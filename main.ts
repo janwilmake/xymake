@@ -19,6 +19,10 @@ export interface Env {
   X_CACHE: KVNamespace;
 }
 
+type Cache = {
+  cached_at: string;
+  tweets: any[];
+};
 export const html = (strings: TemplateStringsArray, ...values: any[]) => {
   return strings.reduce(
     (result, str, i) => result + str + (values[i] || ""),
@@ -56,7 +60,7 @@ async function getUserContentFromApiOrCache(
 
   // Check cache first if we're not forcing a refresh
   if (!forceRefresh) {
-    const cachedContent = await env.X_CACHE.get(cacheKey, "json");
+    const cachedContent = await env.X_CACHE.get<Cache>(cacheKey, "json");
     if (cachedContent) {
       return cachedContent;
     }
@@ -65,12 +69,12 @@ async function getUserContentFromApiOrCache(
   // Cache miss or forced refresh, fetch from API
   try {
     // Fetch tweets with pagination using a single request
-    const recent = await fetchUserContent(userId, accessToken);
+    const tweets = await fetchUserContent(userId, accessToken);
 
     // Construct the response
-    const result = {
-      recent,
-      meta: { cached_at: new Date().toISOString() },
+    const result: Cache = {
+      cached_at: new Date().toISOString(),
+      tweets,
     };
 
     // Store in cache for 15 minutes (900 seconds)
@@ -81,16 +85,12 @@ async function getUserContentFromApiOrCache(
     return result;
   } catch (error) {
     // If API request fails and we have cached data, return that as a fallback
-    const cachedContent = await env.X_CACHE.get(cacheKey, "json");
+    const cachedContent = await env.X_CACHE.get<Cache>(cacheKey, "json");
     if (cachedContent) {
       return {
         ...cachedContent,
-        meta: {
-          ...cachedContent.meta,
-          from_cache: true,
-          error_message:
-            error instanceof Error ? error.message : "Unknown error",
-        },
+        from_cache: true,
+        error_message: error instanceof Error ? error.message : "Unknown error",
       };
     }
 
@@ -362,18 +362,22 @@ export default {
           );
 
           return new Response(
-            JSON.stringify({
-              user: {
-                id,
-                name,
-                username,
-                profile_image_url,
+            JSON.stringify(
+              {
+                user: {
+                  id,
+                  name,
+                  username,
+                  profile_image_url,
+                },
+                ...contentData,
               },
-              ...contentData,
-            }),
+              undefined,
+              2,
+            ),
             {
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json;charset=utf8",
                 "Cache-Control": "private, max-age=900",
               },
             },
