@@ -1,7 +1,8 @@
 /*
-======X LOGIN SCRIPT WITH TWEET FETCHING========
+======X LOGIN SCRIPT WITH TWEET FETCHING AND CACHING========
 Enhanced version of the X oauth implementation that adds
 the ability to fetch and paginate through the user's recent tweets and comments.
+Includes caching to respect X API rate limits (1 request per 15 minutes per user).
 
 To use it, ensure to create a X oauth client, then set .dev.vars and wrangler.toml alike with the Env variables required.
 Navigate to /login from the homepage, with optional parameters ?scope=a,b,c
@@ -14,6 +15,8 @@ export interface Env {
   X_CLIENT_SECRET: string;
   X_REDIRECT_URI: string;
   LOGIN_REDIRECT_URI: string;
+  // Add KV namespace for caching
+  X_CACHE: KVNamespace;
 }
 
 export const html = (strings: TemplateStringsArray, ...values: any[]) => {
@@ -39,59 +42,75 @@ async function generateCodeChallenge(codeVerifier: string): Promise<string> {
   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-async function fetchUserTweets(
+// Cache keys will be in the format: "user_content:{userId}"
+const getUserCacheKey = (userId: string): string => `user_content:${userId}`;
+
+async function getUserContentFromApiOrCache(
   userId: string,
   accessToken: string,
-  maxResults: number = 100,
-  paginationToken?: string,
+  env: Env,
+  forceRefresh: boolean = false,
+  limit: number = 50,
 ): Promise<any> {
-  const params = new URLSearchParams({
-    "tweet.fields": "created_at,public_metrics,referenced_tweets",
-    "user.fields": "profile_image_url",
-    expansions: "author_id,referenced_tweets.id,referenced_tweets.id.author_id",
-    max_results: maxResults.toString(),
-  });
+  const cacheKey = getUserCacheKey(userId);
 
-  if (paginationToken) {
-    params.append("pagination_token", paginationToken);
+  // Check cache first if we're not forcing a refresh
+  if (!forceRefresh) {
+    const cachedContent = await env.X_CACHE.get(cacheKey, "json");
+    if (cachedContent) {
+      return cachedContent;
+    }
   }
 
-  const response = await fetch(
-    `https://api.x.com/2/users/${userId}/tweets?${params.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    },
-  );
+  // Cache miss or forced refresh, fetch from API
+  try {
+    // Fetch tweets with pagination using a single request
+    const recent = await fetchUserContent(userId, accessToken);
 
-  if (!response.ok) {
-    throw new Error(`X API error: ${response.status} ${await response.text()}`);
+    // Construct the response
+    const result = {
+      recent,
+      meta: { cached_at: new Date().toISOString() },
+    };
+
+    // Store in cache for 15 minutes (900 seconds)
+    await env.X_CACHE.put(cacheKey, JSON.stringify(result), {
+      expirationTtl: 900,
+    });
+
+    return result;
+  } catch (error) {
+    // If API request fails and we have cached data, return that as a fallback
+    const cachedContent = await env.X_CACHE.get(cacheKey, "json");
+    if (cachedContent) {
+      return {
+        ...cachedContent,
+        meta: {
+          ...cachedContent.meta,
+          from_cache: true,
+          error_message:
+            error instanceof Error ? error.message : "Unknown error",
+        },
+      };
+    }
+
+    // No cache available, propagate the error
+    throw error;
   }
-
-  return response.json();
 }
 
-async function fetchUserComments(
+async function fetchUserContent(
   userId: string,
   accessToken: string,
-  maxResults: number = 100,
-  paginationToken?: string,
-): Promise<any> {
-  // For comments/replies, we need to get all tweets and filter for those that are replies
+): Promise<any[]> {
   const params = new URLSearchParams({
     "tweet.fields":
       "created_at,public_metrics,referenced_tweets,in_reply_to_user_id",
     "user.fields": "profile_image_url",
     expansions:
       "author_id,referenced_tweets.id,referenced_tweets.id.author_id,in_reply_to_user_id",
-    max_results: maxResults.toString(),
+    max_results: "100",
   });
-
-  if (paginationToken) {
-    params.append("pagination_token", paginationToken);
-  }
 
   const response = await fetch(
     `https://api.x.com/2/users/${userId}/tweets?${params.toString()}`,
@@ -108,63 +127,7 @@ async function fetchUserComments(
   }
 
   const data: any = await response.json();
-
-  // Filter to only include replies
-  if (data.data) {
-    data.data = data.data.filter(
-      (tweet: any) =>
-        tweet.referenced_tweets &&
-        tweet.referenced_tweets.some((ref: any) => ref.type === "replied_to"),
-    );
-  }
-
-  return data;
-}
-
-// Paginate through tweets until we get the requested count or run out of tweets
-async function fetchAllUserContent(
-  userId: string,
-  accessToken: string,
-  contentType: "tweets" | "comments",
-  limit: number = 200,
-): Promise<any[]> {
-  let allContent: any[] = [];
-  let paginationToken: string | undefined;
-  const fetchFn =
-    contentType === "tweets" ? fetchUserTweets : fetchUserComments;
-
-  do {
-    // Calculate how many more items we need
-    const remaining = limit - allContent.length;
-    if (remaining <= 0) break;
-
-    // Twitter API max per request is 100
-    const maxResults = Math.min(remaining, 100);
-
-    // Fetch batch of content
-    const response = await fetchFn(
-      userId,
-      accessToken,
-      maxResults,
-      paginationToken,
-    );
-
-    if (!response.data || response.data.length === 0) {
-      break; // No more data
-    }
-
-    allContent = [...allContent, ...response.data];
-
-    // Get pagination token for next request
-    paginationToken = response.meta?.next_token;
-
-    // If no pagination token, we've reached the end
-    if (!paginationToken) {
-      break;
-    }
-  } while (allContent.length < limit);
-
-  return allContent.slice(0, limit); // Ensure we don't exceed requested limit
+  return data.data;
 }
 
 export default {
@@ -325,9 +288,10 @@ export default {
     }
 
     // Dashboard route for user data and tweets/comments
-    if (url.pathname === "/dashboard") {
+    if (url.pathname === "/dashboard" || url.pathname === "/dashboard.json") {
       // Check if JSON response is requested
       const wantsJson =
+        url.pathname === "/dashboard.json" ||
         request.headers.get("Accept")?.includes("application/json") ||
         (url.searchParams.has("format") &&
           url.searchParams.get("format") === "json");
@@ -378,15 +342,24 @@ export default {
         const userData: any = await userResponse.json();
         const { id, name, username, profile_image_url } = userData.data;
 
+        // Check if force refresh is requested
+        const forceRefresh =
+          url.searchParams.has("refresh") &&
+          url.searchParams.get("refresh") === "true";
+
+        // Get limit parameter
+        const limit = parseInt(url.searchParams.get("limit") || "50", 10);
+
         // If JSON format is requested, fetch tweets and comments
         if (wantsJson) {
-          const limit = parseInt(url.searchParams.get("limit") || "200", 10);
-
-          // Fetch tweets and comments in parallel for efficiency
-          const [tweets, comments] = await Promise.all([
-            fetchAllUserContent(id, accessToken, "tweets", limit),
-            fetchAllUserContent(id, accessToken, "comments", limit),
-          ]);
+          // Fetch content from cache or API
+          const contentData = await getUserContentFromApiOrCache(
+            id,
+            accessToken,
+            env,
+            forceRefresh,
+            limit,
+          );
 
           return new Response(
             JSON.stringify({
@@ -396,17 +369,12 @@ export default {
                 username,
                 profile_image_url,
               },
-              tweets,
-              comments,
-              meta: {
-                tweet_count: tweets.length,
-                comment_count: comments.length,
-              },
+              ...contentData,
             }),
             {
               headers: {
                 "Content-Type": "application/json",
-                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Cache-Control": "private, max-age=900",
               },
             },
           );
@@ -461,11 +429,18 @@ export default {
                         Home
                       </a>
                       <a
-                        href="/dashboard?format=json"
+                        href="/dashboard.json"
                         class="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-medium transition-colors"
                         target="_blank"
                       >
                         View API (JSON)
+                      </a>
+                      <a
+                        href="/dashboard.json?refresh=true"
+                        class="bg-yellow-500 hover:bg-yellow-600 px-6 py-3 rounded-lg font-medium transition-colors"
+                        target="_blank"
+                      >
+                        Force Refresh Cache
                       </a>
                       <a
                         href="/logout"
@@ -480,8 +455,30 @@ export default {
                       <code
                         class="bg-slate-800 p-2 rounded block mt-2 text-sm overflow-x-auto"
                       >
-                        GET /dashboard?format=json&limit=200
+                        GET /dashboard.json
                       </code>
+                      <p class="mt-4">API Options:</p>
+                      <ul class="bg-slate-800 p-2 rounded mt-2 text-sm">
+                        <li>
+                          <code>limit=50</code> - Number of tweets/comments to
+                          retrieve (default: 50)
+                        </li>
+                        <li>
+                          <code>refresh=true</code> - Force refresh the cache
+                        </li>
+                      </ul>
+                      <div
+                        class="mt-4 p-4 bg-blue-900/30 border border-blue-500/30 rounded-lg"
+                      >
+                        <h3 class="font-bold">⚠️ Rate Limiting Information</h3>
+                        <p>
+                          Data is cached for 15 minutes to respect X API rate
+                          limits.
+                        </p>
+                        <p>
+                          Use <code>refresh=true</code> only when necessary!
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </main>
@@ -571,7 +568,7 @@ export default {
                   </h1>
                   <p class="text-xl text-gray-400 mb-8">
                     Secure OAuth 2.0 Implementation with PKCE for X/Twitter with
-                    Tweet & Comment Fetching
+                    Tweet & Comment Fetching (Rate-Limited)
                   </p>
                   <div class="flex justify-center gap-4">
                     <a
@@ -649,8 +646,8 @@ export default {
                     </div>
                     <h3 class="text-xl font-bold mb-2">Tweet Fetching</h3>
                     <p class="text-gray-400">
-                      Fetch up to 200 of your most recent tweets and comments
-                      with pagination
+                      Fetch your most recent tweets and comments with 15-minute
+                      caching
                     </p>
                   </div>
 
@@ -672,9 +669,9 @@ export default {
                         />
                       </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">JSON API</h3>
+                    <h3 class="text-xl font-bold mb-2">Rate-Limit Friendly</h3>
                     <p class="text-gray-400">
-                      Get your tweets and comments as JSON for easy integration
+                      Respects X API rate limits with efficient caching strategy
                     </p>
                   </div>
                 </div>

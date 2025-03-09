@@ -7,6 +7,11 @@ routes = [
   { pattern = "www.xymake.com", custom_domain = true }
 ]
 
+
+[[kv_namespaces]]
+binding = "X_CACHE"
+id = "c76324a576a244a0998d2982a9540f8a"
+
 [vars]
 X_REDIRECT_URI = "https://xymake.com/callback"
-LOGIN_REDIRECT_URI = "https://xymake.com"
+LOGIN_REDIRECT_URI = "/"
