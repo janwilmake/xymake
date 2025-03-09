@@ -105,10 +105,11 @@ async function fetchUserContent(
 ): Promise<any[]> {
   const params = new URLSearchParams({
     "tweet.fields":
-      "created_at,public_metrics,referenced_tweets,in_reply_to_user_id",
-    "user.fields": "profile_image_url",
+      "created_at,public_metrics,referenced_tweets,in_reply_to_user_id,text",
+    "user.fields": "profile_image_url,username,name",
     expansions:
       "author_id,referenced_tweets.id,referenced_tweets.id.author_id,in_reply_to_user_id",
+
     max_results: "100",
   });
 
