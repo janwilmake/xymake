@@ -1,0 +1,12 @@
+name = "xymake"
+main = "main.ts"
+compatibility_date = "2025-03-07"
+dev.port = 3000
+routes = [
+  { pattern = "xymake.com", custom_domain = true },
+  { pattern = "www.xymake.com", custom_domain = true }
+]
+
+[vars]
+X_REDIRECT_URI = "https://xymake.com/callback"
+LOGIN_REDIRECT_URI = "https://xymake.com"
