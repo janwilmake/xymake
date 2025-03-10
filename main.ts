@@ -392,7 +392,7 @@ export class XFeed implements DurableObject {
         const resetInHours = resetDate
           ? Math.round((Number(resetDate) * 1000 - Date.now()) / 36000) / 100
           : undefined;
-        throw new Error("RATE LIMIT ERROR: " + resetInHours);
+        throw new Error(`RATE LIMIT ERROR:  reset in ${resetInHours} hours`);
       }
 
       if (!response.ok) {
