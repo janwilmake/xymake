@@ -1,5 +1,6 @@
 // X Login with Tweet Feed
 // Uses OAuth for authentication and Durable Objects for tweet storage and rate-limited updates
+import { explore } from "./explore";
 
 interface Env {
   X_CLIENT_ID: string;
@@ -142,13 +143,18 @@ export class XFeed implements DurableObject {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
 
+    const exploreRespnse = await explore(request, this.sql);
+    if (exploreRespnse) {
+      return exploreRespnse;
+    }
+
     // Initialize database if needed
     await this.initializeSchema();
 
     // Load user state
     await this.loadUserState();
 
-    console.log("userstate", this.userState);
+    console.log("user-state", this.userState);
 
     if (url.pathname.endsWith("/setup")) {
       // Handle setup endpoint
@@ -887,27 +893,16 @@ export default {
       ?.split("=")[1]
       ?.trim();
 
+    const adminPassword = rows
+      .find((row) => row.startsWith("password="))
+      ?.split("=")[1]
+      ?.trim();
+
     const accessToken = xAccessToken
       ? decodeURIComponent(xAccessToken)
       : url.searchParams.get("apiKey");
 
     // Check for username in path (for feed viewing)
-    const pathParts = url.pathname.split("/").filter(Boolean);
-    if (
-      pathParts.length === 1 &&
-      pathParts[0] !== "login" &&
-      pathParts[0] !== "callback" &&
-      pathParts[0] !== "logout"
-    ) {
-      const username = pathParts[0].split(".")[0]; // Remove extension if present
-
-      // Get Durable Object for this username
-      const id = env.X_FEED.idFromName(username);
-      const stub = env.X_FEED.get(id);
-
-      // Forward the request to the Durable Object
-      return stub.fetch(request);
-    }
 
     // Login page route
     if (url.pathname === "/login") {
@@ -1074,6 +1069,31 @@ export default {
       });
       headers.append("Set-Cookie", `x_access_token=; Max-Age=0; Path=/`);
       return new Response("Logging out...", { status: 307, headers });
+    }
+
+    if (url.pathname.endsWith("/sqlite")) {
+      if (!adminPassword || adminPassword !== env.X_CLIENT_SECRET) {
+        return new Response("Please enter a password as cookie 'password'", {
+          status: 404,
+        });
+      }
+      const name = url.pathname.split("/")[1];
+      const id = env.X_FEED.idFromName(name);
+      const stub = env.X_FEED.get(id);
+      return stub.fetch(request);
+    }
+
+    const pathParts = url.pathname.split("/").filter(Boolean);
+
+    if (pathParts.length === 1) {
+      const username = pathParts[0].split(".")[0]; // Remove extension if present
+
+      // Get Durable Object for this username
+      const id = env.X_FEED.idFromName(username);
+      const stub = env.X_FEED.get(id);
+
+      // Forward the request to the Durable Object
+      return stub.fetch(request);
     }
 
     // Home page route (default)
