@@ -10,3 +10,10 @@ Specification:
   - For all new tweets inserted, it looks for tweet ids replied to that are not already in the DB, and uses `/2/tweets` to fetch these in a single additional api call to insert these into the db as well.
   - It also fetches recent retweets, likes, and bookmarks of tweets and these tweet contents in 3 distinct api calls, using the same principles.
 - The worker exposes `GET /{username}` which returns all tweets based on recency for that username. If `is_private:true` it should be authenticated using `?secret=secret`. If a tweet is a reply, it shows the content of the reply, if available. It does so recursively. It first builds up this JSON dataset and then returns that or md or HTML. Default should be md if the extension isn't present.
+
+# TODO:
+
+🤔 the current implementation did not work yet - it keeps hitting rate limits on the free plan, so there's something wrong and it's not clear what, so I need to work on the debugging experience.
+
+- make it easier to debug what happens in the alarms with a special log function
+- make the explorer able to easily switch between available DO names (use cf api)
