@@ -220,17 +220,18 @@ export class XFeed implements DurableObject {
     // Fetch recent tweets
     const tweets = await this.fetchRecentTweets();
 
-    console.log({ tweets });
     // Count new tweets
     let newTweetsCount = 0;
 
     // Check if we got any tweets back
-    if (tweets && tweets.length > 0) {
+    if (tweets.items && tweets.items.length > 0) {
+      this.state.storage.delete("error");
+
       // Insert tweets and count new ones
-      newTweetsCount = await this.insertTweets(tweets, "tweet");
+      newTweetsCount = await this.insertTweets(tweets.items, "tweet");
 
       // Find reply tweets we need to fetch
-      const replyIds = await this.findMissingReplyTweets(tweets);
+      const replyIds = await this.findMissingReplyTweets(tweets.items);
       if (replyIds.length > 0) {
         const replyTweets = await this.fetchTweetsByIds(replyIds);
         if (replyTweets && replyTweets.length > 0) {
@@ -255,6 +256,8 @@ export class XFeed implements DurableObject {
       // if (bookmarks && bookmarks.length > 0) {
       //   await this.insertTweets(bookmarks, "bookmark");
       // }
+    } else if (tweets.error) {
+      this.state.storage.put("error", tweets.error);
     }
 
     // Schedule next update based on whether we found new tweets
@@ -353,7 +356,7 @@ export class XFeed implements DurableObject {
   }
 
   // Fetch recent tweets from X API
-  async fetchRecentTweets(): Promise<any[]> {
+  async fetchRecentTweets(): Promise<{ error?: string; items?: any[] }> {
     await this.loadUserState();
     if (!this.userState?.access_token) {
       throw new Error("No access token available");
@@ -386,27 +389,33 @@ export class XFeed implements DurableObject {
         },
       );
 
+      console.log("check", userProfile.username);
+
       if (response.status === 429) {
         const resetDate = response.headers.get("x-rate-limit-reset");
 
         const resetInHours = resetDate
           ? Math.round((Number(resetDate) * 1000 - Date.now()) / 36000) / 100
           : undefined;
-        throw new Error(`RATE LIMIT ERROR:  reset in ${resetInHours} hours`);
+        throw new Error(
+          `RATE LIMIT ERROR ${userProfile.username}:  reset in ${resetInHours} hours`,
+        );
       }
 
       if (!response.ok) {
         throw new Error(
-          `X API error: ${response.status} ${await response.text()}`,
+          `X API error: ${response.status} ${
+            userProfile.username
+          } ${await response.text()}`,
         );
       }
 
       const data: any = await response.json();
+      console.log("SUCCESS", Object.keys(data));
 
-      return data.data || [];
-    } catch (error) {
-      console.error("Error fetching recent tweets", error);
-      return [];
+      return { items: data.data || [] };
+    } catch (error: any) {
+      return { error: "Error fetching recent tweets" + error.message };
     }
   }
 
@@ -802,10 +811,13 @@ export class XFeed implements DurableObject {
       //   : pathname.endsWith(".html")
       //   ? "html"
       //   : "md";
-
+      const error: string | null | undefined = await this.state.storage.get(
+        "error",
+      );
       const result = {
         profile,
         tweets: threaded,
+        error,
       };
 
       return new Response(JSON.stringify(result, undefined, 2), {
