@@ -7,10 +7,18 @@ routes = [
   { pattern = "www.xymake.com", custom_domain = true }
 ]
 
+[[durable_objects.bindings]]
+name = "X_FEED"
+class_name = "XFeed"
 
-[[kv_namespaces]]
-binding = "X_CACHE"
-id = "c76324a576a244a0998d2982a9540f8a"
+[[migrations]]
+tag = "v1"
+new_classes = ["XUserFeed"]
+
+[[migrations]]
+tag = "v2"
+deleted_classes = ["XUserFeed"]
+new_sqlite_classes = ["XFeed"]
 
 [vars]
 X_REDIRECT_URI = "https://xymake.com/callback"
