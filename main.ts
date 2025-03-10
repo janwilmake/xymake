@@ -387,8 +387,12 @@ export class XFeed implements DurableObject {
       );
 
       if (!response.ok) {
+        const headers: any = {};
+        response.headers.forEach((value, key) => (headers[key] = value));
         throw new Error(
-          `X API error: ${response.status} ${await response.text()}`,
+          `X API error: ${
+            response.status
+          } ${await response.text()} - ${JSON.stringify(headers)}`,
         );
       }
 
