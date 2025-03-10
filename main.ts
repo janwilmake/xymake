@@ -386,13 +386,18 @@ export class XFeed implements DurableObject {
         },
       );
 
+      if (response.status === 429) {
+        const resetDate = response.headers.get("x-rate-limit-reset");
+
+        const resetInHours = resetDate
+          ? Math.round((Number(resetDate) * 1000 - Date.now()) / 36000) / 100
+          : undefined;
+        throw new Error("RATE LIMIT ERROR: " + resetInHours);
+      }
+
       if (!response.ok) {
-        const headers: any = {};
-        response.headers.forEach((value, key) => (headers[key] = value));
         throw new Error(
-          `X API error: ${
-            response.status
-          } ${await response.text()} - ${JSON.stringify(headers)}`,
+          `X API error: ${response.status} ${await response.text()}`,
         );
       }
 
