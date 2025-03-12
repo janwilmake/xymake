@@ -7,6 +7,8 @@ routes = [
   { pattern = "www.xymake.com", custom_domain = true }
 ]
 
+assets.directory = "./public"
+
 [[durable_objects.bindings]]
 name = "X_FEED"
 class_name = "XFeed"
