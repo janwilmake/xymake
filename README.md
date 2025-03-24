@@ -129,11 +129,14 @@ See how the launch goes, collect feedback, and iterate!
 
 # BACKLOG
 
+- Social Data MCP
+- Index the totality of posts as well (and update this daily). Expose this at xymake.com/username
 - Mobile-friendlyness with username tagging
-- Index the totality of posts as well (and update this daily)
 - Get the actual URLs of media and links
 - Ensure Google indexes it too by adding sitemap
 - Show your threads in the dashboard. To see more than Top 10 most recent, pay $20/month!
 - `/janwilmake` should also be accessible for agents and respond with md,json,yaml file object for every thread
 - Simple LLM Analysis for all your threads that allows for improved SEO, search, etc.
-- Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use cf api)
+- Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
+
+<!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->
