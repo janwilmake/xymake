@@ -18,6 +18,7 @@ The following is what I spent my entire day on:
 - ✅ OG Image for any thread, counting tokens and including usernames and images of the participant(s).
 - ✅ Change landingpage to show opportunity of unlocking your data.
 - ✅ Tweak og:image further so it renders everywhere perfectly.
+- ✅ Ensure you can only see the markdown if the main contributor of the conversation has freed their data!
 
 The result is what you can see at https://xymake.com. Change any X URL into xymake.com and you get flat text out for the entire thread + comments.
 

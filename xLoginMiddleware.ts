@@ -1,3 +1,5 @@
+export type UserConfig = { privacy: "private" | "public" };
+
 // OAuth helpers
 export async function generateRandomString(length: number): Promise<string> {
   const randomBytes = new Uint8Array(length);
@@ -162,7 +164,7 @@ export const xLoginMiddleware = async (
 
       await env.TWEET_KV.put(
         `user:${username}`,
-        JSON.stringify({ privacy: "public" }),
+        JSON.stringify({ privacy: "public" } satisfies UserConfig),
       );
 
       // Trigger initial data fetch

@@ -1,5 +1,6 @@
 import { getOgImage } from "./getOgImage.js";
 import { identify } from "./identify.js";
+import { UserConfig } from "./xLoginMiddleware.js";
 
 export const getThreadData = async (request: Request, env: Env) => {
   const url = new URL(request.url);
@@ -164,6 +165,18 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
         },
       );
     }
+
+    const config = await env.TWEET_KV.get<UserConfig>(
+      `user:${threadData.mainUser}`,
+    );
+
+    if (config?.privacy !== "public") {
+      return new Response(
+        `Bad request: ${threadData.mainUser} did not free their data yet.`,
+        { status: 400 },
+      );
+    }
+
     const { isCrawler } = identify(request);
     const TEST_CRAWLER = false;
     const isHTML = TEST_CRAWLER || isCrawler || formatExt === "html";
