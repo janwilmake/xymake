@@ -273,7 +273,7 @@ export const middleware = async (request: Request, env: Env) => {
       }
 
       if (currentTime - latestTweetTime < 3600000) {
-        // less than an hour ago, its fine
+        // less than an hour ago, its fine too
         return new Response(JSON.stringify(cachedData.tweets, undefined, 2), {
           status: 200,
           headers: {
