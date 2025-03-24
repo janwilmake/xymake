@@ -1,8 +1,8 @@
 // X Login with Tweet Feed
 // Uses OAuth for authentication and Durable Objects for tweet storage and rate-limited updates
 import { explore } from "./explore";
-import { middleware } from "./fulltweet";
-
+import { getThread } from "./getThread";
+import dashboard from "./dashboard.html";
 interface Env {
   TWEET_KV: KVNamespace;
   SOCIALDATA_API_KEY: string;
@@ -27,25 +27,6 @@ interface XUserProfile {
   username: string;
   profile_image_url: string;
   updated_at: number;
-}
-
-// Used for Tweet data structure
-interface Tweet {
-  id: string;
-  text: string;
-  created_at: string;
-  author_id: string;
-  in_reply_to_id?: string;
-  is_reply: boolean;
-  is_retweet: boolean;
-  is_like: boolean;
-  is_bookmark: boolean;
-  metrics?: {
-    retweet_count: number;
-    reply_count: number;
-    like_count: number;
-    quote_count: number;
-  };
 }
 
 // HTML template helper
@@ -897,7 +878,7 @@ export default {
       });
     }
 
-    const tweetResponse = await middleware(request, env);
+    const tweetResponse = await getThread(request, env);
     if (tweetResponse) {
       return tweetResponse;
     }
@@ -1035,6 +1016,11 @@ export default {
         );
         console.log("SETUP", await response.text());
 
+        await env.TWEET_KV.put(
+          `user:${username}`,
+          JSON.stringify({ privacy: "public" }),
+        );
+
         // Trigger initial data fetch
         ctx.waitUntil(stub.fetch(new Request("https://dummy/update")));
 
@@ -1106,68 +1092,17 @@ export default {
 
     if (pathParts.length === 1) {
       const username = pathParts[0].split(".")[0]; // Remove extension if present
+      return new Response(dashboard.replaceAll(`{{username}}`, username), {
+        headers: { "content-type": "text/html;charset=utf8" },
+      });
+      // // Get Durable Object for this username
+      // const id = env.X_FEED.idFromName(username);
+      // const stub = env.X_FEED.get(id);
 
-      // Get Durable Object for this username
-      const id = env.X_FEED.idFromName(username);
-      const stub = env.X_FEED.get(id);
-
-      // Forward the request to the Durable Object
-      return stub.fetch(request);
+      // // Forward the request to the Durable Object
+      // return stub.fetch(request);
     }
 
-    // Home page route (default)
-    return new Response(
-      html`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>X Feed</title>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1"
-            />
-            <style>
-              body {
-                font-family: sans-serif;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 20px;
-                line-height: 1.6;
-              }
-              .btn {
-                display: inline-block;
-                padding: 10px 20px;
-                background: #1da1f2;
-                color: #fff;
-                text-decoration: none;
-                border-radius: 5px;
-                margin: 10px 0;
-              }
-            </style>
-          </head>
-          <body>
-            <h1>X Feed</h1>
-            <p>
-              Login with your X account to create a live feed of your posts.
-            </p>
-            <a href="/login" class="btn">Login with X</a>
-
-            ${accessToken
-              ? `
-            <h2>Your X Feed</h2>
-            <p>You're logged in! Access your feed:</p>
-            <ul>
-              <li><a href="${url.origin}/${
-                  url.searchParams.get("username") || "your-username"
-                }">View your feed</a></li>
-            </ul>
-            <a href="/logout" class="btn">Logout</a>
-            `
-              : ""}
-          </body>
-        </html>
-      `,
-      { headers: { "content-type": "text/html" } },
-    );
+    return new Response("Not found", { status: 404 });
   },
 };

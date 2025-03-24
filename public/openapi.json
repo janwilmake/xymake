@@ -1,0 +1,608 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Twitter Data API",
+    "description": "API for retrieving Twitter/X posts and conversations",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "url": "https://xymake.com/support",
+      "email": "support@xymake.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://xymake.com",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/twitter/status/{tweetId}": {
+      "get": {
+        "summary": "Get a tweet and its conversation",
+        "description": "Retrieves a tweet by ID along with its parent tweets and comments, sorted chronologically",
+        "operationId": "getTweetConversation",
+        "parameters": [
+          {
+            "name": "tweetId",
+            "in": "path",
+            "description": "The numeric ID of the tweet to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the tweet conversation",
+            "headers": {
+              "X-Cache": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["HIT", "MISS"]
+                },
+                "description": "Indicates if the response was served from cache"
+              }
+            },
+            "content": {
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "@username - 2023-05-20T15:30:00Z: This is the text of the tweet\n(500 likes, 100 retweets)\n\n@commenter - 2023-05-20T15:35:00Z: This is a reply to the tweet"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid tweet ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/twitter/status/{tweetId}.json": {
+      "get": {
+        "summary": "Get a tweet and its conversation in JSON format",
+        "description": "Retrieves a tweet by ID along with its parent tweets and comments in JSON format, sorted chronologically",
+        "operationId": "getTweetConversationJson",
+        "parameters": [
+          {
+            "name": "tweetId",
+            "in": "path",
+            "description": "The numeric ID of the tweet to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the tweet conversation",
+            "headers": {
+              "X-Cache": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["HIT", "MISS"]
+                },
+                "description": "Indicates if the response was served from cache"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tweet"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid tweet ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Tweet": {
+        "type": "object",
+        "required": [
+          "id_str",
+          "full_text",
+          "tweet_created_at",
+          "source",
+          "truncated",
+          "user",
+          "lang",
+          "is_quote_status",
+          "is_pinned",
+          "quote_count",
+          "reply_count",
+          "retweet_count",
+          "favorite_count",
+          "views_count",
+          "bookmark_count",
+          "entities"
+        ],
+        "properties": {
+          "id_str": {
+            "type": "string",
+            "description": "String representation of the tweet ID"
+          },
+          "full_text": {
+            "type": "string",
+            "description": "Full text content of the tweet"
+          },
+          "tweet_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date and time of the tweet"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of the tweet (e.g., 'Twitter for iPhone')"
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "Whether the tweet is truncated"
+          },
+          "in_reply_to_status_id_str": {
+            "type": ["string", "null"],
+            "description": "ID of the tweet this is a reply to, if applicable"
+          },
+          "in_reply_to_user_id_str": {
+            "type": ["string", "null"],
+            "description": "ID of the user this tweet is a reply to, if applicable"
+          },
+          "in_reply_to_screen_name": {
+            "type": ["string", "null"],
+            "description": "Screen name of the user this tweet is a reply to, if applicable"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "lang": {
+            "type": "string",
+            "description": "Language code of the tweet"
+          },
+          "quoted_status_id_str": {
+            "type": ["string", "null"],
+            "description": "ID of the quoted tweet, if applicable"
+          },
+          "is_quote_status": {
+            "type": "boolean",
+            "description": "Whether this tweet quotes another tweet"
+          },
+          "is_pinned": {
+            "type": "boolean",
+            "description": "Whether this tweet is pinned to the user's profile"
+          },
+          "quote_count": {
+            "type": "integer",
+            "description": "Number of quote tweets"
+          },
+          "reply_count": {
+            "type": "integer",
+            "description": "Number of replies"
+          },
+          "retweet_count": {
+            "type": "integer",
+            "description": "Number of retweets"
+          },
+          "favorite_count": {
+            "type": "integer",
+            "description": "Number of likes"
+          },
+          "views_count": {
+            "type": "integer",
+            "description": "Number of views"
+          },
+          "bookmark_count": {
+            "type": "integer",
+            "description": "Number of bookmarks"
+          },
+          "quoted_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Tweet"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The quoted tweet object, if applicable"
+          },
+          "retweeted_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Tweet"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The retweeted tweet object, if applicable"
+          },
+          "entities": {
+            "$ref": "#/components/schemas/TweetEntities"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "id_str",
+          "name",
+          "screen_name",
+          "location",
+          "description",
+          "protected",
+          "verified",
+          "followers_count",
+          "friends_count",
+          "listed_count",
+          "favourites_count",
+          "statuses_count",
+          "created_at",
+          "profile_banner_url",
+          "profile_image_url_https"
+        ],
+        "properties": {
+          "id_str": {
+            "type": "string",
+            "description": "String representation of the user ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the user"
+          },
+          "screen_name": {
+            "type": "string",
+            "description": "Username of the user (without @)"
+          },
+          "location": {
+            "type": "string",
+            "description": "User-defined location"
+          },
+          "description": {
+            "type": "string",
+            "description": "User bio"
+          },
+          "url": {
+            "type": ["string", "null"],
+            "description": "URL provided by the user in their profile"
+          },
+          "protected": {
+            "type": "boolean",
+            "description": "Whether the user's tweets are protected"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the user is verified"
+          },
+          "followers_count": {
+            "type": "integer",
+            "description": "Number of followers"
+          },
+          "friends_count": {
+            "type": "integer",
+            "description": "Number of accounts the user is following"
+          },
+          "listed_count": {
+            "type": "integer",
+            "description": "Number of lists the user is on"
+          },
+          "favourites_count": {
+            "type": "integer",
+            "description": "Number of tweets the user has liked"
+          },
+          "statuses_count": {
+            "type": "integer",
+            "description": "Number of tweets the user has posted"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date and time of the user account"
+          },
+          "profile_banner_url": {
+            "type": "string",
+            "description": "URL of the user's profile banner"
+          },
+          "profile_image_url_https": {
+            "type": "string",
+            "description": "HTTPS URL of the user's profile image"
+          },
+          "can_dm": {
+            "type": ["boolean", "null"],
+            "description": "Whether the authenticated user can send direct messages to this user"
+          }
+        }
+      },
+      "TweetEntities": {
+        "type": "object",
+        "required": ["urls", "user_mentions", "hashtags", "symbols"],
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UrlEntity"
+            },
+            "description": "URLs mentioned in the tweet"
+          },
+          "user_mentions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserMentionEntity"
+            },
+            "description": "Users mentioned in the tweet"
+          },
+          "hashtags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HashtagEntity"
+            },
+            "description": "Hashtags in the tweet"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SymbolEntity"
+            },
+            "description": "Symbols (like cashtags) in the tweet"
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaEntity"
+            },
+            "description": "Media attached to the tweet"
+          },
+          "poll": {
+            "$ref": "#/components/schemas/PollEntity"
+          }
+        }
+      },
+      "UrlEntity": {
+        "type": "object",
+        "required": ["url", "expanded_url", "display_url", "indices"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Shortened URL"
+          },
+          "expanded_url": {
+            "type": "string",
+            "description": "Expanded URL"
+          },
+          "display_url": {
+            "type": "string",
+            "description": "URL as displayed in the tweet"
+          },
+          "indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Start and end indices of the URL in the tweet text"
+          }
+        }
+      },
+      "UserMentionEntity": {
+        "type": "object",
+        "required": ["id_str", "name", "screen_name", "indices"],
+        "properties": {
+          "id_str": {
+            "type": "string",
+            "description": "String representation of the mentioned user's ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the mentioned user"
+          },
+          "screen_name": {
+            "type": "string",
+            "description": "Username of the mentioned user (without @)"
+          },
+          "indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Start and end indices of the mention in the tweet text"
+          }
+        }
+      },
+      "HashtagEntity": {
+        "type": "object",
+        "required": ["text", "indices"],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text of the hashtag (without #)"
+          },
+          "indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Start and end indices of the hashtag in the tweet text"
+          }
+        }
+      },
+      "SymbolEntity": {
+        "type": "object",
+        "required": ["text", "indices"],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Text of the symbol (without $)"
+          },
+          "indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Start and end indices of the symbol in the tweet text"
+          }
+        }
+      },
+      "MediaEntity": {
+        "type": "object",
+        "required": [
+          "id_str",
+          "media_url_https",
+          "url",
+          "display_url",
+          "expanded_url",
+          "type",
+          "indices"
+        ],
+        "properties": {
+          "id_str": {
+            "type": "string",
+            "description": "String representation of the media ID"
+          },
+          "media_url_https": {
+            "type": "string",
+            "description": "HTTPS URL pointing to the media file"
+          },
+          "url": {
+            "type": "string",
+            "description": "Shortened URL for the media"
+          },
+          "display_url": {
+            "type": "string",
+            "description": "URL as displayed in the tweet"
+          },
+          "expanded_url": {
+            "type": "string",
+            "description": "Expanded URL for the media"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["photo", "video", "animated_gif"],
+            "description": "Type of media"
+          },
+          "indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Start and end indices of the media URL in the tweet text"
+          }
+        }
+      },
+      "PollEntity": {
+        "type": "object",
+        "required": [
+          "end_datetime",
+          "duration_minutes",
+          "counts_are_final",
+          "choices"
+        ],
+        "properties": {
+          "end_datetime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End date and time of the poll"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "description": "Duration of the poll in minutes"
+          },
+          "counts_are_final": {
+            "type": "boolean",
+            "description": "Whether the counts are final"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PollChoice"
+            },
+            "description": "Choices in the poll"
+          }
+        }
+      },
+      "PollChoice": {
+        "type": "object",
+        "required": ["label", "count"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Text of the poll choice"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of votes for this choice"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["status", "message"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["error"],
+            "description": "Status of the response"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      }
+    }
+  }
+}

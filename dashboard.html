@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black">
+
+<head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>XYMake - Dashboard</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        .xy-gradient {
+            background: linear-gradient(135deg, #000000 0%, #1d1d1d 100%);
+        }
+
+        .xy-border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button-glow:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+
+<body class="text-white">
+    <main class="min-h-screen xy-gradient">
+        <div class="max-w-5xl mx-auto px-4 py-16">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-12">
+                <div class="flex items-center gap-3">
+                    <svg viewBox="0 0 24 24" class="w-8 h-8" fill="currentColor">
+                        <path
+                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    <span class="font-bold text-xl">XYMake</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-400">Welcome, {{username}}</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                        <span class="font-bold">X</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold mb-4">Your X Data Is Now Free</h1>
+                <p
+                    class="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                    Show us what you do with it!
+                </p>
+            </div>
+
+            <!-- Main Instructions -->
+            <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
+                <h2 class="text-2xl font-bold mb-6 text-center">How To Use XYMake</h2>
+
+                <div class="flex flex-col gap-8">
+                    <div class="flex items-start gap-6">
+                        <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">1
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xl mb-2">Change the URL</h3>
+                            <p class="text-gray-300 mb-4">
+                                For any X thread you want to convert to markdown, simply change:
+                            </p>
+                            <div class="flex items-center gap-3 mb-4">
+                                <p class="text-gray-400 line-through font-mono">
+                                    https://x.com/yourusername/status/123456789</p>
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </div>
+                            <div class="flex items-center">
+                                <p class="text-blue-400 font-mono">https://xymake.com/yourusername/status/123456789</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-6">
+                        <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">2
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xl mb-2">Get Clean Markdown</h3>
+                            <p class="text-gray-300">
+                                The thread will instantly be converted to clean markdown format, perfect for:
+                            </p>
+                            <ul class="list-disc list-inside text-gray-300 mt-2 ml-4">
+                                <li>Feeding into LLMs</li>
+                                <li>Repurposing content for your blog</li>
+                                <li>Creating newsletters</li>
+                                <li>Sharing knowledge in a readable format</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Ideas Section -->
+            <div class="xy-border rounded-xl p-8 mb-16 bg-gradient-to-r from-blue-900/30 to-cyan-900/30">
+                <h2 class="text-2xl font-bold mb-6 text-center">What Will You Create?</h2>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="xy-border rounded-lg p-6 bg-white/5 text-center">
+                        <div class="text-blue-400 mb-4">
+                            <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold mb-2">Blog Posts</h3>
+                        <p class="text-gray-400 text-sm">
+                            Turn your best threads into detailed blog articles
+                        </p>
+                    </div>
+
+                    <div class="xy-border rounded-lg p-6 bg-white/5 text-center">
+                        <div class="text-blue-400 mb-4">
+                            <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold mb-2">Newsletters</h3>
+                        <p class="text-gray-400 text-sm">
+                            Compile your insights into regular newsletters
+                        </p>
+                    </div>
+
+                    <div class="xy-border rounded-lg p-6 bg-white/5 text-center">
+                        <div class="text-blue-400 mb-4">
+                            <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold mb-2">AI Projects</h3>
+                        <p class="text-gray-400 text-sm">
+                            Feed threads into LLMs to create new insights
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center text-gray-500 border-t border-white/10 pt-12">
+                <div class="flex justify-center gap-6 mb-8">
+                    <a href="https://x.com/janwilmake" class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                    </a>
+                    <a href="https://github.com/janwilmake/xymake" class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd"
+                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+
+                <p class="text-sm">
+                    © 2025 XYMake. All rights reserved. Not affiliated with X Corp.
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

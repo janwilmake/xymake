@@ -228,7 +228,7 @@ function formatTweetAsMarkdown(tweet: Tweet): string {
 }
 
 // Main handler with format support
-export const middleware = async (request: Request, env: Env) => {
+export const getThread = async (request: Request, env: Env) => {
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split("/");
@@ -261,7 +261,7 @@ export const middleware = async (request: Request, env: Env) => {
     const format = formatExt === "json" ? "json" : "md";
 
     // Check KV cache first
-    const cacheKey = `${tweetId}.${format}`;
+    const cacheKey = `v2.${tweetId}.${format}`;
     const cachedData = await env.TWEET_KV.get<CachedTweetData>(cacheKey, {
       type: "json",
     });
@@ -291,7 +291,8 @@ export const middleware = async (request: Request, env: Env) => {
         );
       }
 
-      if (currentTime - latestTweetTime < 3600000) {
+      if (currentTime - cachedData.timestamp < 3600000) {
+        console.log("Isn't long ago");
         return new Response(
           format === "json"
             ? JSON.stringify(cachedData.tweets, undefined, 2)
@@ -320,9 +321,15 @@ export const middleware = async (request: Request, env: Env) => {
     const allTweets: Tweet[] = [mainTweet, ...parents, ...comments];
 
     allTweets.sort((a, b) => {
-      const dateA = new Date(a.tweet_created_at);
-      const dateB = new Date(b.tweet_created_at);
-      return dateA.getTime() - dateB.getTime();
+      const dateA = new Date(a.tweet_created_at).getTime();
+      const dateB = new Date(b.tweet_created_at).getTime();
+      if (dateA !== dateB) {
+        return dateA - dateB; // Sort by timestamp first
+      } else {
+        const idA = BigInt(a.id_str);
+        const idB = BigInt(b.id_str);
+        return idA < idB ? -1 : idA > idB ? 1 : 0; // Use tweet ID if timestamps are equal
+      }
     });
 
     // Store in KV with 30-day TTL
@@ -335,6 +342,7 @@ export const middleware = async (request: Request, env: Env) => {
       expirationTtl: THIRTY_DAYS_SECONDS,
     });
 
+    console.log("putting new", cacheData.timestamp);
     // Return response based on format
     const responseBody =
       format === "json"
