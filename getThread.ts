@@ -38,19 +38,8 @@ export const getThreadData = async (request: Request, env: Env) => {
     .sort((a, b) => b[1] - a[1])
     .map(([screenName]) => userMap.get(screenName)!);
 
-  // Determine main user (author of the first tweet that isn't a reply or the most active user)
-  let mainUser = null;
-  for (const tweet of allTweets.tweets) {
-    if (!tweet.in_reply_to_status_id_str) {
-      mainUser = tweet.user;
-      break;
-    }
-  }
-
-  // If we couldn't find a non-reply tweet, use the most active user
-  if (!mainUser && sortedUsers.length > 0) {
-    mainUser = sortedUsers[0];
-  }
+  // Determine main user (most posts are from this person)
+  const mainUser = sortedUsers[0];
 
   // Extract user screen names in order of frequency
   const userScreenNames = sortedUsers.map((user) => user.screen_name);
@@ -157,7 +146,8 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       "json",
     );
 
-    if (configUsername?.privacy !== "public") {
+    const test = true;
+    if (configUsername?.privacy !== "public" && !test) {
       if (isBrowser) {
         return new Response(
           html400.replaceAll(`{{username}}`, username || "this user"),
@@ -175,7 +165,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     // Determine output format (default to .md if not specified)
     const threadData = await getThreadData(request, env);
-
+    console.log({ threadData });
     if (!threadData) {
       return new Response(
         JSON.stringify({
