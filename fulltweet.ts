@@ -261,8 +261,19 @@ export const middleware = async (request: Request, env: Env) => {
         ...cachedData.tweets.map((t) => new Date(t.tweet_created_at).getTime()),
       );
 
-      // Use cached data if the latest tweet is older than 24 hours
       if (currentTime - latestTweetTime > ONE_DAY_MS) {
+        // Use cached data if the latest tweet is older than 24 hours
+        return new Response(JSON.stringify(cachedData.tweets, undefined, 2), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json;charset=utf8",
+            "X-Cache": "HIT",
+          },
+        });
+      }
+
+      if (currentTime - latestTweetTime < 3600000) {
+        // less than an hour ago, its fine
         return new Response(JSON.stringify(cachedData.tweets, undefined, 2), {
           status: 200,
           headers: {
