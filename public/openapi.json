@@ -1,14 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Twitter Data API",
+    "title": "X Threads API",
     "description": "API for retrieving Twitter/X posts and conversations",
-    "version": "1.0.0",
-    "contact": {
-      "name": "API Support",
-      "url": "https://xymake.com/support",
-      "email": "support@xymake.com"
-    }
+    "version": "1.0.0"
   },
   "servers": [
     {
@@ -17,16 +12,24 @@
     }
   ],
   "paths": {
-    "/twitter/status/{tweetId}": {
+    "/{login}/status/{tweetId}": {
       "get": {
         "summary": "Get a tweet and its conversation",
         "description": "Retrieves a tweet by ID along with its parent tweets and comments, sorted chronologically",
         "operationId": "getTweetConversation",
         "parameters": [
           {
+            "name": "login",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "tweetId",
             "in": "path",
-            "description": "The numeric ID of the tweet to retrieve",
+            "description": "The numeric ID of the tweet to retrieve the thread for ",
             "required": true,
             "schema": {
               "type": "string",
@@ -83,16 +86,24 @@
         }
       }
     },
-    "/twitter/status/{tweetId}.json": {
+    "/{login}/status/{tweetId}.json": {
       "get": {
         "summary": "Get a tweet and its conversation in JSON format",
         "description": "Retrieves a tweet by ID along with its parent tweets and comments in JSON format, sorted chronologically",
         "operationId": "getTweetConversationJson",
         "parameters": [
           {
+            "name": "login",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "tweetId",
             "in": "path",
-            "description": "The numeric ID of the tweet to retrieve",
+            "description": "The numeric ID of the tweet to retrieve the thread for",
             "required": true,
             "schema": {
               "type": "string",
