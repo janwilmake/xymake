@@ -103,9 +103,9 @@ ctx.waitUntil(
 );
 ```
 
-Last but not least, the `og:image` serving to different platforms is quite tricky. I've previously built https://quickog.com to easily generate the right code to be used in vanilla HTML, and reused that here. As a result, the og:image shows up quite fast when going to any status URL.
+Last but not least, the `og:image` serving to different platforms is quite tricky. I've used the wonderful package [`workers-og`](https://github.com/kvnang/workers-og) to turn a piece of specialized HTML into an SVG and then into a PNG, all from a [Cloudflare Worker](https://workers.cloudflare.com). Also, I've previously built https://quickog.com to easily generate the right code to be used in vanilla HTML, and reused that here. As a result, the og:image shows up quite fast when going to any status URL.
 
-That's about it! Now I've built an entire product in a long day of flowstate now. You may wonder if I used any AI? Of course! There's no such thing as this without AI. I don't use Cursor, but I've used a combination of Claude Anthropic and Grok today for my code generation. Of course this would be impossible without. The project now contains 10000 tokens of code, but the amount of instructions I gave in natural language is probably well below that.
+That's about it! Now I've built an entire product in a long day of flowstate. I'm exhausted and excited. Time for some food. You may wonder if I used any AI? Of course! There's no such thing as this without AI. I don't use Cursor (yet), but I've used a combination of Claude Anthropic and Grok today for my code generation from natural language specification. Of course this would be impossible without. The project now contains 10.000 tokens of code, but the amount of instructions I gave in natural language is probably well below that.
 
 # TODO
 
