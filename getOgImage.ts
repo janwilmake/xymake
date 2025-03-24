@@ -1,9 +1,11 @@
 import { ImageResponse } from "workers-og";
-import { getThreadData } from "./getThread";
+import { getThreadData } from "./getThread.js";
 
 export const getOgImage = async (
   request: Request,
   env: any,
+  ctx: any,
+  isStore: boolean,
 ): Promise<Response | undefined> => {
   try {
     // Check if this is a crawler request or specifically requesting the OG image
@@ -20,7 +22,25 @@ export const getOgImage = async (
       return undefined;
     }
 
-    // Fetch thread data
+    // Create cache key
+    const cacheKey = `og:${url.pathname}`;
+
+    // Try to get the image from KV cache
+    const cachedImage = await env.TWEET_KV.get(cacheKey, {
+      type: "arrayBuffer",
+    });
+
+    if (cachedImage) {
+      // If found in cache, return it with appropriate headers
+      return new Response(cachedImage, {
+        headers: {
+          "Content-Type": "image/png",
+          "Cache-Control": "public, max-age=86400",
+        },
+      });
+    }
+
+    // If not in cache, fetch thread data and generate the image
     const threadData = await getThreadData(request, env);
     if (!threadData) {
       return undefined;
@@ -28,13 +48,24 @@ export const getOgImage = async (
 
     // Create the OG image HTML template
     const html = generateOgImageHtml(threadData);
-
-    // Generate and return the image response
-    return new ImageResponse(html, {
+    const config = {
       width: 1200,
       height: 630,
-      //   format: "png",
-    });
+      format: "png",
+    };
+
+    if (!isStore) {
+      // just return it
+      return new ImageResponse(html, config);
+    }
+
+    // if isStore, only put in kv and
+    const imageBuffer = await new ImageResponse(html, config).arrayBuffer();
+
+    await env.TWEET_KV.put(cacheKey, imageBuffer, { expirationTtl: 86400 });
+
+    // Return the original image response
+    return new Response("Stored", { status: 202 });
   } catch (error: any) {
     console.error("Error generating OG image:", error);
     // Return undefined so the request can continue to regular handler

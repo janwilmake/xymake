@@ -1,4 +1,5 @@
-import { identify } from "./identify";
+import { getOgImage } from "./getOgImage.js";
+import { identify } from "./identify.js";
 
 export const getThreadData = async (request: Request, env: Env) => {
   const url = new URL(request.url);
@@ -115,7 +116,7 @@ export const getThreadData = async (request: Request, env: Env) => {
   return threadData;
 };
 // Main handler with format support
-export const getThread = async (request: Request, env: Env) => {
+export const getThread = async (request: Request, env: Env, ctx: any) => {
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split("/");
@@ -173,6 +174,15 @@ export const getThread = async (request: Request, env: Env) => {
       ? JSON.stringify(threadData.tweets, undefined, 2)
       : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
 
+    // NB: This is only to pre-generate the og image so it's available quicker the second time
+    ctx.waitUntil(
+      getOgImage(
+        new Request(request.url.replace("/status/", "/og/")),
+        env,
+        ctx,
+        true,
+      ),
+    );
     return new Response(responseBody, {
       status: 200,
       headers: {

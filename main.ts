@@ -1,8 +1,8 @@
-import { getThread } from "./getThread";
-import { xLoginMiddleware } from "./xLoginMiddleware";
+import { getThread } from "./getThread.js";
+import { xLoginMiddleware } from "./xLoginMiddleware.js";
 import dashboard from "./dashboard.html";
-import { XFeed } from "./do";
-import { getOgImage } from "./getOgImage";
+import { XFeed } from "./do.js";
+import { getOgImage } from "./getOgImage.js";
 export { XFeed };
 
 interface Env {
@@ -37,11 +37,13 @@ export default {
     if (xauth) {
       return xauth;
     }
-    const og = await getOgImage(request, env);
+
+    const og = await getOgImage(request, env, ctx, false);
     if (og) {
+      // return og image directly either from cache or from regular. don't store
       return og;
     }
-    const tweetResponse = await getThread(request, env);
+    const tweetResponse = await getThread(request, env, ctx);
     if (tweetResponse) {
       return tweetResponse;
     }
@@ -54,12 +56,6 @@ export default {
       return new Response(dashboard.replaceAll(`{{username}}`, username), {
         headers: { "content-type": "text/html;charset=utf8" },
       });
-      // Get Durable Object for this username
-      // const id = env.X_FEED.idFromName(username);
-      // const stub = env.X_FEED.get(id);
-
-      // // Forward the request to the Durable Object
-      // return stub.fetch(request);
     }
 
     return new Response("Not found", { status: 404 });

@@ -1,9 +1,11 @@
 {
-  "include": ["main.ts"],
+  "include": ["*.ts"],
   "compilerOptions": {
     "lib": ["ESNext"],
     "target": "ESNext",
     "strict": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "outDir": "build",
     "skipLibCheck": true,
     "types": ["@cloudflare/workers-types", "./globals.d.ts"],
