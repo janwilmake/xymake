@@ -2,8 +2,10 @@ Login at https://xymake.com to Free Your X Data and use it with any LLM.
 
 # TODO
 
+- ✅ Initial implementation (see https://x.com/janwilmake/status/1904080559422288062)
+- ✅ Calculate data!
+- ✅ Respond with HTML but only for crawlers. This HTML is also SEO optimised
 - OG Image for any thread, counting tokens and including usernames and images of the participant(s).
-- Respond with HTML but only for crawlers. This HTML is also SEO optimised
 - Add terms and conditions checkbox on landingpage for clear consent!
 - Create MCP named 'Social Data MCP' and add this to the dashboard.
 
