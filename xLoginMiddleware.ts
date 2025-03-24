@@ -221,7 +221,11 @@ export const xLoginMiddleware = async (
   }
 
   if (url.pathname.endsWith("/sqlite")) {
-    if (!adminPassword || adminPassword !== env.X_CLIENT_SECRET) {
+    if (
+      !env.X_CLIENT_SECRET ||
+      !adminPassword ||
+      adminPassword !== env.X_CLIENT_SECRET
+    ) {
       return new Response("Please enter a password as cookie 'password'", {
         status: 404,
       });
