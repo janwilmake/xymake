@@ -114,11 +114,18 @@ I don't know about much about the legal aspect of it, and I'm sure it's gray are
 
 That said, I also feel some could be uncomfortable with sharing all their data into the intelligent world wide web. Maybe people don't want this at all and feel like X is a platform where their data is kept behind bars(Safely with Elon, Grok, and [@yacineMTB](https://x.com/yacineMTB)). That's why I decided for now to only allow accessing Markdown posts of users that "Freed their Data". Users that haven't enabled it, won't be exposed here, unless they're not the major contributor of a thread. But if the major contributor to any thread has unlocked their X data with XYMake, the entire public conversation is now public to the WWW.
 
+**Before I launched**
+
+I tested the product with an actual test-user just 1 minute before I wanted to launch (the advantage of working from a coworking space is that you can do this wihtin a minute). I found two very critical failure points in my UX, and solved them:
+
+1. People would go to https://xymake.com/{username} and would think they were done already, however, they needed a 400 page
+2. All posts where always scraped but not shown. This has been fixed too now. Phew!
+
 I'm excited to share this on X now, and see what you guys have to say! I feel we can use our own posts for so much more than just within Grok, and this is just the first step to make anything possible!
 
 # TODO
 
-See how the launch goes!
+See how the launch goes, collect feedback, and iterate!
 
 # BACKLOG
 
