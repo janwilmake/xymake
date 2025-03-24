@@ -127,6 +127,8 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 
 See how the launch goes, collect feedback, and iterate!
 
+Now that it's easy to export, make a habit of writing my ideas as X threads.
+
 # BACKLOG
 
 - Social Data MCP
