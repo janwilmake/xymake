@@ -1,8 +1,11 @@
 // X Login with Tweet Feed
 // Uses OAuth for authentication and Durable Objects for tweet storage and rate-limited updates
 import { explore } from "./explore";
+import { middleware } from "./fulltweet";
 
 interface Env {
+  TWEET_KV: KVNamespace;
+  SOCIALDATA_API_KEY: string;
   X_CLIENT_ID: string;
   X_CLIENT_SECRET: string;
   X_REDIRECT_URI: string;
@@ -883,6 +886,22 @@ export default {
     env: Env,
     ctx: ExecutionContext,
   ): Promise<Response> {
+    // Handle CORS preflight requests
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
+    }
+
+    const tweetResponse = await middleware(request, env);
+    if (tweetResponse) {
+      return tweetResponse;
+    }
+
     const url = new URL(request.url);
     const cookie = request.headers.get("Cookie") || "";
     const rows = cookie.split(";").map((x) => x.trim());

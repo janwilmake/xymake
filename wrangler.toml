@@ -25,3 +25,7 @@ new_sqlite_classes = ["XFeed"]
 [vars]
 X_REDIRECT_URI = "https://xymake.com/callback"
 LOGIN_REDIRECT_URI = "/"
+
+[[kv_namespaces]]
+binding = "TWEET_KV"
+id = "30fb3f9f94c64cf384786cc7ceb595a3"
