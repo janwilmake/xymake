@@ -99,7 +99,9 @@ export const getThreadData = async (request: Request, env: Env) => {
       )}${firstTweet.full_text.length > 120 ? "..." : ""}"`
     : `X thread with ${allTweets.tweets.length} tweets (${totalTokens} tokens)`;
 
+  const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}`;
   const threadData = {
+    ogImageUrl,
     tweets: allTweets.tweets,
     userScreenNames,
     participantsText,
@@ -163,7 +165,7 @@ export const getThread = async (request: Request, env: Env) => {
     }
     const { isCrawler } = identify(request);
     const TEST_CRAWLER = false;
-    const isHTML = TEST_CRAWLER || isCrawler;
+    const isHTML = TEST_CRAWLER || isCrawler || formatExt === "html";
 
     const responseBody = isHTML
       ? getThreadHtml(threadData)
@@ -199,11 +201,18 @@ interface ThreadData {
   title: string;
   description: string;
   avatarUrls: string[];
+  ogImageUrl: string;
 }
 
 const getThreadHtml = (threadData: ThreadData): string => {
-  const { tweets, participantsText, totalTokens, title, description } =
-    threadData;
+  const {
+    tweets,
+    participantsText,
+    totalTokens,
+    title,
+    description,
+    ogImageUrl,
+  } = threadData;
 
   return `
 <!DOCTYPE html>
@@ -216,7 +225,10 @@ const getThreadHtml = (threadData: ThreadData): string => {
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
   <meta property="og:type" content="article">
+  <meta property="og:image" content="${ogImageUrl}">
+
   <meta name="twitter:card" content="summary">
+  <meta property="twitter:image" content="${ogImageUrl}">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
   <script src="https://cdn.tailwindcss.com"></script>

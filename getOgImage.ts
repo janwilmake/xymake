@@ -1,6 +1,5 @@
 import { ImageResponse } from "workers-og";
 import { getThreadData } from "./getThread";
-import { identify } from "./identify";
 
 export const getOgImage = async (
   request: Request,
