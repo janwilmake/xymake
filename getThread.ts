@@ -1,6 +1,7 @@
 import { getOgImage } from "./getOgImage.js";
 import { identify } from "./identify.js";
 import { UserConfig } from "./xLoginMiddleware.js";
+import html400 from "./public/400.html";
 
 export const getThreadData = async (request: Request, env: Env) => {
   const url = new URL(request.url);
@@ -118,6 +119,7 @@ export const getThreadData = async (request: Request, env: Env) => {
 };
 // Main handler with format support
 export const getThread = async (request: Request, env: Env, ctx: any) => {
+  const { isBrowser } = identify(request);
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split("/");
@@ -167,12 +169,23 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     }
 
     const config = await env.TWEET_KV.get<UserConfig>(
-      `user:${threadData.mainUser}`,
+      `user:${threadData.mainUser?.screen_name}`,
+      "json",
     );
 
     if (config?.privacy !== "public") {
+      if (isBrowser) {
+        return new Response(
+          html400.replaceAll(
+            `{{username}}`,
+            threadData.mainUser?.screen_name || "this user",
+          ),
+          { headers: { "content-type": "text/html;charset=utf8" } },
+        );
+      }
+
       return new Response(
-        `Bad request: ${threadData.mainUser} did not free their data yet.`,
+        `Bad request: @${threadData.mainUser?.screen_name} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
         { status: 400 },
       );
     }

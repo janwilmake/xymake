@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black">
+
+<head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>XYMake - Data Not Freed</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        .xy-gradient {
+            background: linear-gradient(135deg, #000000 0%, #1d1d1d 100%);
+        }
+
+        .xy-border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button-glow:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+
+<body class="text-white">
+    <main class="min-h-screen xy-gradient">
+        <div class="max-w-5xl mx-auto px-4 py-16">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-12">
+                <div class="flex items-center gap-3">
+                    <svg viewBox="0 0 24 24" class="w-8 h-8" fill="currentColor">
+                        <path
+                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    <span class="font-bold text-xl">XYMake</span>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold mb-4">This Data Isn't Free Yet</h1>
+                <p class="text-xl text-gray-300 mb-6">
+                    @{{username}} hasn't freed their X data yet.
+                </p>
+                <p class="text-gray-400 mb-8">
+                    XYMake can only convert threads that have been made public. Help us spread the word!
+                </p>
+
+                <!-- CTAs -->
+                <div class="flex flex-col md:flex-row justify-center gap-6">
+                    <a href="https://xymake.com"
+                        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
+                        Free Your X Data Now
+                    </a>
+                    <a href="https://x.com/{{username}}"
+                        class="bg-transparent xy-border text-blue-400 font-bold py-3 px-6 rounded-lg button-glow transition-all hover:text-blue-300 hover:border-blue-400">
+                        Tell @{{username}} to Free Their Data
+                    </a>
+                </div>
+            </div>
+
+            <!-- Explanation Section -->
+            <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
+                <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I See This?</h2>
+                <p class="text-gray-300 text-center">
+                    XYMake respects user privacy. Only threads from accounts that have explicitly freed their data can
+                    be converted to markdown. Encourage @{{username}} to join the movement and make their insights
+                    accessible!
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center text-gray-500 border-t border-white/10 pt-12">
+                <div class="flex justify-center gap-6 mb-8">
+                    <a href="https://x.com/janwilmake" class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                    </a>
+                    <a href="https://github.com/janwilmake/xymake" class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd"
+                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-sm">
+                    © 2025 XYMake. All rights reserved. Not affiliated with X Corp.
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
