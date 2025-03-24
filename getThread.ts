@@ -129,6 +129,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     }
 
     // Split the last part to handle optional format
+    const username = pathParts[1];
     const lastPart = pathParts[3];
     const [tweetId, formatExt] = lastPart.split(".");
     const storageFormat = formatExt === "json" ? "json" : "md";
@@ -149,6 +150,29 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       );
     }
 
+    //1) First check on the username
+
+    const configUsername = await env.TWEET_KV.get<UserConfig>(
+      `user:${username}`,
+      "json",
+    );
+
+    if (configUsername?.privacy !== "public") {
+      if (isBrowser) {
+        return new Response(
+          html400.replaceAll(`{{username}}`, username || "this user"),
+          { headers: { "content-type": "text/html;charset=utf8" } },
+        );
+      }
+
+      return new Response(
+        `Bad request: @${username} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
+        { status: 400 },
+      );
+    }
+
+    // Load data if OK
+
     // Determine output format (default to .md if not specified)
     const threadData = await getThreadData(request, env);
 
@@ -167,6 +191,8 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
         },
       );
     }
+
+    // Before sending data, ensure to first double check that the main contributor to the convo is has their data unlocked already
 
     const config = await env.TWEET_KV.get<UserConfig>(
       `user:${threadData.mainUser?.screen_name}`,

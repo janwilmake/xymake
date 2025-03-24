@@ -46,6 +46,7 @@ export default {
       // return og image directly either from cache or from regular. don't store
       return og;
     }
+
     const tweetResponse = await getThread(request, env, ctx);
     if (tweetResponse) {
       return tweetResponse;
