@@ -1,5 +1,117 @@
 import { identify } from "./identify";
 
+export const getThreadData = async (request: Request, env: Env) => {
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split("/");
+
+  if (pathParts.length < 4 || !["status", "og"].includes(pathParts[2])) {
+    return;
+  }
+
+  // Split the last part to handle optional format
+  const lastPart = pathParts[3];
+  const [tweetId, formatExt] = lastPart.split(".");
+
+  const storageFormat = formatExt === "json" ? "json" : "md";
+
+  const allTweets = await getAllTweets(env, tweetId, storageFormat);
+  const markdownContent = allTweets.tweets
+    .map(formatTweetAsMarkdown)
+    .join("\n\n");
+  const totalTokens = Math.round(markdownContent.length / 5);
+
+  // Count occurrences of each user
+  const userOccurrences = new Map<string, number>();
+  const userMap = new Map<string, User>();
+
+  allTweets.tweets.forEach((tweet) => {
+    const screenName = tweet.user.screen_name;
+    userOccurrences.set(screenName, (userOccurrences.get(screenName) || 0) + 1);
+    userMap.set(screenName, tweet.user);
+  });
+
+  // Sort users by occurrence count (descending)
+  const sortedUsers = Array.from(userOccurrences.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([screenName]) => userMap.get(screenName)!);
+
+  // Determine main user (author of the first tweet that isn't a reply or the most active user)
+  let mainUser = null;
+  for (const tweet of allTweets.tweets) {
+    if (!tweet.in_reply_to_status_id_str) {
+      mainUser = tweet.user;
+      break;
+    }
+  }
+
+  // If we couldn't find a non-reply tweet, use the most active user
+  if (!mainUser && sortedUsers.length > 0) {
+    mainUser = sortedUsers[0];
+  }
+
+  // Extract user screen names in order of frequency
+  const userScreenNames = sortedUsers.map((user) => user.screen_name);
+
+  // Create avatar URLs array in the same order as userScreenNames
+  const avatarUrls = sortedUsers.map((user) => user.profile_image_url_https);
+
+  // Generate participant text
+  let participantsText = "";
+  if (userScreenNames.length === 1) {
+    participantsText = `@${userScreenNames[0]}`;
+  } else if (userScreenNames.length <= 3) {
+    // For 2-3 users, list all of them
+    if (mainUser) {
+      const otherUsers = userScreenNames.filter(
+        (name) => name !== mainUser.screen_name,
+      );
+      participantsText = `@${mainUser.screen_name} and ${otherUsers
+        .map((name) => `@${name}`)
+        .join(", ")}`;
+    } else {
+      participantsText = userScreenNames.map((name) => `@${name}`).join(", ");
+    }
+  } else {
+    // For more than 3 users, show main user and top 2 others, plus count of remaining
+    const otherTopUsers = userScreenNames
+      .filter((name) => name !== mainUser?.screen_name)
+      .slice(0, 2);
+    const remainingCount = userScreenNames.length - otherTopUsers.length - 1;
+    participantsText = `@${mainUser?.screen_name}, ${otherTopUsers
+      .map((name) => `@${name}`)
+      .join(", ")} and ${remainingCount} others`;
+  }
+
+  // Generate title and description for SEO
+  const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
+  const title = firstTweet
+    ? `${participantsText} on X: "${firstTweet.full_text.substring(0, 60)}${
+        firstTweet.full_text.length > 60 ? "..." : ""
+      }"`
+    : "X Thread";
+
+  const description = firstTweet
+    ? `X thread with ${
+        allTweets.tweets.length
+      } posts (${totalTokens} tokens) by ${participantsText}. "${firstTweet.full_text.substring(
+        0,
+        120,
+      )}${firstTweet.full_text.length > 120 ? "..." : ""}"`
+    : `X thread with ${allTweets.tweets.length} tweets (${totalTokens} tokens)`;
+
+  const threadData = {
+    tweets: allTweets.tweets,
+    userScreenNames,
+    participantsText,
+    mainUser,
+    totalTokens,
+    title,
+    description,
+    avatarUrls,
+    "X-CACHE": allTweets["X-CACHE"],
+  };
+  return threadData;
+};
 // Main handler with format support
 export const getThread = async (request: Request, env: Env) => {
   try {
@@ -13,6 +125,7 @@ export const getThread = async (request: Request, env: Env) => {
     // Split the last part to handle optional format
     const lastPart = pathParts[3];
     const [tweetId, formatExt] = lastPart.split(".");
+    const storageFormat = formatExt === "json" ? "json" : "md";
 
     if (!/^\d+$/.test(tweetId)) {
       return new Response(
@@ -31,115 +144,32 @@ export const getThread = async (request: Request, env: Env) => {
     }
 
     // Determine output format (default to .md if not specified)
-    const storageFormat = formatExt === "json" ? "json" : "md";
+    const threadData = await getThreadData(request, env);
 
-    const { isCrawler } = identify(request);
-    const TEST_CRAWLER = true;
-    const isHTML = TEST_CRAWLER || isCrawler;
-    const allTweets = await getAllTweets(env, tweetId, storageFormat);
-    const markdownContent = allTweets.tweets
-      .map(formatTweetAsMarkdown)
-      .join("\n\n");
-    const totalTokens = Math.round(markdownContent.length / 5);
-
-    // Count occurrences of each user
-    const userOccurrences = new Map<string, number>();
-    const userMap = new Map<string, User>();
-
-    allTweets.tweets.forEach((tweet) => {
-      const screenName = tweet.user.screen_name;
-      userOccurrences.set(
-        screenName,
-        (userOccurrences.get(screenName) || 0) + 1,
+    if (!threadData) {
+      return new Response(
+        JSON.stringify({
+          status: "error",
+          message: "Tweet ID must be numeric",
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        },
       );
-      userMap.set(screenName, tweet.user);
-    });
-
-    // Sort users by occurrence count (descending)
-    const sortedUsers = Array.from(userOccurrences.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map(([screenName]) => userMap.get(screenName)!);
-
-    // Determine main user (author of the first tweet that isn't a reply or the most active user)
-    let mainUser = null;
-    for (const tweet of allTweets.tweets) {
-      if (!tweet.in_reply_to_status_id_str) {
-        mainUser = tweet.user;
-        break;
-      }
     }
-
-    // If we couldn't find a non-reply tweet, use the most active user
-    if (!mainUser && sortedUsers.length > 0) {
-      mainUser = sortedUsers[0];
-    }
-
-    // Extract user screen names in order of frequency
-    const userScreenNames = sortedUsers.map((user) => user.screen_name);
-
-    // Create avatar URLs array in the same order as userScreenNames
-    const avatarUrls = sortedUsers.map((user) => user.profile_image_url_https);
-
-    // Generate participant text
-    let participantsText = "";
-    if (userScreenNames.length === 1) {
-      participantsText = `@${userScreenNames[0]}`;
-    } else if (userScreenNames.length <= 3) {
-      // For 2-3 users, list all of them
-      if (mainUser) {
-        const otherUsers = userScreenNames.filter(
-          (name) => name !== mainUser.screen_name,
-        );
-        participantsText = `@${mainUser.screen_name} and ${otherUsers
-          .map((name) => `@${name}`)
-          .join(", ")}`;
-      } else {
-        participantsText = userScreenNames.map((name) => `@${name}`).join(", ");
-      }
-    } else {
-      // For more than 3 users, show main user and top 2 others, plus count of remaining
-      const otherTopUsers = userScreenNames
-        .filter((name) => name !== mainUser?.screen_name)
-        .slice(0, 2);
-      const remainingCount = userScreenNames.length - otherTopUsers.length - 1;
-      participantsText = `@${mainUser?.screen_name}, ${otherTopUsers
-        .map((name) => `@${name}`)
-        .join(", ")} and ${remainingCount} others`;
-    }
-
-    // Generate title and description for SEO
-    const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
-    const title = firstTweet
-      ? `${participantsText} on X: "${firstTweet.full_text.substring(0, 60)}${
-          firstTweet.full_text.length > 60 ? "..." : ""
-        }"`
-      : "X Thread";
-
-    const description = firstTweet
-      ? `X thread with ${
-          allTweets.tweets.length
-        } posts (${totalTokens} tokens) by ${participantsText}. "${firstTweet.full_text.substring(
-          0,
-          120,
-        )}${firstTweet.full_text.length > 120 ? "..." : ""}"`
-      : `X thread with ${allTweets.tweets.length} tweets (${totalTokens} tokens)`;
-
-    const threadData = {
-      tweets: allTweets.tweets,
-      userScreenNames,
-      participantsText,
-      mainUser,
-      totalTokens,
-      title,
-      description,
-      avatarUrls,
-    };
+    const { isCrawler } = identify(request);
+    const TEST_CRAWLER = false;
+    const isHTML = TEST_CRAWLER || isCrawler;
 
     const responseBody = isHTML
       ? getThreadHtml(threadData)
       : storageFormat === "json"
-      ? JSON.stringify(allTweets.tweets, undefined, 2)
-      : allTweets.tweets.map(formatTweetAsMarkdown).join("\n\n");
+      ? JSON.stringify(threadData.tweets, undefined, 2)
+      : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
 
     return new Response(responseBody, {
       status: 200,
@@ -149,7 +179,7 @@ export const getThread = async (request: Request, env: Env) => {
           : storageFormat === "json"
           ? "application/json;charset=utf8"
           : "text/markdown;charset=utf8",
-        "X-Cache": allTweets["X-CACHE"],
+        "X-Cache": threadData["X-CACHE"],
       },
     });
   } catch (error: any) {

@@ -2,6 +2,7 @@ import { getThread } from "./getThread";
 import { xLoginMiddleware } from "./xLoginMiddleware";
 import dashboard from "./dashboard.html";
 import { XFeed } from "./do";
+import { getOgImage } from "./getOgImage";
 export { XFeed };
 
 interface Env {
@@ -36,7 +37,10 @@ export default {
     if (xauth) {
       return xauth;
     }
-
+    const og = await getOgImage(request, env);
+    if (og) {
+      return og;
+    }
     const tweetResponse = await getThread(request, env);
     if (tweetResponse) {
       return tweetResponse;

@@ -1,5 +1,6 @@
 {
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20231218.0"
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "workers-og": "^0.0.25"
   }
 }
