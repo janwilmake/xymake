@@ -1,4 +1,4 @@
-// Define interfaces based on the OpenAPI schema
+// [Previous interface definitions remain unchanged]
 interface Tweet {
   id_str: string;
   full_text: string;
@@ -109,31 +109,28 @@ interface ErrorResponse {
   message: string;
 }
 
-// Define the response structure for the worker
 interface TweetHierarchy {
   tweet: Tweet;
   parents: Tweet[];
   comments: Tweet[];
 }
 
-// Environment variables (set in wrangler.toml or Cloudflare dashboard)
 interface Env {
   SOCIALDATA_API_KEY: string;
+  TWEET_KV: KVNamespace;
 }
 
 const BASE_URL = "https://api.socialdata.tools";
-
-// [Previous interface definitions remain unchanged]
 
 interface CachedTweetData {
   timestamp: number;
   tweets: Tweet[];
 }
 
-const ONE_DAY_MS = 24 * 60 * 60 * 1000; // One day in milliseconds
-const THIRTY_DAYS_SECONDS = 30 * 24 * 60 * 60; // 30 days in seconds for TTL
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const THIRTY_DAYS_SECONDS = 30 * 24 * 60 * 60;
 
-// Fetch a single tweet by ID (unchanged)
+// Fetch a single tweet by ID
 async function fetchTweet(tweetId: string, apiKey: string): Promise<Tweet> {
   const response = await fetch(`${BASE_URL}/twitter/tweets/${tweetId}`, {
     headers: {
@@ -149,7 +146,7 @@ async function fetchTweet(tweetId: string, apiKey: string): Promise<Tweet> {
   return response.json();
 }
 
-// Fetch all comments for a tweet, handling pagination (unchanged)
+// Fetch all comments for a tweet
 async function fetchAllComments(
   tweetId: string,
   apiKey: string,
@@ -182,7 +179,7 @@ async function fetchAllComments(
   return comments;
 }
 
-// Fetch parent tweets recursively (unchanged)
+// Fetch parent tweets recursively
 async function fetchParentTweets(
   tweet: Tweet,
   apiKey: string,
@@ -214,13 +211,23 @@ async function fetchParentTweets(
   return parents;
 }
 
-// Updated Env interface to include KV namespace
-interface Env {
-  SOCIALDATA_API_KEY: string;
-  TWEET_KV: KVNamespace;
+// Format tweet as Markdown
+function formatTweetAsMarkdown(tweet: Tweet): string {
+  const date = new Date(tweet.tweet_created_at).toLocaleString();
+  let markdown = `@${tweet.user.screen_name} - ${date}: ${tweet.full_text}`;
+
+  // Add engagement stats if present
+  const stats = [];
+  if (tweet.favorite_count > 0) stats.push(`${tweet.favorite_count} likes`);
+  if (tweet.retweet_count > 0) stats.push(`${tweet.retweet_count} retweets`);
+  if (stats.length > 0) {
+    markdown += `\n(${stats.join(", ")})`;
+  }
+
+  return markdown;
 }
 
-// Main handler with KV caching
+// Main handler with format support
 export const middleware = async (request: Request, env: Env) => {
   try {
     const url = new URL(request.url);
@@ -230,7 +237,9 @@ export const middleware = async (request: Request, env: Env) => {
       return;
     }
 
-    const tweetId = pathParts[3];
+    // Split the last part to handle optional format
+    const lastPart = pathParts[3];
+    const [tweetId, formatExt] = lastPart.split(".");
 
     if (!/^\d+$/.test(tweetId)) {
       return new Response(
@@ -248,43 +257,60 @@ export const middleware = async (request: Request, env: Env) => {
       );
     }
 
+    // Determine output format (default to .md if not specified)
+    const format = formatExt === "json" ? "json" : "md";
+
     // Check KV cache first
-    const cachedData = await env.TWEET_KV.get<CachedTweetData>(tweetId, {
+    const cacheKey = `${tweetId}.${format}`;
+    const cachedData = await env.TWEET_KV.get<CachedTweetData>(cacheKey, {
       type: "json",
     });
 
     const currentTime = Date.now();
 
     if (cachedData && cachedData.tweets.length > 0) {
-      // Get the timestamp of the most recent tweet
       const latestTweetTime = Math.max(
         ...cachedData.tweets.map((t) => new Date(t.tweet_created_at).getTime()),
       );
 
       if (currentTime - latestTweetTime > ONE_DAY_MS) {
-        // Use cached data if the latest tweet is older than 24 hours
-        return new Response(JSON.stringify(cachedData.tweets, undefined, 2), {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json;charset=utf8",
-            "X-Cache": "HIT",
+        return new Response(
+          format === "json"
+            ? JSON.stringify(cachedData.tweets, undefined, 2)
+            : cachedData.tweets.map(formatTweetAsMarkdown).join("\n\n"),
+          {
+            status: 200,
+            headers: {
+              "Content-Type":
+                format === "json"
+                  ? "application/json;charset=utf8"
+                  : "text/markdown;charset=utf8",
+              "X-Cache": "HIT",
+            },
           },
-        });
+        );
       }
 
       if (currentTime - latestTweetTime < 3600000) {
-        // less than an hour ago, its fine too
-        return new Response(JSON.stringify(cachedData.tweets, undefined, 2), {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json;charset=utf8",
-            "X-Cache": "HIT",
+        return new Response(
+          format === "json"
+            ? JSON.stringify(cachedData.tweets, undefined, 2)
+            : cachedData.tweets.map(formatTweetAsMarkdown).join("\n\n"),
+          {
+            status: 200,
+            headers: {
+              "Content-Type":
+                format === "json"
+                  ? "application/json;charset=utf8"
+                  : "text/markdown;charset=utf8",
+              "X-Cache": "HIT",
+            },
           },
-        });
+        );
       }
     }
 
-    // If no valid cache, fetch fresh data
+    // Fetch fresh data
     const [mainTweet, comments] = await Promise.all([
       fetchTweet(tweetId, env.SOCIALDATA_API_KEY),
       fetchAllComments(tweetId, env.SOCIALDATA_API_KEY),
@@ -305,14 +331,23 @@ export const middleware = async (request: Request, env: Env) => {
       tweets: allTweets,
     };
 
-    await env.TWEET_KV.put(tweetId, JSON.stringify(cacheData), {
+    await env.TWEET_KV.put(cacheKey, JSON.stringify(cacheData), {
       expirationTtl: THIRTY_DAYS_SECONDS,
     });
 
-    return new Response(JSON.stringify(allTweets, undefined, 2), {
+    // Return response based on format
+    const responseBody =
+      format === "json"
+        ? JSON.stringify(allTweets, undefined, 2)
+        : allTweets.map(formatTweetAsMarkdown).join("\n\n");
+
+    return new Response(responseBody, {
       status: 200,
       headers: {
-        "Content-Type": "application/json;charset=utf8",
+        "Content-Type":
+          format === "json"
+            ? "application/json;charset=utf8"
+            : "text/markdown;charset=utf8",
         "X-Cache": "MISS",
       },
     });
