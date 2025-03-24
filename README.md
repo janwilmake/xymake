@@ -121,11 +121,13 @@ I tested the product with an actual test-user just 1 minute before I wanted to l
 1. People would go to https://xymake.com/{username} and would think they were done already, however, they needed a 400 page
 2. All posts where always scraped but not shown. This has been fixed too now. Phew!
 
-I'm excited to share this on X now, and see what you guys have to say! I feel we can use our own posts for so much more than just within Grok, and this is just the first step to make anything possible!
+I'm excited to [share this on X now](https://x.com/janwilmake/status/1904234442937536644), and see what you guys have to say! I feel we can use our own posts for so much more than just within Grok, and this is just the first step to make anything possible!
 
 # TODO
 
 See how the launch goes, collect feedback, and iterate!
+
+Mobile-friendlyness with username tagging
 
 # BACKLOG
 

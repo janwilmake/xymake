@@ -2,10 +2,7 @@
 
 Just add "ymake" to ANY X URL to get the entire thread in LLM-ready format!
 
-Example: https://x.com/... → https://xymake.com/...
-
-Free your X data today at https://xymake.com
-🧵👇
+Let me share my secret sauce and codebase 🧵👇
 
 ---
 
@@ -29,14 +26,15 @@ XYMake features smooth onboarding:
 How does it work? Using some neat Cloudflare Worker tricks:
 
 1. The site serves different content to different consumers:
-   • HTML with og-image to crawlers
-   • Raw markdown to humans and agents
+
+• HTML with og-image to crawlers
+• Raw markdown to humans and agents
 
 2. I preload og-image generation with `ctx.waitUntil` for instant social sharing
 
 ---
 
-I made this using @workers-og to turn specialized HTML into SVG then PNG, all from a Cloudflare Worker.
+I made this using `workers-og` to turn specialized HTML into SVG then PNG, all from a Cloudflare Worker.
 
 The entire project contains ~40,000 tokens of code, built with help from Claude and Grok for code generation from natural language specs.
 
@@ -57,3 +55,9 @@ To try it yourself:
 Or visit https://xymake.com to unlock your own X data with one click.
 
 What will you build with your freed X data?
+
+---
+
+Read the full story and codebase here:
+
+https://github.com/janwilmake/xymake
