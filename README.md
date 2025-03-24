@@ -127,10 +127,9 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 
 See how the launch goes, collect feedback, and iterate!
 
-Mobile-friendlyness with username tagging
-
 # BACKLOG
 
+- Mobile-friendlyness with username tagging
 - Index the totality of posts as well (and update this daily)
 - Get the actual URLs of media and links
 - Ensure Google indexes it too by adding sitemap
