@@ -1,15 +1,22 @@
 Login at https://xymake.com to Free Your X Data and use it with any LLM.
 
-# TODO
+# CHANGELOG, TODO, BACKLOG
+
+# CHANGELOG
+
+## 2025-03-24
 
 - ✅ Initial implementation (see https://x.com/janwilmake/status/1904080559422288062)
 - ✅ Calculate data!
 - ✅ Respond with HTML but only for crawlers. This HTML is also SEO optimised
+
+# TODO
+
 - OG Image for any thread, counting tokens and including usernames and images of the participant(s).
 - Add terms and conditions checkbox on landingpage for clear consent!
 - Create MCP named 'Social Data MCP' and add this to the dashboard.
 
-# Wishlist
+# BACKLOG
 
 - Get the actual URLs of media and links
 - Index the totality of posts as well (and update this daily)
