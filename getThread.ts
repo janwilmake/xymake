@@ -183,6 +183,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
         true,
       ),
     );
+
     return new Response(responseBody, {
       status: 200,
       headers: {
@@ -228,19 +229,30 @@ const getThreadHtml = (threadData: ThreadData): string => {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
-  <meta name="description" content="${description}">
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${description}">
-  <meta property="og:type" content="article">
-  <meta property="og:image" content="${ogImageUrl}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>${title}</title>
+<meta name="description" content="${description}" />
+<meta name="robots" content="index, follow" />
 
-  <meta name="twitter:card" content="summary">
-  <meta property="twitter:image" content="${ogImageUrl}">
-  <meta name="twitter:title" content="${title}">
-  <meta name="twitter:description" content="${description}">
+<!-- Facebook Meta Tags -->
+<meta property="og:url" content="https://producthunt.com" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="${title}" />
+<meta property="og:description" content="${description}" />
+<meta property="og:image" content="${ogImageUrl}" />
+<meta property="og:image:alt" content="${description}"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+
+<!-- Twitter Meta Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:domain" content="producthunt.com" />
+<meta property="twitter:url" content="https://producthunt.com" />
+<meta name="twitter:title" content="${title}" />
+<meta name="twitter:description" content="${description}" />
+<meta name="twitter:image" content="${ogImageUrl}" />
+ 
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .tweet-text a { color: #1DA1F2; text-decoration: none; }

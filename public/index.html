@@ -2,19 +2,45 @@
 <html lang="en" class="bg-black">
 
 <head>
-    <meta charset="utf8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn Your X into LLM-Ready Data</title>
+    <meta name="description"
+        content="Unlock your X value by letting your MCP agents and other APIs access all your X posts." />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://xymake.com?a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Turn Your X into LLM-Ready Data" />
+    <meta property="og:description"
+        content="Unlock your X value by letting your MCP agents and other APIs access all your X posts." />
+    <meta property="og:image" content="https://quickog.com/screenshot/xymake.com?a" />
+    <meta property="og:image:alt"
+        content="Unlock your X value by letting your MCP agents and other APIs access all your X posts." />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="xymake.com?a" />
+    <meta property="twitter:url" content="https://xymake.com?a" />
+    <meta name="twitter:title" content="Turn Your X into LLM-Ready Data" />
+    <meta name="twitter:description"
+        content="Unlock your X value by letting your MCP agents and other APIs access all your X posts." />
+    <meta name="twitter:image" content="https://quickog.com/screenshot/xymake.com?a" />
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>XYMake - Free Your X Data</title>
+    <title>XYMake - Turn Your X Into LLM-Ready Data</title>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
         body {
             font-family: "Inter", sans-serif;
         }
 
         .xy-gradient {
-            background: linear-gradient(135deg, #000000 0%, #1d1d1d 100%);
+            background: linear-gradient(135deg, #000000 0%, #121212 100%);
         }
 
         .xy-border {
@@ -24,156 +50,150 @@
         .button-glow:hover {
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
         }
+
+        .giant-heading {
+            font-size: clamp(3.5rem, 10vw, 7rem);
+            line-height: 1;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
     </style>
 </head>
 
 <body class="text-white">
     <main class="min-h-screen xy-gradient">
-        <div class="max-w-5xl mx-auto px-4 py-16">
+        <div class="max-w-5xl mx-auto px-4 py-16 md:py-24">
             <!-- Hero Section -->
             <div class="text-center mb-20">
-                <div class="mb-8">
-                    <svg viewBox="0 0 24 24" class="w-12 h-12 mx-auto" fill="currentColor">
+                <h1 class="giant-heading mb-4">Turn Your <svg class="inline-block w-24 h-24 md:w-28 md:h-28 -mt-4"
+                        viewBox="0 0 24 24" fill="currentColor">
                         <path
                             d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                </div>
-                <h1 class="text-5xl font-bold mb-4">Free Your X Data</h1>
+                    </svg> Into LLM-Ready Data
+                </h1>
                 <p
-                    class="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                    Repurpose your X threads using LLMs</p>
-                <p class="text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
-                    XYMake lets you convert any X thread into clean markdown format with a simple URL change. Just
-                    change
-                    <span class="font-mono text-blue-400">x.com/...</span> to <span
-                        class="font-mono text-blue-400">xymake.com/...</span>
-                    and get your content ready for LLMs.
+                    class="text-2xl md:text-3xl font-bold mb-10 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                    Unlock your X value by letting your MCP agents and other APIs access all your X posts.
                 </p>
-                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <div class="xy-border rounded-xl p-8 bg-white/5 mb-12 mx-auto max-w-3xl">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
+                        <p class="text-gray-400 line-through font-mono text-xl">x.com/...</p>
+                        <svg class="w-8 h-8 text-blue-400 transform rotate-90 md:rotate-0" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                        <p class="text-blue-400 font-mono text-xl">xymake.com/...</p>
+                    </div>
+                    <p class="text-xl text-gray-300">
+                        Just add "ymake" to any X URL and instantly get your content in formats that LLMs can use
+                    </p>
+                </div>
+                <div class="flex justify-center mb-4">
                     <a href="/login"
-                        class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-bold text-lg transition-all button-glow flex items-center gap-2">
-                        Join the Beta
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="bg-blue-600 hover:bg-blue-700 px-10 py-5 rounded-full font-bold text-xl transition-all button-glow flex items-center gap-2">
+                        Unlock Your Feed
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
                     </a>
                 </div>
-                <!-- Example Thread Section -->
-                <div class="xy-border rounded-xl p-6 bg-white/5 mb-10 mx-auto max-w-2xl">
-                    <h3 class="text-xl font-bold mb-4">Try it with this example:</h3>
-                    <div class="flex items-center gap-2 justify-center mb-4">
-                        <p class="text-gray-400 line-through font-mono text-sm">
-                            https://x.com/janwilmake/status/1904080559422288062</p>
-                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </div>
-                    <div class="flex items-center justify-center mb-6">
-                        <p class="text-blue-400 font-mono text-sm">
-                            https://xymake.com/janwilmake/status/1904080559422288062</p>
-                    </div>
-                    <a href="https://xymake.com/janwilmake/status/1904080559422288062" target="_blank"
-                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium text-sm inline-block transition-all">
-                        See this thread in markdown
-                    </a>
-                </div>
+                <p class="text-sm text-gray-400">
+                    Unlocking your feed will make all your X posts public to anyone. Read the <a href="/tos.html"
+                        class="text-blue-400 underline">Terms and
+                        Conditions</a>
+                </p>
             </div>
 
-            <!-- Features Grid -->
-            <div class="grid md:grid-cols-3 gap-8 mb-20">
-                <div class="xy-border rounded-xl p-6 hover:bg-white/5 transition-colors">
-                    <div class="text-blue-400 mb-4">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Value Props Section -->
+            <div class="grid md:grid-cols-3 gap-6 mb-20">
+                <div class="xy-border rounded-xl p-8 hover:bg-white/5 transition-colors">
+                    <div class="text-blue-400 mb-6">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Repurpose & Sell</h3>
+                    <p class="text-gray-400 text-lg">
+                        Turn your X threads into sellable content and digital products
+                    </p>
+                </div>
+
+                <div class="xy-border rounded-xl p-8 hover:bg-white/5 transition-colors">
+                    <div class="text-blue-400 mb-6">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Simple URL Change</h3>
-                    <p class="text-gray-400">
-                        Just swap <span class="font-mono">x.com</span> with <span class="font-mono">xymake.com</span> in
-                        any X thread URL. No coding or complex setup required.
+                    <h3 class="text-2xl font-bold mb-3">One-Click Access</h3>
+                    <p class="text-gray-400 text-lg">
+                        No complex tools or coding. Just change the URL and get instant markdown format.
                     </p>
                 </div>
 
-                <div class="xy-border rounded-xl p-6 hover:bg-white/5 transition-colors">
-                    <div class="text-blue-400 mb-4">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="xy-border rounded-xl p-8 hover:bg-white/5 transition-colors">
+                    <div class="text-blue-400 mb-6">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Clean Markdown Format</h3>
-                    <p class="text-gray-400">
-                        Get the entire thread in LLM-friendly markdown format, perfect for repurposing in AI
-                        applications.
-                    </p>
-                </div>
-
-                <div class="xy-border rounded-xl p-6 hover:bg-white/5 transition-colors">
-                    <div class="text-blue-400 mb-4">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Public Access</h3>
-                    <p class="text-gray-400">
-                        By authenticating, your X content becomes accessible to both you and other users. Share your
-                        threads easily with anyone.
+                    <h3 class="text-2xl font-bold mb-3">LLM-Ready Format</h3>
+                    <p class="text-gray-400 text-lg">
+                        Perfect for AI tools such as ChatGPT and MCP (Cursor, Claude, etc.)
                     </p>
                 </div>
             </div>
 
-            <!-- How It Works Section -->
-            <div class="xy-border rounded-xl p-8 mb-20">
-                <h2 class="text-2xl font-bold mb-6 text-center">How It Works</h2>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="text-center">
-                        <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-4">1
-                        </div>
-                        <h3 class="font-bold mb-2">Authenticate Once</h3>
-                        <p class="text-gray-400 text-sm">Connect your X account to enable XYMake access to your content.
-                        </p>
-                    </div>
-                    <div class="text-center">
-                        <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-4">2
-                        </div>
-                        <h3 class="font-bold mb-2">Change the URL</h3>
-                        <p class="text-gray-400 text-sm">Replace <span class="font-mono">x.com</span> with <span
-                                class="font-mono">xymake.com</span> in any thread URL.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-4">3
-                        </div>
-                        <h3 class="font-bold mb-2">Get Markdown</h3>
-                        <p class="text-gray-400 text-sm">View and copy the thread in clean markdown format ready for
-                            LLMs.</p>
-                    </div>
+            <!-- Example Section -->
+            <div class="xy-border rounded-xl p-10 mb-20 bg-white/5">
+                <h2 class="text-3xl font-bold mb-8 text-center">See It In Action</h2>
+                <div class="flex flex-colf items-center gap-4 justify-center mb-6">
+                    <p class="text-gray-400 line-through font-mono">
+                        https://x.com/janwilmake/status/1904080559422288062</p>
+                    <svg class="w-8 h-8 text-blue-400 transform rotate-90 md:rotate-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                    <p class="text-blue-400 font-mono">
+                        https://xymake.com/janwilmake/status/1904080559422288062</p>
+                </div>
+                <div class="text-center">
+                    <a href="https://xymake.com/janwilmake/status/1904080559422288062" target="_blank"
+                        class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium text-lg inline-block transition-all">
+                        Try It Now
+                    </a>
                 </div>
             </div>
 
             <!-- CTA Section -->
-            <div class="xy-border rounded-xl p-10 bg-gradient-to-r from-blue-900/30 to-cyan-900/30 mb-20">
+            <div class="xy-border rounded-xl p-10 bg-gradient-to-r from-blue-900/30 to-cyan-900/30 mb-16">
                 <div class="text-center">
-                    <h2 class="text-3xl font-bold mb-4">Ready to Free Your X Data?</h2>
-                    <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
-                        Join users who are effortlessly repurposing X threads for LLMs and other applications.
-                        Remember, your content will be accessible to everyone after authentication.
+                    <h2 class="text-4xl font-bold mb-6">Unlock Your X Gold Mine</h2>
+                    <p class="text-gray-300 mb-8 max-w-2xl mx-auto text-xl">
+                        Your X content has untapped value. XYMake gives you the key to unlock it.
                     </p>
-                    <div class="flex flex-wrap justify-center gap-6">
+                    <div class="flex flex-wrap justify-center gap-4 mb-4">
                         <a href="/login"
-                            class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-full font-bold text-lg transition-all button-glow">
-                            Join the Beta
+                            class="bg-blue-600 hover:bg-blue-700 px-10 py-5 rounded-full font-bold text-xl transition-all button-glow">
+                            Free My X
                         </a>
                     </div>
+                    <p class="text-sm text-gray-400">
+                        By authorizing XYMake you agree to our <a href="/tos.html" class="text-blue-400 underline">Terms
+                            and
+                            Conditions</a>
+                    </p>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="text-center text-gray-500 border-t border-white/10 pt-12">
-                <div class="flex justify-center gap-6 mb-8">
+            <div class="text-center text-gray-500 border-t border-white/10 pt-8">
+                <div class="flex justify-center gap-6 mb-6">
                     <a href="https://x.com/janwilmake" class="hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                             <path
@@ -188,7 +208,6 @@
                         </svg>
                     </a>
                 </div>
-
                 <p class="text-sm">
                     © 2025 XYMake. All rights reserved. Not affiliated with X Corp.
                 </p>

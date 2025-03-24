@@ -1,5 +1,5 @@
 // OAuth helpers
-async function generateRandomString(length: number): Promise<string> {
+export async function generateRandomString(length: number): Promise<string> {
   const randomBytes = new Uint8Array(length);
   crypto.getRandomValues(randomBytes);
   return Array.from(randomBytes, (byte) =>

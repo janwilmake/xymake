@@ -83,24 +83,22 @@ function generateOgImageHtml(threadData: {
   description: string;
   avatarUrls: string[];
 }): string {
-  const { totalTokens, participantsText, mainUser, avatarUrls } = threadData;
+  const {
+    totalTokens,
+    participantsText,
+    mainUser,
+    avatarUrls,
+    userScreenNames,
+  } = threadData;
 
   // Prepare subtitle: handle cases with/without main user
-  let subtitle = `X Thread between ${participantsText}`;
+  let subtitle = `X Thread ${
+    userScreenNames.length === 1 ? "by" : "between"
+  } ${participantsText}`;
 
   // Limit the number of avatars to display (max 6)
   const displayAvatars = avatarUrls.slice(0, 6);
-  /* <!-- Tweet Preview -->
-        <div style="background-color: #f8f8f8; border: 1px solid #e1e1e1; border-radius: 16px; padding: 24px; width: 80%; margin-top: 20px; display: flex; flex-direction: column;">
-          <div style="font-size: 18px; line-height: 1.5; color: #333; overflow: hidden; text-overflow: ellipsis; max-height: 200px; display: flex;">
-            ${
-              threadData.tweets.length > 0
-                ? threadData.tweets[0].full_text.substring(0, 280) +
-                  (threadData.tweets[0].full_text.length > 280 ? "..." : "")
-                : "Thread preview"
-            }
-          </div>
-        </div>*/
+
   // Generate avatar HTML with proper positioning
   let avatarsHtml = "";
   displayAvatars.forEach((url, index) => {
