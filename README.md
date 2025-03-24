@@ -4,8 +4,8 @@ Login at https://xymake.com to Free Your X Data and use it with any LLM.
 
 - OG Image for any thread, counting tokens and including usernames and images of the participant(s).
 - Respond with HTML but only for crawlers. This HTML is also SEO optimised
-- Create MCP named 'Social Data MCP' and add this to the dashboard.
 - Add terms and conditions checkbox on landingpage for clear consent!
+- Create MCP named 'Social Data MCP' and add this to the dashboard.
 
 # Wishlist
 
