@@ -127,7 +127,7 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 
 Priorities:
 
-- ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON.
+- ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON. This could be GREAT marketing: https://x.com/AnandButani/status/1904476317283738105
 - See how the launch goes, collect feedback, and iterate!
 - Now that it's easy to export, make a habit of writing my ideas as X threads.
 
