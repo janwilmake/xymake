@@ -86,15 +86,15 @@ export const getThreadData = async (
   }
 
   // Generate title and description for SEO
-  //  const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
-  // const title = firstTweet
-  //   ? `${participantsText} on X: "${firstTweet.full_text.substring(0, 60)}${
-  //       firstTweet.full_text.length > 60 ? "..." : ""
-  //     }"`
-  //   : "X Thread";
+  const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
+  const description = firstTweet
+    ? `${participantsText} on X: "${firstTweet.full_text
+        .substring(0, 60)
+        .replaceAll("\n", "")
+        .replaceAll('"', "'")}${firstTweet.full_text.length > 60 ? "..." : ""}"`
+    : "";
 
-  const description = `X thread with ${allTweets.tweets.length} posts (${totalTokens} tokens)`;
-  const title = description;
+  const title = `${participantsText} on X with ${allTweets.tweets.length} posts (${totalTokens} tokens)`;
   const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}`;
   const threadData = {
     ogImageUrl,
@@ -113,7 +113,7 @@ export const getThreadData = async (
 };
 // Main handler with format support
 export const getThread = async (request: Request, env: Env, ctx: any) => {
-  const { isBrowser } = identify(request);
+  const { isBrowser, isAgent, isCrawler } = identify(request);
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split("/");
@@ -199,7 +199,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     if (authorConfig?.privacy !== "public" && topConfig?.privacy !== "public") {
       const author = threadData.authorUser?.screen_name;
-      if (isBrowser) {
+      if (isBrowser || isCrawler) {
         const { title, description, ogImageUrl } = threadData;
 
         return new Response(
@@ -239,7 +239,6 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       );
     }
 
-    const { isCrawler } = identify(request);
     const TEST_CRAWLER = false;
     const isHTML = TEST_CRAWLER || isCrawler || formatExt === "html";
 
