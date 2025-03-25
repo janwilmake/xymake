@@ -2,6 +2,9 @@
 <html lang="en" class="bg-black">
 
 <head>
+    <!-- 100% privacy-first analytics -->
+    <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+
     <meta charset="utf8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,6 +26,25 @@
 
         .button-glow:hover {
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .use-case-card {
+            transition: all 0.3s ease;
+        }
+
+        .use-case-card.selected {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .close-button {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .use-case-card:hover .close-button,
+        .use-case-card.selected .close-button {
+            opacity: 1;
         }
     </style>
 </head>
@@ -49,8 +71,26 @@
                     XYMake can only convert threads that have been made public. Help us spread the word!
                 </p>
 
-                <!-- URL Input (Initially hidden) -->
-                <div id="urlInputContainer" class="hidden mb-8">
+            </div>
+
+            <!-- Active Use Case Selection (Initially hidden) -->
+            <div id="activeUseCase" class="hidden xy-border rounded-xl p-8 mb-12 bg-white/5">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold"><span class="text-blue-400">@{{username}}</span> should <span
+                            id="activeCaseDescription"></span></h2>
+                    <button id="clearUseCase" class="text-gray-400 hover:text-white p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="w-5 h-5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <p id="activeCaseContent" class="text-gray-300 mb-6"></p>
+
+                <!-- URL Input (Moved here - will appear with active use case) -->
+                <div id="urlInputContainer" class="mt-6">
                     <div class="flex max-w-xl mx-auto">
                         <input id="urlInput" type="text"
                             class="flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded-l-lg text-white" />
@@ -59,29 +99,103 @@
                             Copy
                         </button>
                     </div>
-                </div>
 
-                <!-- CTAs -->
-                <div id="ctaButtons" class="flex flex-col md:flex-row justify-center gap-6">
-                    <a id="primaryCTA" href="https://xymake.com"
-                        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
-                        Free Your X Data Now
-                    </a>
-                    <a id="secondaryCTA" href="https://x.com/{{username}}"
-                        class="bg-transparent xy-border text-blue-400 font-bold py-3 px-6 rounded-lg button-glow transition-all hover:text-blue-300 hover:border-blue-400">
-                        Tell @{{username}} to Free Their Data
-                    </a>
+                    <div id="ctaButtons" class="flex fflex-row justify-center mt-10">
+                        <a id="secondaryCTA" href="https://x.com/{{username}}"
+                            class="bg-transparent xy-border text-blue-400 font-bold py-3 px-6 rounded-lg button-glow transition-all hover:text-blue-300 hover:border-blue-400">
+                            Tell @{{username}} to Free Their Data
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Use Cases Section -->
+            <div id="useCasesSection" class="mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-center">Select a Use Case for @{{username}}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Use Case 1 -->
+                    <div id="useCase-analyze"
+                        class="use-case-card xy-border rounded-xl p-6 bg-white/5 relative cursor-pointer">
+                        <button class="close-button absolute top-2 right-2 text-gray-400 hover:text-white p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <h3 class="text-xl font-bold mb-3">Analyze Followers' Comments</h3>
+                        <p class="text-gray-300">Help influencers analyze their followers' comments with AI for better
+                            engagement and content strategy.</p>
+                    </div>
+
+                    <!-- Use Case 2 -->
+                    <div id="useCase-repurpose"
+                        class="use-case-card xy-border rounded-xl p-6 bg-white/5 relative cursor-pointer">
+                        <button class="close-button absolute top-2 right-2 text-gray-400 hover:text-white p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <h3 class="text-xl font-bold mb-3">Repurpose Content</h3>
+                        <p class="text-gray-300">Transform X threads and conversations with @{{username}} into blogs and
+                            short-form videos for wider reach.</p>
+                    </div>
+
+                    <!-- Use Case 3 -->
+                    <div id="useCase-seo"
+                        class="use-case-card xy-border rounded-xl p-6 bg-white/5 relative cursor-pointer">
+                        <button class="close-button absolute top-2 right-2 text-gray-400 hover:text-white p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <h3 class="text-xl font-bold mb-3">SEO Optimization</h3>
+                        <p class="text-gray-300">Make @{{username}}'s knowledge accessible through Google search by
+                            optimizing
+                            content for better discoverability.</p>
+                    </div>
+
+                    <!-- Use Case 4 -->
+                    <div id="useCase-ai"
+                        class="use-case-card xy-border rounded-xl p-6 bg-white/5 relative cursor-pointer">
+                        <button class="close-button absolute top-2 right-2 text-gray-400 hover:text-white p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="w-4 h-4">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <h3 class="text-xl font-bold mb-3">AI Persona</h3>
+                        <p class="text-gray-300">Create an AI model that talks like @{{username}}, preserving their
+                            unique voice
+                            and insights for followers.</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Explanation Section -->
             <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
                 <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I See This?</h2>
-                <p class="text-gray-300 text-center">
+                <p class="text-gray-300 text-center mb-8">
                     XYMake respects user privacy. Only threads from accounts that have explicitly freed their data can
                     be converted to markdown. Encourage @{{username}} to join the movement and make their insights
                     accessible!
                 </p>
+                <div class="flex justify-center">
+                    <a id="primaryCTA" href="https://xymake.com"
+                        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
+                        Free Your X Data Now
+                    </a>
+                </div>
             </div>
 
             <!-- Footer -->
@@ -110,50 +224,190 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Define use cases with their data
+            const useCases = {
+                'analyze': {
+                    description: 'analyze their followers\' comments with AI',
+                    content: 'Using XYMake, they can extract valuable insights from follower comments, identify trends, and better understand audience engagement patterns through AI-powered analysis.',
+                    title: 'Analyze Followers\' Comments'
+                },
+                'repurpose': {
+                    description: 'repurpose their threads into blogs and shorts',
+                    content: 'XYMake helps transform X threads into high-quality blog posts and short-form videos, extending content reach beyond social media and maximizing its value.',
+                    title: 'Repurpose Content'
+                },
+                'seo': {
+                    description: 'make their knowledge accessible through Google',
+                    content: 'By converting X content to SEO-optimized formats, their valuable insights become discoverable through search engines, reaching a much wider audience than social media alone.',
+                    title: 'SEO Optimization'
+                },
+                'ai': {
+                    description: 'create an AI model that talks like them',
+                    content: 'XYMake can help build a personalized AI that captures their unique voice, style, and knowledge, allowing followers to interact with their digital persona anytime.',
+                    title: 'AI Persona'
+                }
+            };
+
             // Check for URL pattern /{username}/status/{id}
             const pathSegments = window.location.pathname.split('/').filter(segment => segment);
             const isThreadUrl = pathSegments.length >= 3 && pathSegments[1] === 'status';
 
+            // Parse query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const makeParam = urlParams.get('make');
+
+            let username = 'user';
+            let statusId = '';
+
             if (isThreadUrl) {
-                const username = pathSegments[0];
-                const statusId = pathSegments[2];
-                const currentUrl = window.location.href;
+                username = pathSegments[0];
+                statusId = pathSegments[2];
+
                 // Update the title and description
                 document.getElementById('pageTitle').textContent = `@${username} Hasn't Freed Their X Data Yet.`;
-                document.getElementById('pageDescription').textContent =
-                    `${username} hasn't freed their X data yet, but you can share this link in the thread to let ${username} know you want the markdown for your LLM.`;
-
-                // Show the URL input field and set its value
-                const urlInputContainer = document.getElementById('urlInputContainer');
-                urlInputContainer.classList.remove('hidden');
-                setTimeout(() => {
-                    const urlInput = document.getElementById('urlInput');
-                    urlInput.value = currentUrl;
-                    // Set up the copy button
-                    const copyButton = document.getElementById('copyButton');
-                    copyButton.addEventListener('click', function () {
-                        urlInput.select();
-                        document.execCommand('copy');
-                        copyButton.textContent = 'Copied!';
-                        setTimeout(() => {
-                            copyButton.textContent = 'Copy';
-                        }, 2000);
-                    });
-                }, 20)
-
-
 
                 // Update secondary CTA
                 const secondaryCTA = document.getElementById('secondaryCTA');
                 secondaryCTA.href = `https://x.com/${username}/status/${statusId}`;
                 secondaryCTA.textContent = `Tell @${username} to Free Their Data`;
-
-                // Replace all instances of {{username}} in the HTML
-                document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, username);
-            } else {
-                // Default behavior - just replace {{username}} placeholders with a default value
-                document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, 'user');
             }
+
+            // Replace all instances of {{username}} in the HTML
+            document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, username);
+
+            // Function to set up URL input field
+            function setupUrlInput() {
+                const urlInput = document.getElementById('urlInput');
+                const currentUrl = window.location.href;
+                urlInput.value = currentUrl;
+
+                // Set up the copy button
+                const copyButton = document.getElementById('copyButton');
+                copyButton.addEventListener('click', function () {
+                    urlInput.select();
+                    document.execCommand('copy');
+                    copyButton.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyButton.textContent = 'Copy';
+                    }, 2000);
+                });
+            }
+
+            // Function to show a specific use case
+            function showUseCase(caseId, isUserSelected2) {
+                const isUserSelected = true;
+                if (!useCases[caseId]) return;
+
+                // Hide the use cases section
+                document.getElementById('useCasesSection').classList.add('hidden');
+
+                // Show the active use case
+                const activeUseCase = document.getElementById('activeUseCase');
+                activeUseCase.classList.remove('hidden');
+
+                // Set the active case content
+                document.getElementById('activeCaseDescription').textContent = useCases[caseId].description;
+                document.getElementById('activeCaseContent').textContent = useCases[caseId].content;
+
+                // Update URL without reloading page
+                const url = new URL(window.location);
+                url.searchParams.set('make', caseId);
+                history.pushState({}, '', url);
+
+                // Set up the URL input field, but only if the user just selected a use case
+                // (not if it was preselected from the URL)
+                if (isUserSelected) {
+                    setupUrlInput();
+                }
+            }
+
+            // Function to hide all use cases
+            function hideUseCase() {
+                // Show the use cases section
+                document.getElementById('useCasesSection').classList.remove('hidden');
+
+                // Hide the active use case
+                document.getElementById('activeUseCase').classList.add('hidden');
+
+                // Remove the make parameter from URL
+                const url = new URL(window.location);
+                url.searchParams.delete('make');
+                history.pushState({}, '', url);
+
+                // Deselect all use case cards
+                document.querySelectorAll('.use-case-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+            }
+
+            // Function to select a use case
+            function selectUseCase(caseId) {
+                // Deselect all use cases first
+                document.querySelectorAll('.use-case-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+
+                // Select the clicked one
+                const card = document.getElementById(`useCase-${caseId}`);
+                if (card) {
+                    card.classList.add('selected');
+                }
+
+                // Update URL
+                const url = new URL(window.location);
+                url.searchParams.set('make', caseId);
+                history.pushState({}, '', url);
+            }
+
+            // Check if a use case is already selected via URL parameter
+            if (makeParam && useCases[makeParam]) {
+                showUseCase(makeParam, false); // false means not user-selected
+            }
+
+            // Set up event listeners for use case cards
+            Object.keys(useCases).forEach(caseId => {
+                const card = document.getElementById(`useCase-${caseId}`);
+                if (card) {
+                    // Click on the card
+                    card.addEventListener('click', function (e) {
+                        // Ignore if the close button was clicked
+                        if (e.target.closest('.close-button')) return;
+
+                        // Otherwise, select it
+                        selectUseCase(caseId);
+                        showUseCase(caseId, true); // true means user-selected
+
+                    });
+
+                    // Click on close button
+                    const closeBtn = card.querySelector('.close-button');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            hideUseCase();
+                        });
+                    }
+                }
+            });
+
+            // Set up event listener for the clear button in active use case
+            const clearBtn = document.getElementById('clearUseCase');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', hideUseCase);
+            }
+
+            // Handle back/forward browser navigation
+            window.addEventListener('popstate', function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const makeParam = urlParams.get('make');
+
+                if (makeParam && useCases[makeParam]) {
+                    showUseCase(makeParam, false);
+                    selectUseCase(makeParam);
+                } else {
+                    hideUseCase();
+                }
+            });
         });
     </script>
 </body>

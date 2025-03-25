@@ -10,6 +10,8 @@ export const getOgImage = async (
   try {
     // Check if this is a crawler request or specifically requesting the OG image
     const url = new URL(request.url);
+    // TODO: Show Alternate OG based on this from the use-cases.
+    const makeId = url.searchParams.get("make");
     const pathParts = url.pathname.split("/");
     if (pathParts.length < 4 || pathParts[2] !== "og") {
       return undefined;

@@ -8,6 +8,8 @@ export const getThreadData = async (
   env: Env,
 ): Promise<ThreadData | undefined> => {
   const url = new URL(request.url);
+  const makeId = url.searchParams.get("make");
+  const makeSuffix = makeId ? `?make=${makeId}` : "";
   const pathParts = url.pathname.split("/");
 
   if (pathParts.length < 4 || !["status", "og"].includes(pathParts[2])) {
@@ -95,7 +97,7 @@ export const getThreadData = async (
     : "";
 
   const title = `${participantsText} on X with ${allTweets.tweets.length} posts (${totalTokens} tokens)`;
-  const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}`;
+  const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}${makeSuffix}`;
   const threadData = {
     ogImageUrl,
     tweets: allTweets.tweets,
@@ -223,7 +225,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
             <meta name="robots" content="index, follow" />
             
             <!-- Facebook Meta Tags -->
-            <meta property="og:url" content="https://xymake.com" />
+            <meta property="og:url" content="${request.url}" />
             <meta property="og:type" content="website" />
             <meta property="og:title" content="${title}" />
             <meta property="og:description" content="${description}" />
@@ -234,10 +236,10 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
             
             <!-- Twitter Meta Tags -->
             <meta name="twitter:card" content="summary_large_image" />
-            <meta property="twitter:domain" content="producthunt.com" />
-            <meta property="twitter:url" content="https://xymake.com" />
-            <meta name="twitter:title" content="${title}" />
-            <meta name="twitter:description" content="${description}" />
+            <meta property="twitter:domain" content="https://xymake.com" />
+            <meta property="twitter:url" content="${request.url}" />
+            <meta name="twitter:description" content="${title}" />
+            <meta name="twitter:title" content="📄 " />
             <meta name="twitter:image" content="${ogImageUrl}" />
             </head>
              `,
@@ -256,7 +258,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     const isHTML = TEST_CRAWLER || isCrawler || formatExt === "html";
 
     const responseBody = isHTML
-      ? getThreadHtml(threadData)
+      ? getThreadHtml(threadData, request.url)
       : storageFormat === "json"
       ? JSON.stringify(threadData.tweets, undefined, 2)
       : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
@@ -294,7 +296,7 @@ export interface ThreadData {
   ogImageUrl: string;
 }
 
-const getThreadHtml = (threadData: ThreadData): string => {
+const getThreadHtml = (threadData: ThreadData, requestUrl: string): string => {
   const {
     tweets,
     participantsText,
@@ -315,7 +317,7 @@ const getThreadHtml = (threadData: ThreadData): string => {
 <meta name="robots" content="index, follow" />
 
 <!-- Facebook Meta Tags -->
-<meta property="og:url" content="https://xymake.com" />
+<meta property="og:url" content="${requestUrl}" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="${title}" />
 <meta property="og:description" content="${description}" />
@@ -326,10 +328,10 @@ const getThreadHtml = (threadData: ThreadData): string => {
 
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:domain" content="producthunt.com" />
-<meta property="twitter:url" content="https://xymake.com" />
-<meta name="twitter:title" content="${title}" />
-<meta name="twitter:description" content="${description}" />
+<meta property="twitter:domain" content="https://xymake.com" />
+<meta property="twitter:url" content="${requestUrl}" />
+<meta name="twitter:description" content="${title}" />
+<meta name="twitter:title" content="📄 " />
 <meta name="twitter:image" content="${ogImageUrl}" />
  
   <script src="https://cdn.tailwindcss.com"></script>
