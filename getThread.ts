@@ -86,17 +86,15 @@ export const getThreadData = async (
   }
 
   // Generate title and description for SEO
-  const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
-  const title = firstTweet
-    ? `${participantsText} on X: "${firstTweet.full_text.substring(0, 60)}${
-        firstTweet.full_text.length > 60 ? "..." : ""
-      }"`
-    : "X Thread";
+  //  const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
+  // const title = firstTweet
+  //   ? `${participantsText} on X: "${firstTweet.full_text.substring(0, 60)}${
+  //       firstTweet.full_text.length > 60 ? "..." : ""
+  //     }"`
+  //   : "X Thread";
 
-  const description = firstTweet
-    ? `X thread with ${allTweets.tweets.length} posts (${totalTokens} tokens) by ${participantsText}.`
-    : `X thread with ${allTweets.tweets.length} tweets (${totalTokens} tokens)`;
-
+  const description = `X thread with ${allTweets.tweets.length} posts (${totalTokens} tokens)`;
+  const title = description;
   const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}`;
   const threadData = {
     ogImageUrl,
