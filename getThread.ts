@@ -88,10 +88,10 @@ export const getThreadData = async (
   // Generate title and description for SEO
   const firstTweet = allTweets.tweets.length > 0 ? allTweets.tweets[0] : null;
   const description = firstTweet
-    ? `${participantsText} on X: "${firstTweet.full_text
+    ? `${participantsText} on X: '${firstTweet.full_text
         .substring(0, 60)
-        .replaceAll("\n", "")
-        .replaceAll('"', "'")}${firstTweet.full_text.length > 60 ? "..." : ""}"`
+        .replaceAll("\n", " ")
+        .replaceAll('"', "'")}${firstTweet.full_text.length > 60 ? "..." : ""}'`
     : "";
 
   const title = `${participantsText} on X with ${allTweets.tweets.length} posts (${totalTokens} tokens)`;
