@@ -94,12 +94,7 @@ export const getThreadData = async (
     : "X Thread";
 
   const description = firstTweet
-    ? `X thread with ${
-        allTweets.tweets.length
-      } posts (${totalTokens} tokens) by ${participantsText}. "${firstTweet.full_text.substring(
-        0,
-        120,
-      )}${firstTweet.full_text.length > 120 ? "..." : ""}"`
+    ? `X thread with ${allTweets.tweets.length} posts (${totalTokens} tokens) by ${participantsText}.`
     : `X thread with ${allTweets.tweets.length} tweets (${totalTokens} tokens)`;
 
   const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}`;
@@ -153,31 +148,30 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     //1) First check on the username
 
-    const configUsername = await env.TWEET_KV.get<UserConfig>(
-      `user:${username}`,
-      "json",
-    );
+    // const configUsername = await env.TWEET_KV.get<UserConfig>(
+    //   `user:${username}`,
+    //   "json",
+    // );
 
-    const test = true;
-    if (configUsername?.privacy !== "public" && !test) {
-      if (isBrowser) {
-        return new Response(
-          html400.replaceAll(`{{username}}`, username || "this user"),
-          { headers: { "content-type": "text/html;charset=utf8" } },
-        );
-      }
+    // if (configUsername?.privacy !== "public") {
+    //   if (isBrowser) {
+    //     return new Response(
+    //       html400.replaceAll(`{{username}}`, username || "this user"),
+    //       { headers: { "content-type": "text/html;charset=utf8" } },
+    //     );
+    //   }
 
-      return new Response(
-        `Bad request: @${username} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
-        { status: 400 },
-      );
-    }
+    //   return new Response(
+    //     `Bad request: @${username} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
+    //     { status: 400 },
+    //   );
+    // }
 
     // Load data if OK
 
     // Determine output format (default to .md if not specified)
     const threadData = await getThreadData(request, env);
-    console.log({ threadData });
+
     if (!threadData) {
       return new Response(
         JSON.stringify({
@@ -206,21 +200,43 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     );
 
     if (authorConfig?.privacy !== "public" && topConfig?.privacy !== "public") {
-      const usernames =
-        threadData.authorUser?.screen_name === threadData?.topUser?.screen_name
-          ? threadData.authorUser?.screen_name
-          : threadData.authorUser?.screen_name;
+      const author = threadData.authorUser?.screen_name;
       if (isBrowser) {
+        const { title, description, ogImageUrl } = threadData;
+
         return new Response(
-          html400.replaceAll(`{{username}}`, usernames || "this user"),
-          {
-            headers: { "content-type": "text/html;charset=utf8" },
-          },
+          html400.replaceAll(`{{username}}`, author || "this user").replace(
+            "</head>",
+            `
+            <meta name="description" content="${description}" />
+            <meta name="robots" content="index, follow" />
+            
+            <!-- Facebook Meta Tags -->
+            <meta property="og:url" content="https://xymake.com" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="${title}" />
+            <meta property="og:description" content="${description}" />
+            <meta property="og:image" content="${ogImageUrl}" />
+            <meta property="og:image:alt" content="${description}"/>
+            <meta property="og:image:width" content="1200"/>
+            <meta property="og:image:height" content="630"/>
+            
+            <!-- Twitter Meta Tags -->
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="twitter:domain" content="producthunt.com" />
+            <meta property="twitter:url" content="https://xymake.com" />
+            <meta name="twitter:title" content="${title}" />
+            <meta name="twitter:description" content="${description}" />
+            <meta name="twitter:image" content="${ogImageUrl}" />
+            </head>
+             `,
+          ),
+          { headers: { "content-type": "text/html;charset=utf8" } },
         );
       }
 
       return new Response(
-        `Bad request: @${usernames} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
+        `Bad request: @${author} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
         { status: 400 },
       );
     }
@@ -294,12 +310,12 @@ const getThreadHtml = (threadData: ThreadData): string => {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>${title}</title>
+<title>${title}</title>
 <meta name="description" content="${description}" />
 <meta name="robots" content="index, follow" />
 
 <!-- Facebook Meta Tags -->
-<meta property="og:url" content="https://producthunt.com" />
+<meta property="og:url" content="https://xymake.com" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="${title}" />
 <meta property="og:description" content="${description}" />
@@ -311,7 +327,7 @@ const getThreadHtml = (threadData: ThreadData): string => {
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:domain" content="producthunt.com" />
-<meta property="twitter:url" content="https://producthunt.com" />
+<meta property="twitter:url" content="https://xymake.com" />
 <meta name="twitter:title" content="${title}" />
 <meta name="twitter:description" content="${description}" />
 <meta name="twitter:image" content="${ogImageUrl}" />

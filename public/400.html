@@ -43,19 +43,31 @@
 
             <!-- Main Content -->
             <div class="text-center mb-16">
-                <h1 class="text-5xl font-bold mb-4">@{{username}} Hasn't Freed Their X Data Yet.</h1>
+                <h1 id="pageTitle" class="text-5xl font-bold mb-4">@{{username}} Hasn't Freed Their X Data Yet.</h1>
 
-                <p class="text-gray-400 mb-8">
+                <p id="pageDescription" class="text-gray-400 mb-8">
                     XYMake can only convert threads that have been made public. Help us spread the word!
                 </p>
 
+                <!-- URL Input (Initially hidden) -->
+                <div id="urlInputContainer" class="hidden mb-8">
+                    <div class="flex max-w-xl mx-auto">
+                        <input id="urlInput" type="text"
+                            class="flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded-l-lg text-white" />
+                        <button id="copyButton"
+                            class="bg-gray-700 text-white px-4 py-3 rounded-r-lg hover:bg-gray-600 transition-colors">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+
                 <!-- CTAs -->
-                <div class="flex flex-col md:flex-row justify-center gap-6">
-                    <a href="https://xymake.com"
+                <div id="ctaButtons" class="flex flex-col md:flex-row justify-center gap-6">
+                    <a id="primaryCTA" href="https://xymake.com"
                         class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
                         Free Your X Data Now
                     </a>
-                    <a href="https://x.com/{{username}}"
+                    <a id="secondaryCTA" href="https://x.com/{{username}}"
                         class="bg-transparent xy-border text-blue-400 font-bold py-3 px-6 rounded-lg button-glow transition-all hover:text-blue-300 hover:border-blue-400">
                         Tell @{{username}} to Free Their Data
                     </a>
@@ -95,6 +107,55 @@
             </div>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check for URL pattern /{username}/status/{id}
+            const pathSegments = window.location.pathname.split('/').filter(segment => segment);
+            const isThreadUrl = pathSegments.length >= 3 && pathSegments[1] === 'status';
+
+            if (isThreadUrl) {
+                const username = pathSegments[0];
+                const statusId = pathSegments[2];
+                const currentUrl = window.location.href;
+                // Update the title and description
+                document.getElementById('pageTitle').textContent = `@${username} Hasn't Freed Their X Data Yet.`;
+                document.getElementById('pageDescription').textContent =
+                    `${username} hasn't freed their X data yet, but you can share this link in the thread to let ${username} know you want the markdown for your LLM.`;
+
+                // Show the URL input field and set its value
+                const urlInputContainer = document.getElementById('urlInputContainer');
+                urlInputContainer.classList.remove('hidden');
+                setTimeout(() => {
+                    const urlInput = document.getElementById('urlInput');
+                    urlInput.value = currentUrl;
+                    // Set up the copy button
+                    const copyButton = document.getElementById('copyButton');
+                    copyButton.addEventListener('click', function () {
+                        urlInput.select();
+                        document.execCommand('copy');
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy';
+                        }, 2000);
+                    });
+                }, 20)
+
+
+
+                // Update secondary CTA
+                const secondaryCTA = document.getElementById('secondaryCTA');
+                secondaryCTA.href = `https://x.com/${username}/status/${statusId}`;
+                secondaryCTA.textContent = `Tell @${username} to Free Their Data`;
+
+                // Replace all instances of {{username}} in the HTML
+                document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, username);
+            } else {
+                // Default behavior - just replace {{username}} placeholders with a default value
+                document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, 'user');
+            }
+        });
+    </script>
 </body>
 
 </html>
