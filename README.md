@@ -123,11 +123,13 @@ I tested the product with an actual test-user just 1 minute before I wanted to l
 
 I'm excited to [share this on X now](https://x.com/janwilmake/status/1904234442937536644), and see what you guys have to say! I feel we can use our own posts for so much more than just within Grok, and this is just the first step to make anything possible!
 
-# TODO
+## Collecting feedback and iterate (2025-03-25++)
 
-See how the launch goes, collect feedback, and iterate!
+Priorities:
 
-Now that it's easy to export, make a habit of writing my ideas as X threads.
+- ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON.
+- See how the launch goes, collect feedback, and iterate!
+- Now that it's easy to export, make a habit of writing my ideas as X threads.
 
 # BACKLOG
 

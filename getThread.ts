@@ -146,6 +146,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     //1) First check on the username
 
+    // NB: THis could make things cheaper, but would not scrape for unauthorized accounts!
     // const configUsername = await env.TWEET_KV.get<UserConfig>(
     //   `user:${username}`,
     //   "json",
@@ -197,8 +198,20 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       "json",
     );
 
+    // NB: This is only to pre-generate the og image so it's available quicker the second time
+    ctx.waitUntil(
+      getOgImage(
+        new Request(request.url.replace("/status/", "/og/")),
+        env,
+        ctx,
+        true,
+      ),
+    );
+
     if (authorConfig?.privacy !== "public" && topConfig?.privacy !== "public") {
       const author = threadData.authorUser?.screen_name;
+
+      console.log("NOT PUBLIC", author, { isBrowser, isCrawler, isAgent });
       if (isBrowser || isCrawler) {
         const { title, description, ogImageUrl } = threadData;
 
@@ -247,16 +260,6 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       : storageFormat === "json"
       ? JSON.stringify(threadData.tweets, undefined, 2)
       : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
-
-    // NB: This is only to pre-generate the og image so it's available quicker the second time
-    ctx.waitUntil(
-      getOgImage(
-        new Request(request.url.replace("/status/", "/og/")),
-        env,
-        ctx,
-        true,
-      ),
-    );
 
     return new Response(responseBody, {
       status: 200,
