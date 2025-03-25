@@ -1,5 +1,5 @@
 import { ImageResponse } from "workers-og";
-import { getThreadData } from "./getThread.js";
+import { getThreadData, ThreadData } from "./getThread.js";
 
 export const getOgImage = async (
   request: Request,
@@ -73,23 +73,9 @@ export const getOgImage = async (
   }
 };
 
-function generateOgImageHtml(threadData: {
-  tweets: any[];
-  userScreenNames: string[];
-  participantsText: string;
-  mainUser: any | null;
-  totalTokens: number;
-  title: string;
-  description: string;
-  avatarUrls: string[];
-}): string {
-  const {
-    totalTokens,
-    participantsText,
-    mainUser,
-    avatarUrls,
-    userScreenNames,
-  } = threadData;
+function generateOgImageHtml(threadData: ThreadData): string {
+  const { totalTokens, participantsText, avatarUrls, userScreenNames } =
+    threadData;
 
   // Prepare subtitle: handle cases with/without main user
   let subtitle = `X Thread ${

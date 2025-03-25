@@ -3,7 +3,10 @@ import { identify } from "./identify.js";
 import { UserConfig } from "./xLoginMiddleware.js";
 import html400 from "./public/400.html";
 
-export const getThreadData = async (request: Request, env: Env) => {
+export const getThreadData = async (
+  request: Request,
+  env: Env,
+): Promise<ThreadData | undefined> => {
   const url = new URL(request.url);
   const pathParts = url.pathname.split("/");
 
@@ -38,8 +41,16 @@ export const getThreadData = async (request: Request, env: Env) => {
     .sort((a, b) => b[1] - a[1])
     .map(([screenName]) => userMap.get(screenName)!);
 
+  let authorUser = null;
+  for (const tweet of allTweets.tweets) {
+    if (!tweet.in_reply_to_status_id_str) {
+      authorUser = tweet.user;
+      break;
+    }
+  }
+
   // Determine main user (most posts are from this person)
-  const mainUser = sortedUsers[0];
+  const topUser = sortedUsers[0];
 
   // Extract user screen names in order of frequency
   const userScreenNames = sortedUsers.map((user) => user.screen_name);
@@ -53,11 +64,11 @@ export const getThreadData = async (request: Request, env: Env) => {
     participantsText = `@${userScreenNames[0]}`;
   } else if (userScreenNames.length <= 3) {
     // For 2-3 users, list all of them
-    if (mainUser) {
+    if (authorUser) {
       const otherUsers = userScreenNames.filter(
-        (name) => name !== mainUser.screen_name,
+        (name) => name !== authorUser.screen_name,
       );
-      participantsText = `@${mainUser.screen_name} and ${otherUsers
+      participantsText = `@${authorUser.screen_name} and ${otherUsers
         .map((name) => `@${name}`)
         .join(", ")}`;
     } else {
@@ -66,10 +77,10 @@ export const getThreadData = async (request: Request, env: Env) => {
   } else {
     // For more than 3 users, show main user and top 2 others, plus count of remaining
     const otherTopUsers = userScreenNames
-      .filter((name) => name !== mainUser?.screen_name)
+      .filter((name) => name !== authorUser?.screen_name)
       .slice(0, 2);
     const remainingCount = userScreenNames.length - otherTopUsers.length - 1;
-    participantsText = `@${mainUser?.screen_name}, ${otherTopUsers
+    participantsText = `@${authorUser?.screen_name}, ${otherTopUsers
       .map((name) => `@${name}`)
       .join(", ")} and ${remainingCount} others`;
   }
@@ -97,7 +108,8 @@ export const getThreadData = async (request: Request, env: Env) => {
     tweets: allTweets.tweets,
     userScreenNames,
     participantsText,
-    mainUser,
+    authorUser,
+    topUser,
     totalTokens,
     title,
     description,
@@ -184,24 +196,31 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     // Before sending data, ensure to first double check that the main contributor to the convo is has their data unlocked already
 
-    const config = await env.TWEET_KV.get<UserConfig>(
-      `user:${threadData.mainUser?.screen_name}`,
+    const authorConfig = await env.TWEET_KV.get<UserConfig>(
+      `user:${threadData.authorUser?.screen_name}`,
+      "json",
+    );
+    const topConfig = await env.TWEET_KV.get<UserConfig>(
+      `user:${threadData.authorUser?.screen_name}`,
       "json",
     );
 
-    if (config?.privacy !== "public") {
+    if (authorConfig?.privacy !== "public" && topConfig?.privacy !== "public") {
+      const usernames =
+        threadData.authorUser?.screen_name === threadData?.topUser?.screen_name
+          ? threadData.authorUser?.screen_name
+          : threadData.authorUser?.screen_name;
       if (isBrowser) {
         return new Response(
-          html400.replaceAll(
-            `{{username}}`,
-            threadData.mainUser?.screen_name || "this user",
-          ),
-          { headers: { "content-type": "text/html;charset=utf8" } },
+          html400.replaceAll(`{{username}}`, usernames || "this user"),
+          {
+            headers: { "content-type": "text/html;charset=utf8" },
+          },
         );
       }
 
       return new Response(
-        `Bad request: @${threadData.mainUser?.screen_name} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
+        `Bad request: @${usernames} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
         { status: 400 },
       );
     }
@@ -245,11 +264,13 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
   }
 };
 
-interface ThreadData {
+export interface ThreadData {
+  "X-CACHE": string;
   tweets: Tweet[];
   userScreenNames: string[];
   participantsText: string;
-  mainUser: User | null;
+  authorUser: User | null;
+  topUser: User | null;
   totalTokens: number;
   title: string;
   description: string;

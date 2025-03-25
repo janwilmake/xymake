@@ -131,6 +131,7 @@ Now that it's easy to export, make a habit of writing my ideas as X threads.
 
 # BACKLOG
 
+- This one does not work: https://x.com/bryan_johnson/status/1904328460019077452
 - Social Data MCP
 - Index the totality of posts as well (and update this daily). Expose this at xymake.com/username
 - Mobile-friendlyness with username tagging
