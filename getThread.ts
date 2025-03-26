@@ -196,7 +196,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       "json",
     );
     const topConfig = await env.TWEET_KV.get<UserConfig>(
-      `user:${threadData.authorUser?.screen_name}`,
+      `user:${threadData.topUser?.screen_name}`,
       "json",
     );
 

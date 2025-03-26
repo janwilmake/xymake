@@ -133,7 +133,7 @@ Priorities:
 
 # BACKLOG
 
-- This one does not work: https://x.com/bryan_johnson/status/1904328460019077452
+- Make it cheaper for unauthorized profiles. Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive. Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
 - Social Data MCP
 - Index the totality of posts as well (and update this daily). Expose this at xymake.com/username
 - Mobile-friendlyness with username tagging
