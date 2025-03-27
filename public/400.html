@@ -46,6 +46,21 @@
         .use-case-card.selected .close-button {
             opacity: 1;
         }
+
+        .preview-fade {
+            position: relative;
+        }
+
+        .preview-fade::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(17, 17, 17, 1));
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -184,6 +199,14 @@
                 </div>
             </div>
 
+            <!-- Thread Preview Card -->
+            <div id="threadPreviewCard" class="xy-border rounded-xl p-6 mb-12 bg-white/5 hidden">
+                <h2 class="text-xl font-bold mb-4">Thread Preview</h2>
+                <div class="preview-fade h-48 overflow-hidden">
+                    <pre><div id="threadPreviewContent" class="text-gray-300"></div></pre>
+                </div>
+            </div>
+
             <!-- Explanation Section -->
             <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
                 <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I See This?</h2>
@@ -276,6 +299,16 @@
 
             // Replace all instances of {{username}} in the HTML
             document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, username);
+
+            // Check if thread preview is available
+            if (typeof window.preview === 'string' && window.preview.trim() !== '') {
+                // Show the thread preview card
+                const previewCard = document.getElementById('threadPreviewCard');
+                previewCard.classList.remove('hidden');
+
+                // Set the preview content
+                document.getElementById('threadPreviewContent').textContent = window.preview;
+            }
 
             // Function to set up URL input field
             function setupUrlInput() {

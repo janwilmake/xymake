@@ -220,9 +220,10 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       // preview of the data
       const preview = jsonOrMarkdownString.slice(
         0,
+        // either max 240/120 tokens, or half. whatever smaller
         Math.min(
-          storageFormat === "json" ? 240 : 120,
-          Math.round(jsonOrMarkdownString.length / 5),
+          storageFormat === "json" ? 240 : 480,
+          Math.round(jsonOrMarkdownString.length / 2),
         ),
       );
 
