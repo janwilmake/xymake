@@ -8,7 +8,7 @@
     <meta charset="utf8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>XYMake - Data Not Freed</title>
+    <title>XYMake - Data Not Unlocked Yet</title>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
@@ -80,7 +80,7 @@
 
             <!-- Main Content -->
             <div class="text-center mb-16">
-                <h1 id="pageTitle" class="text-5xl font-bold mb-4">@{{username}} Hasn't Freed Their X Data Yet.</h1>
+                <h1 id="pageTitle" class="text-5xl font-bold mb-4">@{{username}} Hasn't Unlock Their X Data Yet.</h1>
 
                 <p id="pageDescription" class="text-gray-400 mb-8">
                     XYMake can only convert threads that have been made public. Help us spread the word!
@@ -211,7 +211,7 @@
             <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
                 <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I See This?</h2>
                 <p class="text-gray-300 text-center mb-8">
-                    XYMake respects user privacy. Only threads from accounts that have explicitly freed their data can
+                    XYMake respects user privacy. Only threads from accounts that have explicitly unlock their data can
                     be converted to markdown. Encourage @{{username}} to join the movement and make their insights
                     accessible!
                 </p>
@@ -289,7 +289,7 @@
                 statusId = pathSegments[2];
 
                 // Update the title and description
-                document.getElementById('pageTitle').textContent = `@${username} Hasn't Freed Their X Data Yet.`;
+                document.getElementById('pageTitle').textContent = `@${username} Hasn't Unlocked Their X Data Yet.`;
 
                 // Update secondary CTA
                 const secondaryCTA = document.getElementById('secondaryCTA');

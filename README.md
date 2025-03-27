@@ -125,11 +125,10 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 
 ## Collecting feedback and iterate (2025-03-25++)
 
-Priorities:
-
 - ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON. This could be GREAT marketing: https://x.com/AnandButani/status/1904476317283738105
+- ✅ Made some improvements to the 400 page (data not free yet) - see https://x.com/janwilmake/status/1905268970220900549
+- ✅ Now that it's easy to export, make a habit of writing my ideas as X threads.
 - See how the launch goes, collect feedback, and iterate!
-- Now that it's easy to export, make a habit of writing my ideas as X threads.
 
 # BACKLOG
 
