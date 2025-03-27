@@ -13,8 +13,9 @@ Out of scope:
 
 Unanswered Questions:
 
-- how do people think about their data? owning it privatly is one step, is making it fully public desired or do we need more control?
-- is the onboarding flow clear? is choosing the use-case helping or does it only confuse people?
+- How do people think about their data? owning it privatly is one step, is making it fully public desired or do we need more control?
+- Is the onboarding flow clear? is choosing the use-case helping or does it only confuse people?
+- Which products are out there today that can be connected with the X context to provide value (tools such as the ones mentioned in 'out of scope')?
 
 # CHANGELOG
 
