@@ -6,6 +6,7 @@ Goals:
 
 - provide an easy way to interact with X context programatically (using APIs and MCP) in different formats
 - provide an easy way for devs to build with X actions such as posting
+- strong focus on UX that enables high adoption
 
 Out of scope:
 
