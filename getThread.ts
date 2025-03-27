@@ -235,9 +235,12 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
         const { title, description, ogImageUrl } = threadData;
 
         return new Response(
-          html400.replaceAll(`{{username}}`, author || "this user").replace(
-            "</head>",
-            `
+          html400
+            .replaceAll(`{{username}}`, author || "this user")
+            .replaceAll(`{{numTweets}}`, String(threadData.tweets?.length || 0))
+            .replace(
+              "</head>",
+              `
             <meta name="description" content="${description}" />
             <meta name="robots" content="index, follow" />
             
@@ -264,7 +267,7 @@ window.preview = \`${preview}\`;
             </script>
             </head>
              `,
-          ),
+            ),
           { headers: { "content-type": "text/html;charset=utf8" } },
         );
       }

@@ -2,6 +2,20 @@
 
 Login at https://xymake.com to Free Your X Data and use it with any LLM, MCP, or API.
 
+Goals:
+
+- provide an easy way to interact with X context programatically (using APIs and MCP) in different formats
+- provide an easy way for devs to build with X actions such as posting
+
+Out of scope:
+
+- Build products on top of this (AI personas, SEO tools, Content repurposing, data intelligence, etc)
+
+Unanswered Questions:
+
+- how do people think about their data? owning it privatly is one step, is making it fully public desired or do we need more control?
+- is the onboarding flow clear? is choosing the use-case helping or does it only confuse people?
+
 # CHANGELOG
 
 ## Half an hour turned into 10 hours - I made this POC in a day! (2025-03-24)
@@ -128,19 +142,24 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON. This could be GREAT marketing: https://x.com/AnandButani/status/1904476317283738105
 - ✅ Made some improvements to the 400 page (data not free yet) - see https://x.com/janwilmake/status/1905268970220900549
 - ✅ Now that it's easy to export, make a habit of writing my ideas as X threads.
-- See how the launch goes, collect feedback, and iterate!
+- ❗️ Biggest Bug: quoted posts shouldn't count towards 'main creator': https://xymake.com/amasad/status/1905261929452519838
+- ❗️ Biggest for speed & cost-saving: Make it cheaper for unauthorized profiles. Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive. Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
+- 🟠 See how the launch goes, collect feedback, and iterate!
+
+## ❗️ Most requested: Getting All threads
+
+- Index the totality of posts as well (and update this daily). Expose this at xymake.com/{username}
+- Show your threads in the dashboard. To see more than Top 10 most recent, pay $20/month!
+- `/janwilmake` should also be accessible for agents and respond with md,json,yaml file object for every thread
+- show it in zipobject ui
 
 # BACKLOG
 
-- Make it cheaper for unauthorized profiles. Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive. Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
-- Social Data MCP
-- Index the totality of posts as well (and update this daily). Expose this at xymake.com/username
-- Mobile-friendlyness with username tagging
-- Get the actual URLs of media and links
 - Ensure Google indexes it too by adding sitemap
-- Show your threads in the dashboard. To see more than Top 10 most recent, pay $20/month!
-- `/janwilmake` should also be accessible for agents and respond with md,json,yaml file object for every thread
-- Simple LLM Analysis for all your threads that allows for improved SEO, search, etc.
+- Get the actual URLs of media and links
 - Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
+- Hierarchical file-structure data format (non-flat)
+- Mobile-friendliness with username tagging
+- MCP
 
 <!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->

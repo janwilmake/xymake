@@ -12,6 +12,7 @@
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
+
         body {
             font-family: "Inter", sans-serif;
         }
@@ -61,12 +62,26 @@
             background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(17, 17, 17, 1));
             pointer-events: none;
         }
+
+        pre {
+            white-space: pre-wrap;
+            /* CSS3 */
+            word-wrap: break-word;
+            /* IE */
+            overflow-wrap: break-word;
+        }
+
+        #threadPreviewContent {
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 100%;
+        }
     </style>
 </head>
 
 <body class="text-white">
     <main class="min-h-screen xy-gradient">
-        <div class="max-w-5xl mx-auto px-4 py-16">
+        <div class="max-w-4xl mx-auto px-4 py-16">
             <!-- Header -->
             <header class="flex justify-between items-center mb-12">
                 <a href="/" class="flex items-center gap-3">
@@ -129,7 +144,8 @@
 
             <!-- Use Cases Section -->
             <div id="useCasesSection" class="mb-12">
-                <h2 class="text-2xl font-bold mb-6 text-center">Select a Use Case for @{{username}}</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center">Why should @{{username}} unlock this thread? Choose one:
+                </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Use Case 1 -->
                     <div id="useCase-analyze"
@@ -200,8 +216,13 @@
             </div>
 
             <!-- Thread Preview Card -->
-            <div id="threadPreviewCard" class="xy-border rounded-xl p-6 mb-12 bg-white/5 hidden">
-                <h2 class="text-xl font-bold mb-4">Thread Preview</h2>
+            <div id="threadPreviewCard" class="xy-border  rounded-xl p-6 mb-12 bg-white/5 hidden">
+                <div class="flex flex-row justify-between">
+                    <h2 class="text-xl font-bold mb-4">Thread Preview (total items: {{numTweets}})</h2>
+                    <button disabled class="bg-gray-700 text-gray-500 px-4 py-2 rounded cursor-not-allowed opacity-60">
+                        Copy
+                    </button>
+                </div>
                 <div class="preview-fade h-48 overflow-hidden">
                     <pre><div id="threadPreviewContent" class="text-gray-300"></div></pre>
                 </div>
@@ -209,7 +230,7 @@
 
             <!-- Explanation Section -->
             <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
-                <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I See This?</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I Get The Thread?</h2>
                 <p class="text-gray-300 text-center mb-8">
                     XYMake respects user privacy. Only threads from accounts that have explicitly unlock their data can
                     be converted to markdown. Encourage @{{username}} to join the movement and make their insights
@@ -218,7 +239,7 @@
                 <div class="flex justify-center">
                     <a id="primaryCTA" href="https://xymake.com"
                         class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
-                        Free Your X Data Now
+                        Unlock Your X Data Now
                     </a>
                 </div>
             </div>
@@ -281,24 +302,20 @@
             const urlParams = new URLSearchParams(window.location.search);
             const makeParam = urlParams.get('make');
 
-            let username = 'user';
-            let statusId = '';
 
+            const username = '{{username}}';
             if (isThreadUrl) {
-                username = pathSegments[0];
-                statusId = pathSegments[2];
+                const urlUsername = pathSegments[0];
+                const statusId = pathSegments[2];
 
                 // Update the title and description
                 document.getElementById('pageTitle').textContent = `@${username} Hasn't Unlocked Their X Data Yet.`;
 
                 // Update secondary CTA
                 const secondaryCTA = document.getElementById('secondaryCTA');
-                secondaryCTA.href = `https://x.com/${username}/status/${statusId}`;
+                secondaryCTA.href = `https://x.com/${urlUsername}/status/${statusId}`;
                 secondaryCTA.textContent = `Tell @${username} to Unlock Their X Data`;
             }
-
-            // Replace all instances of {{username}} in the HTML
-            document.body.innerHTML = document.body.innerHTML.replace(/\{\{username\}\}/g, username);
 
             // Check if thread preview is available
             if (typeof window.preview === 'string' && window.preview.trim() !== '') {
@@ -443,6 +460,26 @@
                     hideUseCase();
                 }
             });
+
+
+            // Create back button next to logo
+            const header = document.querySelector('header');
+            const backButton = document.createElement('a');
+            backButton.className = 'text-blue-400 hover:text-blue-300 transition-colors flex items-center ml-4';
+
+            if (isThreadUrl) {
+                const urlUsername = pathSegments[0];
+                const statusId = pathSegments[2];
+                backButton.textContent = 'Back to thread →';
+                backButton.href = `https://x.com/${urlUsername}/status/${statusId}`;
+            } else {
+                backButton.textContent = 'Back to profile →';
+                backButton.href = `https://x.com/${urlUsername}`;
+            }
+
+            // Insert the button after the logo
+            const logo = header.querySelector('a');
+            logo.parentNode.insertBefore(backButton, logo.nextSibling);
         });
     </script>
 </body>
