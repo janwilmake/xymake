@@ -259,7 +259,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
             <meta name="twitter:image" content="${ogImageUrl}" />
 
             <script>
-window.preview = "${preview}";
+window.preview = \`${preview}\`;
             </script>
             </head>
              `,
