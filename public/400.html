@@ -103,9 +103,11 @@
                     <div id="ctaButtons" class="flex fflex-row justify-center mt-10">
                         <a id="secondaryCTA" href="https://x.com/{{username}}"
                             class="bg-transparent xy-border text-blue-400 font-bold py-3 px-6 rounded-lg button-glow transition-all hover:text-blue-300 hover:border-blue-400">
-                            Tell @{{username}} to Free Their Data
+                            Tell @{{username}} to Unlock Their X Data
                         </a>
                     </div>
+                    <br><br>
+                    <center><img src="/morpheus.jpeg" width="400" height="400" /></center>
 
                 </div>
             </div>
@@ -269,7 +271,7 @@
                 // Update secondary CTA
                 const secondaryCTA = document.getElementById('secondaryCTA');
                 secondaryCTA.href = `https://x.com/${username}/status/${statusId}`;
-                secondaryCTA.textContent = `Tell @${username} to Free Their Data`;
+                secondaryCTA.textContent = `Tell @${username} to Unlock Their X Data`;
             }
 
             // Replace all instances of {{username}} in the HTML
