@@ -2,6 +2,7 @@ import { getThread } from "./getThread.js";
 import { UserConfig, xLoginMiddleware } from "./xLoginMiddleware.js";
 import dashboard from "./dashboard.html";
 import { XFeed } from "./do.js";
+import { makeThread } from "./makeThread.js";
 import { getOgImage } from "./getOgImage.js";
 import html400 from "./public/400.html";
 import { identify } from "./identify.js";
@@ -81,6 +82,11 @@ export default {
       return new Response(dashboard.replaceAll(`{{username}}`, username), {
         headers: { "content-type": "text/html;charset=utf8" },
       });
+    }
+
+    const makeThreadResponse = await makeThread(request, env, ctx);
+    if (makeThreadResponse) {
+      return makeThreadResponse;
     }
 
     return new Response("Not found", { status: 404 });

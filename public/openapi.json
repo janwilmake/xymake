@@ -161,6 +161,143 @@
           }
         }
       }
+    },
+    "/{login}/{action}/{tweetId}/{text}": {
+      "get": {
+        "summary": "Create a new tweet, reply, or quote",
+        "description": "Creates a new tweet, reply to an existing tweet, or quote tweet based on the action parameter",
+        "operationId": "createTweetThread",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The login identifier"
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["reply", "quote", "new"]
+            },
+            "description": "The action to perform: reply to a tweet, quote a tweet, or create a new tweet"
+          },
+          {
+            "name": "tweetId",
+            "in": "path",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{18,19}$"
+            },
+            "description": "The numeric ID of the tweet to reply to or quote (required for reply and quote actions)"
+          },
+          {
+            "name": "text",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The text content of the tweet"
+          },
+          {
+            "name": "apiKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "API key for authentication if not provided via cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully created the tweet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "tweet_id": {
+                      "type": "string",
+                      "description": "ID of the created tweet"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Text content of the tweet"
+                    },
+                    "action": {
+                      "type": "string",
+                      "enum": ["reply", "quote", "new"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid tweet ID format or missing required parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized - missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "apiKey": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -613,6 +750,18 @@
             "description": "Error message"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "x_access_token"
+      },
+      "apiKey": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apiKey"
       }
     }
   }

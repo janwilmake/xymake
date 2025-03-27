@@ -189,6 +189,12 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
       );
     }
 
+    // get this already to pass a part of it to the 400 page
+    const jsonOrMarkdownString =
+      storageFormat === "json"
+        ? JSON.stringify(threadData.tweets, undefined, 2)
+        : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
+
     // Before sending data, ensure to first double check that the main contributor to the convo is has their data unlocked already
 
     const authorConfig = await env.TWEET_KV.get<UserConfig>(
@@ -211,6 +217,16 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     );
 
     if (authorConfig?.privacy !== "public" && topConfig?.privacy !== "public") {
+      // preview of the data
+      const preview = jsonOrMarkdownString.slice(
+        0,
+        Math.min(
+          storageFormat === "json" ? 240 : 120,
+          Math.round(jsonOrMarkdownString.length / 5),
+        ),
+      );
+
+      // Not public yet.
       const author = threadData.authorUser?.screen_name;
 
       console.log("NOT PUBLIC", author, { isBrowser, isCrawler, isAgent });
@@ -241,6 +257,8 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
             <meta name="twitter:description" content="${title}" />
             <meta name="twitter:title" content="📄 " />
             <meta name="twitter:image" content="${ogImageUrl}" />
+
+            <script>window.preview = "${preview}"</script>
             </head>
              `,
           ),
@@ -259,9 +277,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     const responseBody = isHTML
       ? getThreadHtml(threadData, request.url)
-      : storageFormat === "json"
-      ? JSON.stringify(threadData.tweets, undefined, 2)
-      : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
+      : jsonOrMarkdownString;
 
     return new Response(responseBody, {
       status: 200,
