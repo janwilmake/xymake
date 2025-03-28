@@ -78,6 +78,16 @@ export const handleConsole = async (
       },
     );
 
+    if (userResponse.status === 401 || userResponse.status === 403) {
+      // Redirect to login if not authenticated
+      return new Response("Unauthorized", {
+        status: 307,
+        headers: {
+          Location:
+            "/login?scope=users.read%20follows.read%20tweet.read%20offline.access%20tweet.write",
+        },
+      });
+    }
     if (!userResponse.ok) {
       throw new Error(`Failed to fetch user data: ${userResponse.status}`);
     }
