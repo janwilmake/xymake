@@ -163,6 +163,10 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - Make and keep a `free:{status}` in kv
 - Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
 
+for now the biggest priority is entire archive for your own threads
+
+but then also lists, bookmarks, and likes.
+
 # BACKLOG
 
 - ❌ Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
@@ -172,6 +176,8 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 
 # Ideas
 
-- [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers.
+- [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and likes
+- [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
+- [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
 
 <!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->
