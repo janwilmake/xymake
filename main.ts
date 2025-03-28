@@ -8,6 +8,7 @@ import { getOgImage } from "./getOgImage.js";
 import html400 from "./public/400.html";
 import { identify } from "./identify.js";
 import posts from "./posts.js";
+import users from "./users.js";
 
 export const handleConsole = async (
   request: Request,
@@ -162,6 +163,10 @@ export default {
 
     if (url.pathname.startsWith("/posts/")) {
       return posts.fetch(request, env, ctx);
+    }
+
+    if (url.pathname === "/users.json" || url.pathname === "/users.md") {
+      return users.fetch(request, env);
     }
 
     const og = await getOgImage(request, env, ctx, false);

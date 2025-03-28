@@ -170,4 +170,8 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - MCP
 - Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
 
+# Ideas
+
+- [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers.
+
 <!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->
