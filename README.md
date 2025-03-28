@@ -176,8 +176,64 @@ but then also lists, bookmarks, and likes.
 
 # Ideas
 
-- [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and likes
+- [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
 - [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
 - [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
 
 <!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->
+
+# X URL Structure
+
+XYMake aims to follow the url structure of X with sensible extensions to it, such as allowing to choose the data format (.md, .json, .html, etc). This way, things are always easy to find, just change x.com/... into xymake.com/... and you can see!
+
+- **Profile Pages**:
+
+  - ✅ `x.com/[username]/status/[tweet_id]` - Direct link to a specific tweet and its replies
+  - `x.com/[username]`
+  - `x.com/[username]/posts`
+  - `x.com/[username]/with_replies`
+  - `x.com/[username]/highlights`
+  - `x.com/[username]/articles`
+  - `x.com/[username]/media` - Quick access to a user's photos and videos
+  - `x.com/[username]/likes`
+  - `x.com/[username]/following`
+  - `x.com/[username]/followers`
+  - `x.com/[username]/verified_followers`
+  - `x.com/[username]/creator-subscriptions/subscriptions`
+  - `x.com/[username]/lists`
+
+- Bookmarks: `x.com/i/bookmarks` - Saved tweets
+- Specific list: `x.com/i/lists/[list_id]`
+- List members: `x.com/i/lists/[list_id]/members`
+
+- ❌ **Topics**: `x.com/i/topics`
+
+  - Browse and follow topics
+
+- ❌ **Communities**: `x.com/i/communities`
+
+  - Twitter's group-like feature
+
+- ❌ **Notifications**: `x.com/notifications`
+
+  - Shows interactions with your account (likes, retweets, mentions)
+
+- ❌ **Messages**: `x.com/messages`
+
+  - Access to your direct messages
+
+- ❌ **Home Timeline**: `x.com/home`
+
+  - Main feed showing tweets from accounts you follow
+
+- ❌ **Explore**: `x.com/explore`
+
+  - Search and trending content
+
+- ❌ **Search**: `x.com/search?q=[search_terms]`
+
+  - Search results for specific queries
+
+- ❌ **Spaces**: `x.com/i/spaces`
+
+  - Live audio conversations
