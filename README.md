@@ -5,6 +5,7 @@ Login at https://xymake.com to Free Your X Data and use it with any LLM, MCP, or
 Goals:
 
 - provide an easy way to interact with X context programatically (using APIs and MCP) in different formats
+- focus lies on creating full-context conversations in plain text
 - provide an easy way for devs to build with X actions such as posting
 - strong focus on UX that enables high adoption
 
@@ -144,24 +145,29 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON. This could be GREAT marketing: https://x.com/AnandButani/status/1904476317283738105
 - ✅ Made some improvements to the 400 page (data not free yet) - see https://x.com/janwilmake/status/1905268970220900549
 - ✅ Now that it's easy to export, make a habit of writing my ideas as X threads.
-- ❗️ Biggest Bug: quoted posts shouldn't count towards 'main creator': https://xymake.com/amasad/status/1905261929452519838
-- ❗️ Biggest for speed & cost-saving: Make it cheaper for unauthorized profiles. Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive. Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
+- ✅ Biggest Bug: quoted posts shouldn't count towards 'main creator': https://xymake.com/amasad/status/1905261929452519838
+- ✅ Get the actual URLs of media and links. EASY ONE
 - 🟠 See how the launch goes, collect feedback, and iterate!
 
 ## ❗️ Most requested: Getting All threads
 
+- ✅ Made an endpoint to get posts not commented on myself at any given day; endpoint /posts/{username}/{date}
 - Index the totality of posts as well (and update this daily). Expose this at xymake.com/{username}
 - Show your threads in the dashboard. To see more than Top 10 most recent, pay $20/month!
 - `/janwilmake` should also be accessible for agents and respond with md,json,yaml file object for every thread
 - show it in zipobject ui
 
+# Make it cheaper for unauthorized profiles
+
+- Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive.
+- Make and keep a `free:{status}` in kv
+- Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
+
 # BACKLOG
 
-- Ensure Google indexes it too by adding sitemap
-- Get the actual URLs of media and links
-- Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
-- Hierarchical file-structure data format (non-flat)
+- ❌ Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
 - Mobile-friendliness with username tagging
 - MCP
+- Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
 
 <!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->

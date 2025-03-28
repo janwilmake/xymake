@@ -1,5 +1,5 @@
 import { ImageResponse } from "workers-og";
-import { getThreadData, ThreadData } from "./getThread.js";
+import { getThreadData, ThreadData } from "./getThreadData.js";
 
 export const getOgImage = async (
   request: Request,
@@ -76,12 +76,11 @@ export const getOgImage = async (
 };
 
 function generateOgImageHtml(threadData: ThreadData): string {
-  const { totalTokens, participantsText, avatarUrls, userScreenNames } =
-    threadData;
+  const { totalTokens, participantsText, avatarUrls, userCounts } = threadData;
 
   // Prepare subtitle: handle cases with/without main user
   let subtitle = `X Thread ${
-    userScreenNames.length === 1 ? "by" : "between"
+    Object.keys(userCounts).length === 1 ? "by" : "between"
   } ${participantsText}`;
 
   // Limit the number of avatars to display (max 6)

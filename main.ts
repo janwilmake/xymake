@@ -7,6 +7,7 @@ import { makeThread } from "./makeThread.js";
 import { getOgImage } from "./getOgImage.js";
 import html400 from "./public/400.html";
 import { identify } from "./identify.js";
+import posts from "./posts.js";
 
 export const handleConsole = async (
   request: Request,
@@ -136,6 +137,8 @@ export default {
     env: Env,
     ctx: ExecutionContext,
   ): Promise<Response> {
+    const url = new URL(request.url);
+
     // Handle CORS preflight requests
     if (request.method === "OPTIONS") {
       return new Response(null, {
@@ -157,6 +160,10 @@ export default {
       return console;
     }
 
+    if (url.pathname.startsWith("/posts/")) {
+      return posts.fetch(request, env, ctx);
+    }
+
     const og = await getOgImage(request, env, ctx, false);
     if (og) {
       // return og image directly either from cache or from regular. don't store
@@ -168,7 +175,6 @@ export default {
       return tweetResponse;
     }
 
-    const url = new URL(request.url);
     const pathParts = url.pathname.split("/").filter(Boolean);
 
     if (pathParts.length === 1) {
