@@ -101,6 +101,14 @@
                     XYMake can only convert threads that have been made public. Help us spread the word!
                 </p>
 
+                <p id="pageDescription" class="text-gray-400 mb-8">
+                    Are you @{{username}}?
+                </p>
+
+                <a href="/"
+                    class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
+                    Unlock Your X Data Now
+                </a>
             </div>
 
             <!-- Active Use Case Selection (Initially hidden) -->
@@ -330,7 +338,7 @@
             // Function to set up URL input field
             function setupUrlInput() {
                 const urlInput = document.getElementById('urlInput');
-                const currentUrl = window.location.href;
+                const currentUrl = window.location.origin + window.location.pathname + window.location.search;
                 urlInput.value = currentUrl;
 
                 // Set up the copy button
