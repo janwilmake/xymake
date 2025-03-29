@@ -1,6 +1,9 @@
 // NB: this is a work in progress to actually get X data for free.
 import { explore } from "./explore.js";
 
+// Support domain sharing and redirecting to the following external clients:
+const REDIRECT_URIS_ALLOWED = ["https://cli.xymake.com/console"];
+
 export interface Env {
   TWEET_KV: KVNamespace;
   SOCIALDATA_API_KEY: string;
@@ -915,6 +918,7 @@ export const xLoginMiddleware = async (
   // Login page route
   if (url.pathname === "/login") {
     const scope = url.searchParams.get("scope");
+    const redirect_uri = url.searchParams.get("redirect_uri");
     const state = await generateRandomString(16);
     const codeVerifier = await generateRandomString(43);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -929,13 +933,19 @@ export const xLoginMiddleware = async (
       )}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`,
     });
 
+    if (redirect_uri) {
+      headers.append(
+        "Set-Cookie",
+        `redirect_uri=${redirect_uri}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
+      );
+    }
     headers.append(
       "Set-Cookie",
-      `x_oauth_state=${state}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
+      `x_oauth_state=${state}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
     );
     headers.append(
       "Set-Cookie",
-      `x_code_verifier=${codeVerifier}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
+      `x_code_verifier=${codeVerifier}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
     );
 
     return new Response("Redirecting", { status: 307, headers });
@@ -951,6 +961,9 @@ export const xLoginMiddleware = async (
       ?.split("=")[1];
     const codeVerifier = rows
       .find((c) => c.startsWith("x_code_verifier="))
+      ?.split("=")[1];
+    const redirect_uri = rows
+      .find((c) => c.startsWith("redirect_uri="))
       ?.split("=")[1];
 
     // Validate state and code verifier
@@ -979,9 +992,11 @@ export const xLoginMiddleware = async (
           },
           body: new URLSearchParams({
             code: code || "",
-            redirect_uri: env.X_REDIRECT_URI,
             grant_type: "authorization_code",
             code_verifier: codeVerifier,
+
+            // NB: Not required
+            redirect_uri: env.X_REDIRECT_URI,
           }),
         },
       );
@@ -1041,22 +1056,25 @@ export const xLoginMiddleware = async (
       // Trigger initial data fetch
       ctx.waitUntil(stub.fetch(new Request("https://dummy/update")));
 
-      const headers = new Headers({
-        Location: `/${username}`,
-      });
+      const Location =
+        redirect_uri && REDIRECT_URIS_ALLOWED.includes(redirect_uri)
+          ? redirect_uri
+          : `/${username}`;
+
+      const headers = new Headers({ Location });
 
       // Set access token cookie and clear temporary cookies
       headers.append(
         "Set-Cookie",
         `x_access_token=${encodeURIComponent(
           json.access_token,
-        )}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=34560000`,
+        )}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=34560000`,
       );
       headers.append(
         "Set-Cookie",
         `username=${encodeURIComponent(
           username,
-        )}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=34560000`,
+        )}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=34560000`,
       );
       headers.append("Set-Cookie", `x_oauth_state=; Max-Age=0; Path=/`);
       headers.append("Set-Cookie", `x_code_verifier=; Max-Age=0; Path=/`);

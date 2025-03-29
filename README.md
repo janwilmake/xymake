@@ -155,15 +155,16 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ✅ Fix DO token-refresh and `getSubscriber`
 - ❌ Add `priceCredit` to `getSubscriber` and keep track of balance.
 - Make redirect url in xymake configurable (securely)
-- If possible, fix `localhost:3000` auth as well. If not through X, use API
 - Fix oauth flow for https://cli.forgithub.com both from landing and CLI
 - also smooth if already logged in.
+- BONUS: fix `localhost:3000` auth as well. If not through X, use API
 
 Now I can actually fix CLI. Great if fixed today and I can put 17 tweets out from terminal per day smoothly.
 
 ## Fundamentals
 
 - ✅ Make the new router the core of xymake (using getFormat, allowing .ext convention)
+- Refactor away `/og/` to use just `/username/status/id.png` (but keep old one possible for a bit longer)
 - Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
 - See which endpoints can be easily done with https://socialdata.tools
 
