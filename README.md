@@ -140,47 +140,50 @@ I tested the product with an actual test-user just 1 minute before I wanted to l
 
 I'm excited to [share this on X now](https://x.com/janwilmake/status/1904234442937536644), and see what you guys have to say! I feel we can use our own posts for so much more than just within Grok, and this is just the first step to make anything possible!
 
-## Collecting feedback and iterate (2025-03-25++)
+## Collecting feedback and iterate (2025-03-25,26,27,28)
 
 - ✅ Made the og:image show up for unauthorized threads as well, improved 400 page A TON. This could be GREAT marketing: https://x.com/AnandButani/status/1904476317283738105
 - ✅ Made some improvements to the 400 page (data not free yet) - see https://x.com/janwilmake/status/1905268970220900549
 - ✅ Now that it's easy to export, make a habit of writing my ideas as X threads.
 - ✅ Biggest Bug: quoted posts shouldn't count towards 'main creator': https://xymake.com/amasad/status/1905261929452519838
 - ✅ Get the actual URLs of media and links. EASY ONE
+- ✅ Made an endpoint to get posts not commented on myself at any given day; endpoint /posts/{username}/{date}
 - 🟠 See how the launch goes, collect feedback, and iterate!
 
-## ❗️ Most requested: Getting All threads
+## Fundamentals
 
-- ✅ Made an endpoint to get posts not commented on myself at any given day; endpoint /posts/{username}/{date}
-- Index the totality of posts as well (and update this daily). Expose this at xymake.com/{username}
-- Show your threads in the dashboard. To see more than Top 10 most recent, pay $20/month!
-- `/janwilmake` should also be accessible for agents and respond with md,json,yaml file object for every thread
-- show it in zipobject ui
+- Make the new router the core of xymake (using getFormat, allowing .ext convention)
+- Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps balance of the user (sponsorflare style, but with X)
+- See which endpoints can be easily done with socialdata.tools
 
-# Make it cheaper for unauthorized profiles
+## Make it cheaper for unauthorized profiles
 
 - Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive.
 - Make and keep a `free:{status}` in kv
 - Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
 
-for now the biggest priority is entire archive for your own threads
+For now the biggest priority is entire archive for your own threads
 
-but then also lists, bookmarks, and likes.
+But then also lists, bookmarks, and likes.
 
 # BACKLOG
 
-- ❌ Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
-- Mobile-friendliness with username tagging
-- MCP
 - Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
 
 # Ideas
 
+- [@ThomasSlabbers](https://x.com/Thomasslabbers) -
+- [@brianships](https://x.com/brianships) - MCP
 - [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
 - [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
 - [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
+- [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations. ❌
 
 <!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->
+
+# Community work
+
+- https://uithub.com/helloprkr/xymake-plus - Turn Your 𝕏 Into LLM-Ready Data: Threads, Bookmarks, Media & More
 
 # X URL Structure
 
