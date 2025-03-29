@@ -1,3 +1,5 @@
+import { Env } from "./xLoginMiddleware.js";
+
 function isTweetId(id: any) {
   // Ensure it's a string or number and consists only of digits
   if (typeof id !== "string" && typeof id !== "number") return false;
@@ -14,10 +16,8 @@ function isTweetId(id: any) {
   return true;
 }
 
-// console.log(isTweetId("1905227667357544768"));
-
 /** Endpoint /login/reply|quote|new[/tweet_id]/text */
-export const makeThread = async (request: Request, env: any, ctx: any) => {
+export const postTweets = async (request: Request, env: Env, ctx: any) => {
   const url = new URL(request.url);
 
   const cookie = request.headers.get("Cookie") || "";
@@ -36,22 +36,31 @@ export const makeThread = async (request: Request, env: any, ctx: any) => {
     "users.read follows.read tweet.read offline.access tweet.write",
   )}`;
 
+  /*POST 'https://api.x.com/2/oauth2/token' \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --data-urlencode 'refresh_token=bWRWa3gzdnk3WHRGU1o0bmRRcTJ5VUxWX1lZTDdJSUtmaWcxbTVxdEFXcW5tOjE2MjIxNDc3NDM5MTQ6MToxOnJ0OjE' \
+    --data-urlencode 'grant_type=refresh_token' \
+    --data-urlencode 'client_id=rG9n6402A3dbUJKzXTNX4oWHJ*/
+
   if (!accessToken) {
     return new Response(`Unauthorized. Please login first.\n\n${loginUrl}`, {
-      status: 403,
+      status: 301,
       headers: { Location: loginUrl },
     });
   }
 
-  const [login, action, ...rest] = url.pathname.split("/").slice(1);
+  const [username, action, ...rest] = url.pathname.split("/").slice(1);
   const actions = ["reply", "quote", "new"];
-  if (!login || !actions.includes(action)) {
+
+  if (!username || !actions.includes(action)) {
     return;
   }
+
   const needTweetId = action === "reply" || action === "quote";
+
   const tweet_id = needTweetId ? rest[0] : undefined;
   if (needTweetId && !isTweetId(tweet_id)) {
-    return new Response(`Usage: /${login}/${action}/tweet_id/...text`, {
+    return new Response(`Usage: /${username}/${action}/tweet_id/...text`, {
       status: 400,
     });
   }

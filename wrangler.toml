@@ -1,5 +1,5 @@
 name = "xymake"
-main = "main.ts"
+main = "router.ts"
 compatibility_date = "2025-03-07"
 dev.port = 3000
 routes = [

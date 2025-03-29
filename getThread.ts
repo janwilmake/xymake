@@ -1,6 +1,6 @@
 import { getOgImage } from "./getOgImage.js";
 import { identify } from "./identify.js";
-import { UserConfig } from "./xLoginMiddleware.js";
+import { UserState } from "./xLoginMiddleware.js";
 import html400 from "./public/400.html";
 import {
   Env,
@@ -94,11 +94,11 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
 
     // Before sending data, ensure to first double check that the main contributor to the convo is has their data unlocked already
 
-    const authorConfig = await env.TWEET_KV.get<UserConfig>(
+    const authorConfig = await env.TWEET_KV.get<UserState>(
       `user:${threadData.authorUser?.screen_name}`,
       "json",
     );
-    const topConfig = await env.TWEET_KV.get<UserConfig>(
+    const topConfig = await env.TWEET_KV.get<UserState>(
       `user:${threadData.topUser?.screen_name}`,
       "json",
     );

@@ -150,11 +150,22 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ✅ Made an endpoint to get posts not commented on myself at any given day; endpoint /posts/{username}/{date}
 - 🟠 See how the launch goes, collect feedback, and iterate!
 
+## Improved auth (2025-03-29)
+
+- ✅ Fix DO token-refresh and `getSubscriber`
+- ❌ Add `priceCredit` to `getSubscriber` and keep track of balance.
+- Make redirect url in xymake configurable (securely)
+- If possible, fix `localhost:3000` auth as well. If not through X, use API
+- Fix oauth flow for https://cli.forgithub.com both from landing and CLI
+- also smooth if already logged in.
+
+Now I can actually fix CLI. Great if fixed today and I can put 17 tweets out from terminal per day smoothly.
+
 ## Fundamentals
 
-- Make the new router the core of xymake (using getFormat, allowing .ext convention)
-- Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps balance of the user (sponsorflare style, but with X)
-- See which endpoints can be easily done with socialdata.tools
+- ✅ Make the new router the core of xymake (using getFormat, allowing .ext convention)
+- Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
+- See which endpoints can be easily done with https://socialdata.tools
 
 ## Make it cheaper for unauthorized profiles
 
@@ -172,18 +183,16 @@ But then also lists, bookmarks, and likes.
 
 # Ideas
 
-- [@ThomasSlabbers](https://x.com/Thomasslabbers) -
 - [@brianships](https://x.com/brianships) - MCP
 - [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
 - [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
 - [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
-- [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations. ❌
+- [@ThomasSlabbers](https://x.com/Thomasslabbers)
 
-<!-- NB: Many of these things should probably be projects that are built on top of xymake.com! -->
-
-# Community work
+# Community work / opportunities
 
 - https://uithub.com/helloprkr/xymake-plus - Turn Your 𝕏 Into LLM-Ready Data: Threads, Bookmarks, Media & More
+- [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
 
 # X URL Structure
 

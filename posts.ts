@@ -1,3 +1,5 @@
+import { Env } from "./xLoginMiddleware.js";
+
 // SocialData API interface types
 interface Tweet {
   id_str: string;
@@ -109,11 +111,6 @@ interface ErrorResponse {
   message: string;
 }
 
-export interface Env {
-  SOCIALDATA_API_KEY: string;
-  TWEET_KV: KVNamespace;
-}
-
 export default {
   async fetch(
     request: Request,
@@ -121,19 +118,15 @@ export default {
     ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
-    const path = url.pathname;
+    const segments = url.pathname.split("/").slice(1);
 
-    const pathMatch = path.match(/^\/posts\/([^\/]+)\/(\d{4}-\d{2}-\d{2})$/);
-
-    if (!pathMatch) {
-      return new Response("Invalid route. Use /posts/username/YYYY-MM-DD", {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    const username = segments[0];
+    const date = segments[2];
+    if (!date) {
+      return new Response(
+        "Invalid path. For now, posts is only when date is given",
+      );
     }
-
-    const username = pathMatch[1];
-    const date = pathMatch[2];
 
     try {
       if (env.TWEET_KV) {

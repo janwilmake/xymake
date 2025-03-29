@@ -1,17 +1,76 @@
-export { XFeed } from "./do.js";
+import { stringify } from "yaml";
+import { getFormat } from "./getFormat.js";
+import { Env, xLoginMiddleware } from "./xLoginMiddleware.js";
+import { postTweets } from "./postTweets.js";
+import users from "./users.js";
+import posts from "./posts.js";
+import { profile } from "./profile.js";
+import { getThread } from "./getThread.js";
+import { handleConsole } from "./console.js";
+import { getOgImage } from "./getOgImage.js";
+export { XFeed } from "./xLoginMiddleware.js";
+
+/** Needs to be further improved using `getFormat` */
+const getDataResponse = (data: any, format: string) => {
+  if (format === "application/json") {
+    return new Response(JSON.stringify(data, undefined, 2), {
+      headers: { "content-type": "application/json" },
+    });
+  }
+  return new Response(stringify(data), {
+    headers: { "content-type": "text/yaml" },
+  });
+};
 
 export default {
-  fetch: async (request: Request) => {
+  fetch: async (request: Request, env: Env, ctx: any) => {
+    // Handle CORS preflight requests
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
+    }
+
+    const xauth = await xLoginMiddleware(request, env, ctx);
+    if (xauth) {
+      return xauth;
+    }
+
+    const console = await handleConsole(request, env, ctx);
+    if (console) {
+      return console;
+    }
+
+    // return og image directly either from cache or from regular. don't store
+    const og = await getOgImage(request, env, ctx, false);
+    if (og) {
+      return og;
+    }
+
     const url = new URL(request.url);
     const path = url.pathname;
     const segments = path.split("/").filter((s) => s);
+    const format = getFormat(request);
+    if (!format) {
+      return new Response("Bad request, invalid format expected", {
+        status: 400,
+      });
+    }
+
+    if (url.pathname === "/users.json" || url.pathname === "/users.md") {
+      return users.fetch(request, env);
+    }
 
     // Extract format if present
-    let format = null;
+    let ext = null;
     const lastSegment = segments[segments.length - 1];
     if (lastSegment && lastSegment.includes(".")) {
       const parts = lastSegment.split(".");
-      format = parts[parts.length - 1];
+      ext = parts[parts.length - 1];
       segments[segments.length - 1] = parts[0];
     }
 
@@ -19,9 +78,7 @@ export default {
     if (segments[0] === "search" && segments.length === 1) {
       const query = url.searchParams.get("q");
       return new Response(
-        `Coming Soon! Search for "${query}" ${
-          format ? `in ${format} format` : ""
-        }`,
+        `Search is not supported (yet). Search for "${query}" ${format}`,
       );
     }
 
@@ -34,16 +91,6 @@ export default {
     ) {
       const username = segments[0];
 
-      // Handle various profile routes
-      if (segments.length === 1) {
-        return new Response(
-          `Coming Soon! This feature is under development.${
-            format ? ` Format: ${format}` : ""
-          }`,
-        );
-      }
-
-      // Handle nested profile routes
       const validProfileRoutes = [
         "details",
         "status",
@@ -65,19 +112,53 @@ export default {
         "bookmarks",
       ];
 
+      // Handle various profile routes
+      if (segments.length === 1) {
+        // todo: can be cleaner
+        if (format === "application/json") {
+          const data = validProfileRoutes.reduce((previous, current) => {
+            return {
+              ...previous,
+              [current]: { $ref: `${url.origin}/${username}/${current}` },
+            };
+          }, {} as { [key: string]: { $ref: string } });
+          return getDataResponse(data, format);
+        }
+        return profile(request, env);
+      }
+
       // Check if the route is valid
       const route = segments[1];
+
       if (
-        validProfileRoutes.includes(route) ||
-        (route === "creator-subscriptions" &&
-          segments[2] === "subscriptions") ||
-        (route === "status" && segments.length >= 3) ||
         (route === "reply" && segments.length >= 4) ||
         (route === "quote" && segments.length >= 4) ||
         (route === "new" && segments.length >= 3)
       ) {
+        return postTweets(request, env, ctx);
+      }
+
+      if (route === "status" && segments.length >= 3) {
+        return getThread(request, env, ctx);
+      }
+
+      if (route === "posts" && segments.length >= 3) {
+        return posts.fetch(request, env, ctx);
+      }
+
+      if (
+        route === "creator-subscriptions" &&
+        segments[2] === "subscriptions"
+      ) {
         return new Response(
-          `Coming Soon! This feature is under development.${
+          `It's not possible yet to view your subscriptions. ${
+            format ? ` Format: ${format}` : ""
+          }`,
+        );
+      }
+      if (validProfileRoutes.includes(route)) {
+        return new Response(
+          `It's not possible yet (${route}). ${
             format ? ` Format: ${format}` : ""
           }`,
         );
@@ -87,14 +168,19 @@ export default {
     // Handle /i/ routes
     if (segments[0] === "i") {
       const validIRoutes = ["bookmarks", "lists", "topics", "communities"];
-      if (
-        validIRoutes.includes(segments[1]) ||
-        (segments[1] === "lists" && segments.length >= 3)
-      ) {
+      if (validIRoutes.includes(segments[1])) {
         return new Response(
-          `Coming Soon! This feature is under development.${
+          `This feature is not supported (yet). ${
             format ? ` Format: ${format}` : ""
           }`,
+        );
+      }
+
+      if (segments[1] === "lists" && segments.length >= 3) {
+        return new Response(
+          `Viewing a specific list is coming soon.
+          
+          ${format ? ` Format: ${format}` : ""}`,
         );
       }
     }
@@ -109,7 +195,7 @@ export default {
     ];
     if (segments.length === 1 && validBaseRoutes.includes(segments[0])) {
       return new Response(
-        `Coming Soon! This feature is under development.${
+        `This feature is not supported (yet).${
           format ? ` Format: ${format}` : ""
         }`,
       );
