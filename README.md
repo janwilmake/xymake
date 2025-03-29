@@ -189,8 +189,8 @@ XYMake aims to follow the url structure of X with sensible extensions to it, suc
 - **Profile Pages**:
 
   - ✅ `x.com/[username]/status/[tweet_id]` - Direct link to a specific tweet and its replies
-  - `x.com/[username]`
-  - `x.com/[username]/posts`
+  - `x.com/[username]` - should have links to all available data, and user profile details
+  - `x.com/[username]/photo` the large png, served
   - `x.com/[username]/with_replies`
   - `x.com/[username]/highlights`
   - `x.com/[username]/articles`
@@ -201,6 +201,11 @@ XYMake aims to follow the url structure of X with sensible extensions to it, suc
   - `x.com/[username]/verified_followers`
   - `x.com/[username]/creator-subscriptions/subscriptions`
   - `x.com/[username]/lists`
+  - (custom) `x.com/[username]/posts` - should have the posts
+  - (custom) `x.com/[username]/reply/id/message`
+  - (custom) `x.com/[username]/quote/id/message`
+  - (custom) `x.com/[username]/new/message`
+  - (custom) `x.com/[username]/bookmarks`
 
 - Bookmarks: `x.com/i/bookmarks` - Saved tweets
 - Specific list: `x.com/i/lists/[list_id]`
