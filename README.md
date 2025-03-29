@@ -155,7 +155,7 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ✅ Fix DO token-refresh and `getSubscriber`
 - ❌ Add `priceCredit` to `getSubscriber` and keep track of balance.
 - ✅ Make redirect url in xymake configurable (securely)
-- Fix oauth flow for https://cli.forgithub.com both from landing and CLI
+- Fix oauth flow for https://cli.xymake.com both from landing and CLI
 - also smooth if already logged in.
 - BONUS: fix `localhost:3000` auth as well. If not through X, use API
 
