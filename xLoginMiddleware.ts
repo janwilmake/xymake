@@ -994,8 +994,6 @@ export const xLoginMiddleware = async (
             code: code || "",
             grant_type: "authorization_code",
             code_verifier: codeVerifier,
-
-            // NB: Not required
             redirect_uri: env.X_REDIRECT_URI,
           }),
         },
@@ -1076,10 +1074,20 @@ export const xLoginMiddleware = async (
           username,
         )}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=34560000`,
       );
-      headers.append("Set-Cookie", `x_oauth_state=; Max-Age=0; Path=/`);
-      headers.append("Set-Cookie", `x_code_verifier=; Max-Age=0; Path=/`);
+      headers.append(
+        "Set-Cookie",
+        `x_oauth_state=; Domain=xymake.com; Max-Age=0; Path=/`,
+      );
+      headers.append(
+        "Set-Cookie",
+        `x_code_verifier=; Domain=xymake.com; Max-Age=0; Path=/`,
+      );
+      headers.append(
+        "Set-Cookie",
+        `redirect_uri=; Domain=xymake.com; Max-Age=0; Path=/`,
+      );
 
-      return new Response("Redirecting", { status: 307, headers });
+      return new Response(`Redirecting.`, { status: 307, headers });
     } catch (error) {
       return new Response(
         html`
@@ -1143,7 +1151,9 @@ export const getSubscriber = async (
     /** cost to deduct from the subscriber in USD */
     priceCredit?: number;
   },
-): Promise<{ error?: string; newAccessToken?: string }> => {
+): Promise<
+  { error?: string; newAccessToken?: string } & Partial<UserState>
+> => {
   const url = new URL(request.url);
   const cookie = request.headers.get("Cookie") || "";
   const rows = cookie.split(";").map((x) => x.trim());

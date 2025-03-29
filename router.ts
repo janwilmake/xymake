@@ -6,7 +6,6 @@ import users from "./users.js";
 import posts from "./posts.js";
 import { profile } from "./profile.js";
 import { getThread } from "./getThread.js";
-import { handleConsole } from "./console.js";
 import { getOgImage } from "./getOgImage.js";
 export { XFeed } from "./xLoginMiddleware.js";
 
@@ -38,11 +37,6 @@ export default {
     const xauth = await xLoginMiddleware(request, env, ctx);
     if (xauth) {
       return xauth;
-    }
-
-    const console = await handleConsole(request, env, ctx);
-    if (console) {
-      return console;
     }
 
     // return og image directly either from cache or from regular. don't store

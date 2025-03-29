@@ -1,4 +1,4 @@
-import { Env } from "./xLoginMiddleware.js";
+import { Env, getSubscriber } from "./xLoginMiddleware.js";
 
 function isTweetId(id: any) {
   // Ensure it's a string or number and consists only of digits
@@ -20,29 +20,22 @@ function isTweetId(id: any) {
 export const postTweets = async (request: Request, env: Env, ctx: any) => {
   const url = new URL(request.url);
 
-  const cookie = request.headers.get("Cookie") || "";
-  const rows = cookie.split(";").map((x) => x.trim());
+  const subscriber = await getSubscriber(request, env);
+  const { access_token, newAccessToken } = subscriber;
 
-  // Get X access token from cookies
-  const xAccessToken = rows
-    .find((row) => row.startsWith("x_access_token="))
-    ?.split("=")[1]
-    ?.trim();
+  const setCookieHeader: { [key: string]: string } = newAccessToken
+    ? {
+        "Set-Cookie": `x_access_token=${encodeURIComponent(
+          newAccessToken,
+        )}; Domain=xymake.com; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=34560000`,
+      }
+    : {};
 
-  const accessToken = xAccessToken
-    ? decodeURIComponent(xAccessToken)
-    : url.searchParams.get("apiKey");
   const loginUrl = `https://xymake.com/login?scope=${encodeURIComponent(
     "users.read follows.read tweet.read offline.access tweet.write",
   )}`;
 
-  /*POST 'https://api.x.com/2/oauth2/token' \
-    --header 'Content-Type: application/x-www-form-urlencoded' \
-    --data-urlencode 'refresh_token=bWRWa3gzdnk3WHRGU1o0bmRRcTJ5VUxWX1lZTDdJSUtmaWcxbTVxdEFXcW5tOjE2MjIxNDc3NDM5MTQ6MToxOnJ0OjE' \
-    --data-urlencode 'grant_type=refresh_token' \
-    --data-urlencode 'client_id=rG9n6402A3dbUJKzXTNX4oWHJ*/
-
-  if (!accessToken) {
+  if (!access_token) {
     return new Response(`Unauthorized. Please login first.\n\n${loginUrl}`, {
       status: 301,
       headers: { Location: loginUrl },
@@ -53,7 +46,10 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
   const actions = ["reply", "quote", "new"];
 
   if (!username || !actions.includes(action)) {
-    return;
+    return new Response("Usage: /username/new|quote|reply[/tweet_id]/...text", {
+      status: 400,
+      headers: setCookieHeader,
+    });
   }
 
   const needTweetId = action === "reply" || action === "quote";
@@ -62,6 +58,7 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
   if (needTweetId && !isTweetId(tweet_id)) {
     return new Response(`Usage: /${username}/${action}/tweet_id/...text`, {
       status: 400,
+      headers: setCookieHeader,
     });
   }
 
@@ -89,7 +86,7 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${access_token}`,
         "Content-Type": "application/json",
         // "User-Agent": "XYMake",
       },
@@ -110,7 +107,11 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
         ),
         {
           status: response.status,
-          headers: { "Content-Type": "application/json", Location: loginUrl },
+          headers: {
+            "Content-Type": "application/json",
+            Location: loginUrl,
+            ...setCookieHeader,
+          },
         },
       );
     }
@@ -123,7 +124,7 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
         ),
         {
           status: response.status,
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...setCookieHeader },
         },
       );
     }
@@ -139,7 +140,7 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
         undefined,
         2,
       ),
-      { headers: { "Content-Type": "application/json" } },
+      { headers: { "Content-Type": "application/json", ...setCookieHeader } },
     );
   } catch (error: any) {
     return new Response(
@@ -150,7 +151,7 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
       ),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...setCookieHeader },
       },
     );
   }
