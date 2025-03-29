@@ -1164,13 +1164,14 @@ export const getSubscriber = async (
     ?.split("=")[1]
     ?.trim();
 
-  const username = rows
+  const xUsername = rows
     .find((row) => row.startsWith("username="))
     ?.split("=")[1]
     ?.trim();
   const accessToken = xAccessToken
     ? decodeURIComponent(xAccessToken)
     : url.searchParams.get("apiKey");
+  const username = xUsername || url.searchParams.get("username");
 
   if (!username || !accessToken) {
     return { error: "Username and access token cookies are required" };

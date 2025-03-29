@@ -21,7 +21,7 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
   const url = new URL(request.url);
 
   const subscriber = await getSubscriber(request, env);
-  const { access_token, newAccessToken } = subscriber;
+  const { access_token, newAccessToken, error } = subscriber;
 
   const setCookieHeader: { [key: string]: string } = newAccessToken
     ? {
@@ -36,10 +36,13 @@ export const postTweets = async (request: Request, env: Env, ctx: any) => {
   )}`;
 
   if (!access_token) {
-    return new Response(`Unauthorized. Please login first.\n\n${loginUrl}`, {
-      status: 301,
-      headers: { Location: loginUrl },
-    });
+    return new Response(
+      `Unauthorized. Please login first.\n\n${loginUrl}\n\n Error = ${error}`,
+      {
+        status: 401,
+        headers: { Location: loginUrl },
+      },
+    );
   }
 
   const [username, action, ...rest] = url.pathname.split("/").slice(1);
