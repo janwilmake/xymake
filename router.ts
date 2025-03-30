@@ -147,6 +147,7 @@ export default {
             } (use ?start=YYYY-MM-DD&end=YYYY-MM-DD to change)
             
 ${result.dateResults
+  .filter((x) => x.post_count > 0)
   .map(
     (item) => `# ${item.date} (${item.post_count} posts)
   

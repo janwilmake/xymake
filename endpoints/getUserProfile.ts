@@ -1,4 +1,3 @@
-import { identify } from "../identify.js";
 import { Env, UserState } from "../xLoginMiddleware.js";
 import dashboard from "../dashboard.html";
 import html400 from "../public/400.html";
@@ -94,7 +93,7 @@ export const getUserProfile = async (
   }
 
   // Prepare profile routes data
-  const validProfileRoutes = ["with_replies/{date}", "highlights", "lists"];
+  const validProfileRoutes = ["with_replies", "highlights", "lists"];
   const routesData = validProfileRoutes.reduce((previous, current) => {
     return {
       ...previous,
