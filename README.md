@@ -181,13 +181,18 @@ To gracefully work with ratelimits while creating a continous export, we can:
 
 To grow this to $5k/month (and be able to get the pro plan) I need to make the most out of the $200/month plan as well as socialdata.tools.
 
-## Fundamentals
+## Refactors (2025-03-30)
 
 - ✅ Make the new router the core of xymake (using getFormat, allowing .ext convention)
+- ✅ New endpoints implemented
+  - user lists
+  - list details/members
+  - user posts for daterange implemented
+  - user highlights
 - Refactor away `/og/` to use just `/username/status/id.png` (but keep old one possible for a bit longer)
 - Refactor away storing user data in TWEET_KV (store all in DOs) and create a central DO that also has all userdata (this is a longer project but great to do. another option would be to add X Auth to [sponsorflare](https://sponsorflare.com))
-
-Which endpoints can be easily done with https://socialdata.tools
+- Refactor such that KV is fully gone and we put everything in an R2 under the appropriate pathname
+- Now building an archive for a user becomes easy: a DO with alarms can function as a temporary 'queue' to aggregate all data available from the API.
 
 ## Make it cheaper for unauthorized profiles
 

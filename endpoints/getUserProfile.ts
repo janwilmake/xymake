@@ -4,44 +4,12 @@ import dashboard from "../dashboard.html";
 import html400 from "../public/400.html";
 import { getFormat } from "../getFormat.js";
 import { getDataResponse } from "../getDataResponse.js";
-import { getPosts } from "./getPosts.js";
 
-export const profile = async (request: Request, env: Env) => {
-  const url = new URL(request.url);
-  const pathParts = url.pathname.split("/").filter(Boolean);
-
-  if (pathParts.length === 1) {
-    const username = pathParts[0].split(".")[0];
-    const { isBrowser } = identify(request);
-
-    const config = await env.TWEET_KV.get<UserState>(
-      `user:${username}`,
-      "json",
-    );
-
-    if (config?.privacy !== "public") {
-      if (isBrowser) {
-        return new Response(
-          html400.replaceAll(`{{username}}`, username || "this user"),
-          { headers: { "content-type": "text/html;charset=utf8" } },
-        );
-      }
-
-      return new Response(
-        `Bad request: @${username} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`,
-        { status: 400 },
-      );
-    }
-
-    return new Response(dashboard.replaceAll(`{{username}}`, username), {
-      headers: { "content-type": "text/html;charset=utf8" },
-    });
-  }
-
-  return new Response("Not found", { status: 404 });
-};
-
-export const getUserProfile = async (request: Request, env: Env, ctx: any) => {
+export const getUserProfile = async (
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext,
+) => {
   const format = getFormat(request);
   if (!format) {
     return new Response("Bad request, invalid format expected", {
@@ -53,15 +21,151 @@ export const getUserProfile = async (request: Request, env: Env, ctx: any) => {
   const segments = url.pathname.split("/").slice(1);
   const username = segments[0].split(".")[0];
 
-  const validProfileRoutes = ["with_replies/{date}", "highlights", "lists"];
-  if (format === "application/json") {
-    const data = validProfileRoutes.reduce((previous, current) => {
-      return {
-        ...previous,
-        [current]: { $ref: `${url.origin}/${username}/${current}` },
-      };
-    }, {} as { [key: string]: { $ref: string } });
-    return getDataResponse(data, format);
+  // Get user state from KV
+  const userState = await env.TWEET_KV.get<UserState>(
+    `user:${username}`,
+    "json",
+  );
+
+  // Privacy message based on user state
+  const privacyMessage =
+    userState?.privacy !== "public"
+      ? `@${username} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`
+      : "";
+
+  // If HTML format and privacy is not public, handle accordingly
+  if (userState?.privacy !== "public") {
+    if (format === "text/html") {
+      return new Response(
+        html400.replaceAll(`{{username}}`, username || "this user"),
+        { headers: { "content-type": "text/html;charset=utf8" } },
+      );
+    }
+    return new Response(privacyMessage, { status: 400 });
   }
-  return profile(request, env);
+
+  // If HTML format and privacy is public, return the dashboard
+  if (format === "text/html" && userState?.privacy === "public") {
+    return new Response(dashboard.replaceAll(`{{username}}`, username), {
+      headers: { "content-type": "text/html;charset=utf8" },
+    });
+  }
+
+  // For other formats, we need to fetch the profile data
+  // Try to get profile from cache first
+  const cacheKey = `${username}/index.json`;
+  let profileData: any = await env.TWEET_KV.get(cacheKey, "json");
+
+  // If not in cache or cache expired, fetch from Twitter API
+  if (!profileData) {
+    try {
+      const response = await fetch(
+        `https://api.socialdata.tools/twitter/user/${username}`,
+        {
+          headers: {
+            Authorization: `Bearer ${env.SOCIALDATA_API_KEY}`,
+          },
+        },
+      );
+
+      if (response.ok) {
+        profileData = await response.json();
+
+        // Cache the profile data for up to a week
+        ctx.waitUntil(
+          env.TWEET_KV.put(cacheKey, JSON.stringify(profileData), {
+            expirationTtl: 60 * 60 * 24 * 7, // 7 days
+          }),
+        );
+      } else {
+        // Handle API error
+        return new Response(
+          `Error fetching profile data: ${response.statusText}`,
+          {
+            status: response.status,
+          },
+        );
+      }
+    } catch (error: any) {
+      return new Response(`Failed to fetch profile data: ${error.message}`, {
+        status: 500,
+      });
+    }
+  }
+
+  // Prepare profile routes data
+  const validProfileRoutes = ["with_replies/{date}", "highlights", "lists"];
+  const routesData = validProfileRoutes.reduce((previous, current) => {
+    return {
+      ...previous,
+      [current]: { $ref: `${url.origin}/${username}/${current}` },
+    };
+  }, {} as { [key: string]: { $ref: string } });
+
+  // Combine profile data with routes
+  const fullData = {
+    ...profileData,
+    routes: routesData,
+    message: privacyMessage,
+  };
+
+  // Handle response based on format
+  if (format === "application/json" || format === "text/yaml") {
+    return getDataResponse(fullData, format);
+  } else if (format === "text/markdown") {
+    // Create a markdown representation of the profile
+    const markdown = generateMarkdownProfile(
+      profileData,
+      username,
+      privacyMessage,
+    );
+    return new Response(markdown, {
+      headers: { "content-type": "text/markdown;charset=utf8" },
+    });
+  } else {
+    return new Response("Unsupported format", { status: 400 });
+  }
 };
+
+// Helper function to generate markdown representation of a user profile
+function generateMarkdownProfile(
+  profileData: any,
+  username: string,
+  message: string,
+): string {
+  if (!profileData) {
+    return `# @${username}\n\n${message || "Profile data not available."}`;
+  }
+
+  let markdown = `# ${profileData.name} (@${profileData.screen_name})\n\n`;
+
+  if (message) {
+    markdown += `> ${message}\n\n`;
+  }
+
+  if (profileData.description) {
+    markdown += `${profileData.description}\n\n`;
+  }
+
+  markdown += `- **Followers:** ${profileData.followers_count.toLocaleString()}\n`;
+  markdown += `- **Following:** ${profileData.friends_count.toLocaleString()}\n`;
+  markdown += `- **Tweets:** ${profileData.statuses_count.toLocaleString()}\n`;
+
+  if (profileData.location) {
+    markdown += `- **Location:** ${profileData.location}\n`;
+  }
+
+  if (profileData.url) {
+    markdown += `- **Website:** ${profileData.url}\n`;
+  }
+
+  markdown += `- **Joined:** ${new Date(
+    profileData.created_at,
+  ).toLocaleDateString()}\n`;
+
+  if (profileData.verified) {
+    markdown += `- ✓ Verified account\n`;
+  }
+
+  return markdown;
+}
