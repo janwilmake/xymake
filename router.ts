@@ -106,9 +106,6 @@ export default {
 
       // Handle various profile routes
       if (segments.length === 1) {
-        if (ext === "zip") {
-          return getArchive(request, env, ctx);
-        }
         // Profile root page - show user details
         return getUserProfile(request, env, ctx);
       }
@@ -122,6 +119,8 @@ export default {
         (route === "new" && segments.length >= 3)
       ) {
         return postTweets(request, env, ctx);
+      } else if (route === "archive") {
+        return getArchive(request, env, ctx);
       } else if (route === "status" && segments.length >= 3) {
         return getThread(request, env, ctx);
         // } else if (route === "photo") {

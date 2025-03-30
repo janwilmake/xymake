@@ -5,6 +5,7 @@ import { explore } from "./explore.js";
 const REDIRECT_URIS_ALLOWED = ["https://cli.xymake.com/console"];
 
 export interface Env {
+  ZIPOBJECT_API_KEY: string;
   TWEET_KV: KVNamespace;
   SOCIALDATA_API_KEY: string;
   X_CLIENT_ID: string;
