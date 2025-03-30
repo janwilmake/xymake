@@ -211,19 +211,6 @@ Refactor away `/og/` to use just `/username/status/id.png` (but keep old one pos
 
 - Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
 
-# Ideas
-
-- [@brianships](https://x.com/brianships) - MCP
-- [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
-- [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
-- [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
-- [@ThomasSlabbers](https://x.com/Thomasslabbers)
-
-# Community work / opportunities
-
-- https://uithub.com/helloprkr/xymake-plus - Turn Your 𝕏 Into LLM-Ready Data: Threads, Bookmarks, Media & More
-- [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
-
 # X URL Structure Coverage
 
 XYMake aims to follow the url structure of X with sensible extensions to it, such as allowing to choose the data format (.md, .json, .html, etc). This way, things are always easy to find, just change x.com/... into xymake.com/... and you can see!
@@ -264,3 +251,19 @@ Endpoints:
 - ❌ **Explore**: `x.com/explore` - Search and trending content
 - ❌ **Search**: `x.com/search?q=[search_terms]` - Search results for specific queries
 - ❌ **Spaces**: `x.com/i/spaces` - Live audio conversations
+
+# Community
+
+## Ideas by the community
+
+- [@brianships](https://x.com/brianships) - MCP
+- [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
+- [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
+- [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
+
+## Created by the community / Attributions
+
+- [@jordanwaparker](https://x.com/jordanwaparker) https://uithub.com/helloprkr/xymake-plus - Turn Your 𝕏 Into LLM-Ready Data: Threads, Bookmarks, Media & More
+- [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
+- [@ThomasSlabbers](https://x.com/Thomasslabbers) - Creator of https://www.xdeepthought.com and https://www.socialdatabase.com
+- [@brianships](https://x.com/brianships) - Creator of the API XYMake uses (https://socialdata.tools)
