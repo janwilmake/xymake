@@ -221,6 +221,7 @@ Legenda:
 - 🟠 planned
 - 🔒 require X API Basic Plan
 - ❌ Likely hard to do / require enterprise, or unimportant (for now)
+- 🤔 Unsure
 
 Endpoints:
 
@@ -243,23 +244,23 @@ Endpoints:
 - 🔒 `x.com/[username]/likes`
 - 🔒 (custom) `x.com/[username]/bookmarks`
 - 🔒 Bookmarks: `x.com/i/bookmarks` - Saved tweets
-- ❌ **Topics**: `x.com/i/topics` - Browse and follow topics
-- ❌ **Communities**: `x.com/i/communities` - Twitter's group-like feature
-- ❌ **Notifications**: `x.com/notifications` - Shows interactions with your account (likes, retweets, mentions)
-- ❌ **Messages**: `x.com/messages` - Access to your direct messages
+- 🔒 **Topics**: `x.com/i/topics` - Browse and follow topics
+- 🔒 **Spaces**: `x.com/i/spaces` - Live audio conversations
+- 🔒 **Communities**: `x.com/i/communities` - Twitter's group-like feature
 - ❌ **Home Timeline**: `x.com/home` - Main feed showing tweets from accounts you follow
-- ❌ **Explore**: `x.com/explore` - Search and trending content
-- ❌ **Search**: `x.com/search?q=[search_terms]` - Search results for specific queries
-- ❌ **Spaces**: `x.com/i/spaces` - Live audio conversations
+- ❌ **Messages**: `x.com/messages` - Access to your direct messages
+- ❌ **Notifications**: `x.com/notifications` - Shows interactions with your account (likes, retweets, mentions)
+- 🤔 **Explore**: `x.com/explore` - Search and trending content
+- 🤔 **Search**: `x.com/search?q=[search_terms]` - Search results for specific queries
 
 # Community
 
 ## Ideas by the community
 
-- [@brianships](https://x.com/brianships) - MCP
-- [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
-- [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://x.com/i/lists/1784659545656021044)
-- [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - xy cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
+- ✅ [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://xymake.com/i/lists/1784659545656021044)
+- 🟠 [@brianships](https://x.com/brianships) - MCP
+- 🔒 [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
+- 🤔 [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - x cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
 
 ## Created by the community / Attributions
 
