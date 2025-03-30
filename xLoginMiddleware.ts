@@ -1193,15 +1193,26 @@ export const getSubscriber = async (
 
   let newAccessToken: undefined | string = undefined;
   if (json.expiredAt && json.refresh_token && json.expiredAt < Date.now()) {
+    /*
+
+    curl -X POST "https://api.x.com/2/oauth2/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -u "CLIENT_ID:CLIENT_SECRET" \
+  -d "refresh_token=xxxxxx&grant_type=refresh_token"
+
+  */
+
     const refreshResponse = await fetch("https://api.x.com/2/oauth2/token", {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        refresh_token: json.refresh_token,
-        grant_type: "refresh_token",
-        client_id: env.X_CLIENT_ID,
-      }),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${btoa(
+          `${env.X_CLIENT_ID}:${env.X_CLIENT_SECRET}`,
+        )}`,
+      },
+      body: `refresh_token=${json.refresh_token}&grant_type=refresh_token`,
     });
+
     if (!refreshResponse.ok) {
       // can't refresh. need to report status
       return {
