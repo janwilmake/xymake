@@ -224,63 +224,43 @@ Refactor away `/og/` to use just `/username/status/id.png` (but keep old one pos
 - https://uithub.com/helloprkr/xymake-plus - Turn Your 𝕏 Into LLM-Ready Data: Threads, Bookmarks, Media & More
 - [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
 
-# X URL Structure
+# X URL Structure Coverate
 
 XYMake aims to follow the url structure of X with sensible extensions to it, such as allowing to choose the data format (.md, .json, .html, etc). This way, things are always easy to find, just change x.com/... into xymake.com/... and you can see!
 
-- **Profile Pages**:
+Legenda:
 
-  - ✅ `x.com/[username]/status/[tweet_id]` - Direct link to a specific tweet and its replies
-  - `x.com/[username]` - should have links to all available data, and user profile details
-  - `x.com/[username]/photo` the large png, served
-  - `x.com/[username]/with_replies`
-  - `x.com/[username]/highlights`
-  - `x.com/[username]/articles`
-  - `x.com/[username]/media` - Quick access to a user's photos and videos
-  - `x.com/[username]/likes`
-  - `x.com/[username]/following`
-  - `x.com/[username]/followers`
-  - `x.com/[username]/verified_followers`
-  - `x.com/[username]/creator-subscriptions/subscriptions`
-  - `x.com/[username]/lists`
-  - (custom) `x.com/[username]/posts` - should have the posts
-  - (custom) `x.com/[username]/reply/id/message`
-  - (custom) `x.com/[username]/quote/id/message`
-  - (custom) `x.com/[username]/new/message`
-  - (custom) `x.com/[username]/bookmarks`
+- ✅ done
+- 🟠 planned
+- 🔒 require X API Basic Plan
+- ❌ Likely hard to do / require enterprise, or unimportant (for now)
 
-- Bookmarks: `x.com/i/bookmarks` - Saved tweets
-- Specific list: `x.com/i/lists/[list_id]`
-- List members: `x.com/i/lists/[list_id]/members`
+Endpoints:
 
-- ❌ **Topics**: `x.com/i/topics`
-
-  - Browse and follow topics
-
-- ❌ **Communities**: `x.com/i/communities`
-
-  - Twitter's group-like feature
-
-- ❌ **Notifications**: `x.com/notifications`
-
-  - Shows interactions with your account (likes, retweets, mentions)
-
-- ❌ **Messages**: `x.com/messages`
-
-  - Access to your direct messages
-
-- ❌ **Home Timeline**: `x.com/home`
-
-  - Main feed showing tweets from accounts you follow
-
-- ❌ **Explore**: `x.com/explore`
-
-  - Search and trending content
-
-- ❌ **Search**: `x.com/search?q=[search_terms]`
-
-  - Search results for specific queries
-
-- ❌ **Spaces**: `x.com/i/spaces`
-
-  - Live audio conversations
+- ✅ List deatails and members: `x.com/i/lists/[list_id]`
+- ✅ (custom) `x.com/[username]/reply/id/message`
+- ✅ (custom) `x.com/[username]/quote/id/message`
+- ✅ (custom) `x.com/[username]/new/message`
+- ✅ `x.com/[username]/status/[tweet_id]` - Direct link to a specific tweet and its replies
+- ✅ `x.com/[username]` - should have links to all available data, and user profile details
+- ✅ `x.com/[username]/with_replies`
+- ✅ `x.com/[username]/highlights`
+- ✅ `x.com/[username]/lists`
+- 🟠 `x.com/[username]/following`
+- 🟠 `x.com/[username]/followers`
+- 🟠 `x.com/[username]/verified_followers`
+- 🟠 `x.com/[username]/creator-subscriptions/subscriptions`
+- 🟠 `x.com/[username]/photo` the large png, served
+- 🔒 `x.com/[username]/articles`
+- 🔒 `x.com/[username]/media` - Quick access to a user's photos and videos
+- 🔒 `x.com/[username]/likes`
+- 🔒 (custom) `x.com/[username]/bookmarks`
+- 🔒 Bookmarks: `x.com/i/bookmarks` - Saved tweets
+- ❌ **Topics**: `x.com/i/topics` - Browse and follow topics
+- ❌ **Communities**: `x.com/i/communities` - Twitter's group-like feature
+- ❌ **Notifications**: `x.com/notifications` - Shows interactions with your account (likes, retweets, mentions)
+- ❌ **Messages**: `x.com/messages` - Access to your direct messages
+- ❌ **Home Timeline**: `x.com/home` - Main feed showing tweets from accounts you follow
+- ❌ **Explore**: `x.com/explore` - Search and trending content
+- ❌ **Search**: `x.com/search?q=[search_terms]` - Search results for specific queries
+- ❌ **Spaces**: `x.com/i/spaces` - Live audio conversations
