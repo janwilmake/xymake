@@ -185,14 +185,13 @@ To grow this to $5k/month (and be able to get the pro plan) I need to make the m
 
 - ✅ Make the new router the core of xymake (using getFormat, allowing .ext convention)
 - ✅ New endpoints implemented
-  - user lists
-  - list details/members
-  - user posts for daterange implemented
-  - user highlights
-- Refactor away `/og/` to use just `/username/status/id.png` (but keep old one possible for a bit longer)
-- Refactor away storing user data in TWEET_KV (store all in DOs) and create a central DO that also has all userdata (this is a longer project but great to do. another option would be to add X Auth to [sponsorflare](https://sponsorflare.com))
-- Refactor such that KV is fully gone and we put everything in an R2 under the appropriate pathname
-- Now building an archive for a user becomes easy: a DO with alarms can function as a temporary 'queue' to aggregate all data available from the API.
+  - ✅ user lists
+  - ✅ list details/members
+  - ✅ user posts for daterange implemented
+  - ✅ user highlights
+- ❌ Refactor away storing user data in TWEET_KV (store all in DOs) and create a central DO that also has all userdata (this is a longer project but great to do. another option would be to add X Auth to [sponsorflare](https://sponsorflare.com)) - **too much work for now**
+- ❌ Refactor such that KV is fully gone and we put everything in an R2 under the appropriate pathname **not needed with help of zipobject object derefs**
+- ❌ Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api) **for now, we will use socialdata.tools until we have the $200 plan**
 
 ## Make it cheaper for unauthorized profiles
 
@@ -204,9 +203,12 @@ For now the biggest priority is entire archive for your own threads
 
 But then also lists, bookmarks, and likes.
 
+# Improved OGs for other pages
+
+Refactor away `/og/` to use just `/username/status/id.png` (but keep old one possible for a bit longer). Ensure every page has a proper OG Image by making that og html more generic.
+
 # BACKLOG
 
-- Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
 - Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
 
 # Ideas
