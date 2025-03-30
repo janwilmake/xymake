@@ -263,7 +263,7 @@ Endpoints:
 
 ## Created by the community / Attributions
 
-- [@jordanwaparker](https://x.com/jordanwaparker) https://uithub.com/helloprkr/xymake-plus - Turn Your 𝕏 Into LLM-Ready Data: Threads, Bookmarks, Media & More
+- [@jordanwaparker](https://x.com/jordanwaparker) - Custom frontend client for XYMake: [XYMake Plus](https://uithub.com/helloprkr/xymake-plus)
 - [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
 - [@ThomasSlabbers](https://x.com/Thomasslabbers) - Creator of https://www.xdeepthought.com and https://www.socialdatabase.com
 - [@brianships](https://x.com/brianships) - Creator of the API XYMake uses (https://socialdata.tools)
