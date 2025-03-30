@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "X Threads API",
-    "description": "API for retrieving Twitter/X posts and conversations",
+    "description": "API for retrieving and interacting with Twitter/X posts, conversations, and user data",
     "version": "1.0.0"
   },
   "servers": [
@@ -12,24 +12,153 @@
     }
   ],
   "paths": {
-    "/{login}/status/{tweetId}": {
+    "/users.json": {
+      "get": {
+        "summary": "Get list of users",
+        "description": "Returns a list of all users in JSON format",
+        "operationId": "getUsersJson",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "example": ["user1", "user2", "user3"]
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users.md": {
+      "get": {
+        "summary": "Get list of users in Markdown format",
+        "description": "Returns a list of all users in Markdown format",
+        "operationId": "getUsersMd",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved users list",
+            "content": {
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "@user1, @user2, @user3"
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{username}": {
+      "get": {
+        "summary": "Get user profile",
+        "description": "Retrieves information about a user's profile",
+        "operationId": "getUserProfile",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The Twitter/X username (without @)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User profile is private or not available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{username}/status/{tweetId}": {
       "get": {
         "summary": "Get a tweet and its conversation",
         "description": "Retrieves a tweet by ID along with its parent tweets and comments, sorted chronologically",
         "operationId": "getTweetConversation",
         "parameters": [
           {
-            "name": "login",
+            "name": "username",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "The Twitter/X username (without @)"
           },
           {
             "name": "tweetId",
             "in": "path",
-            "description": "The numeric ID of the tweet to retrieve the thread for ",
+            "description": "The numeric ID of the tweet to retrieve the thread for",
             "required": true,
             "schema": {
               "type": "string",
@@ -86,19 +215,20 @@
         }
       }
     },
-    "/{login}/status/{tweetId}.json": {
+    "/{username}/status/{tweetId}.json": {
       "get": {
         "summary": "Get a tweet and its conversation in JSON format",
         "description": "Retrieves a tweet by ID along with its parent tweets and comments in JSON format, sorted chronologically",
         "operationId": "getTweetConversationJson",
         "parameters": [
           {
-            "name": "login",
+            "name": "username",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "The Twitter/X username (without @)"
           },
           {
             "name": "tweetId",
@@ -162,14 +292,341 @@
         }
       }
     },
-    "/{login}/{action}/{tweetId}/{text}": {
+    "/{username}/with_replies": {
+      "get": {
+        "summary": "Get user posts with replies",
+        "description": "Retrieves a user's posts including their replies",
+        "operationId": "getUserPostsWithReplies",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The Twitter/X username (without @)"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date for the posts (format: YYYY-MM-DD)"
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for the posts (format: YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user posts with replies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "dateResults": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DateResult"
+                      }
+                    },
+                    "start": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "end": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid date format or date range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User profile is private or not available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{username}/highlights": {
+      "get": {
+        "summary": "Get user highlights",
+        "description": "Retrieves highlighted content from a user's profile",
+        "operationId": "getUserHighlights",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The Twitter/X username (without @)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user highlights",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "urls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "text/yaml": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User profile is private or not available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{username}/lists": {
+      "get": {
+        "summary": "Get user lists",
+        "description": "Retrieves lists created by a user",
+        "operationId": "getUserLists",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The Twitter/X username (without @)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user lists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lists": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TwitterList"
+                      }
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "text/yaml": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User profile is private or not available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/i/lists/{listId}": {
+      "get": {
+        "summary": "Get list details",
+        "description": "Retrieves details about a specific list and its members",
+        "operationId": "getListDetails",
+        "parameters": [
+          {
+            "name": "listId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "details": {
+                      "$ref": "#/components/schemas/TwitterList"
+                    },
+                    "memberCount": {
+                      "type": "integer"
+                    },
+                    "members": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              },
+              "text/yaml": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid list ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "List not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{username}/{action}/{tweetId}/{text}": {
       "get": {
         "summary": "Create a new tweet, reply, or quote",
         "description": "Creates a new tweet, reply to an existing tweet, or quote tweet based on the action parameter",
         "operationId": "createTweetThread",
         "parameters": [
           {
-            "name": "login",
+            "name": "username",
             "in": "path",
             "required": true,
             "schema": {
@@ -733,6 +1190,97 @@
           "count": {
             "type": "integer",
             "description": "Number of votes for this choice"
+          }
+        }
+      },
+      "TwitterList": {
+        "type": "object",
+        "required": [
+          "id_str",
+          "name",
+          "description",
+          "member_count",
+          "subscriber_count",
+          "mode",
+          "created_at",
+          "uri",
+          "user"
+        ],
+        "properties": {
+          "id_str": {
+            "type": "string",
+            "description": "String representation of the list ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the list"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the list"
+          },
+          "member_count": {
+            "type": "integer",
+            "description": "Number of members in the list"
+          },
+          "subscriber_count": {
+            "type": "integer",
+            "description": "Number of subscribers to the list"
+          },
+          "mode": {
+            "type": "string",
+            "description": "Privacy setting of the list (Public or Private)"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date and time of the list"
+          },
+          "uri": {
+            "type": "string",
+            "description": "URI for the list"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id_str": {
+                "type": "string",
+                "description": "String representation of the user ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Display name of the user"
+              },
+              "screen_name": {
+                "type": "string",
+                "description": "Username of the user (without @)"
+              }
+            }
+          }
+        }
+      },
+      "DateResult": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username the posts belong to"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the posts (YYYY-MM-DD)"
+          },
+          "post_count": {
+            "type": "integer",
+            "description": "Number of posts on this date"
+          },
+          "statusIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of status IDs for posts on this date"
           }
         }
       },
