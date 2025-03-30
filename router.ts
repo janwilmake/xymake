@@ -13,6 +13,7 @@ import { getUserProfile } from "./endpoints/getUserProfile.js";
 import { getUserHighlights } from "./endpoints/getUserHighlights.js";
 import { getUserLists } from "./endpoints/getUserLists.js";
 import { getListDetails } from "./endpoints/getListDetails.js";
+import { getArchive } from "./endpoints/getArchive.js";
 // import { getUserPhoto } from "./endpoints/getUserPhoto.js";
 // import { getUserFollowing } from "./endpoints/getUserFollowing.js";
 // import { getUserFollowers } from "./endpoints/getUserFollowers.js";
@@ -105,6 +106,9 @@ export default {
 
       // Handle various profile routes
       if (segments.length === 1) {
+        if (ext === "zip") {
+          return getArchive(request, env, ctx);
+        }
         // Profile root page - show user details
         return getUserProfile(request, env, ctx);
       }
