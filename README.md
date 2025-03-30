@@ -275,7 +275,7 @@ Legenda:
 
 ## Created by the community / Attributions
 
-- [@jordanwaparker](https://x.com/jordanwaparker) - Custom frontend client for XYMake: [XYMake Plus](https://uithub.com/helloprkr/xymake-plus)
+- [@jordanwaparker](https://x.com/jordanwaparker) - Custom frontend client for XYMake: [XYMake Plus](https://github.com/helloprkr/xymake-plus)
 - [@ThomasSlabbers](https://x.com/Thomasslabbers) - Creator of https://www.xdeepthought.com and https://www.socialdatabase.com
 - [@brianships](https://x.com/brianships) - Creator of the API XYMake uses (https://socialdata.tools)
 - [@exgenesis](https://x.com/exgenesis) - Creator of https://www.community-archive.org
