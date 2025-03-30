@@ -1,14 +1,14 @@
-import { getOgImage } from "./getOgImage.js";
-import { identify } from "./identify.js";
-import { UserState } from "./xLoginMiddleware.js";
-import html400 from "./public/400.html";
+import { getOgImage } from "../getOgImage.js";
+import { identify } from "../identify.js";
+import { UserState } from "../xLoginMiddleware.js";
+import html400 from "../public/400.html";
 import {
   Env,
   formatTweetAsMarkdown,
   getThreadData,
   ThreadData,
   Tweet,
-} from "./getThreadData.js";
+} from "../getThreadData.js";
 
 // Main handler with format support
 export const getThread = async (request: Request, env: Env, ctx: any) => {

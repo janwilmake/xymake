@@ -1,4 +1,4 @@
-import { Env } from "./getThreadData.js";
+import { Env } from "../getThreadData.js";
 
 export default {
   fetch: async (request: Request, env: Env) => {

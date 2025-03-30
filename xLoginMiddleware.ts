@@ -917,6 +917,7 @@ export const xLoginMiddleware = async (
 
   // Login page route
   if (url.pathname === "/login") {
+    // TODO: If going to `/login` and you're already logged in, should redirect to appropriate url without needing to go through twitter
     const scope = url.searchParams.get("scope");
     const redirect_uri = url.searchParams.get("redirect_uri");
     const state = await generateRandomString(16);

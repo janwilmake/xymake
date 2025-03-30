@@ -156,17 +156,38 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ❌ Add `priceCredit` to `getSubscriber` and keep track of balance.
 - ✅ Make redirect url in xymake configurable (securely)
 - ✅ Fix oauth flow for https://cli.xymake.com both from landing and CLI
-- Also smooth if already logged in.
-- BONUS: fix `localhost:3000` auth as well. If not through X, use API
 
 Now I can actually fix CLI. Great if fixed today and I can put 17 tweets out from terminal per day smoothly.
+
+# Learnings (2025-03-30)
+
+There are quite some limitations X places upon their api as can be seen at https://docs.x.com/x-api/introduction. This must be taken into account when thinking about features! The biggest ones to be aware of are:
+
+- The free API has a very strict ratelimit (e.g. 17 requests per 24h period)
+- For free, basic and pro plan ($200 and $5000 monthly, respectively) a monthly app-level post-limit and post-read-limit.
+- Also there are strict [periodic ratelimits](https://docs.x.com/x-api/fundamentals/rate-limits#rate-limits) to deal with.
+- https://socialdata.tools is great for upping the read limit at a very low cost ($0.20/1000)
+
+To be determined:
+
+- As far as I know, the app-level ratelimit always counts if it exists, but some endpoints only have a user-level limit, which is interesting.
+- As far as I know all ratelimits are on a per-endpoint basis (independent of each other)
+
+To gracefully work with ratelimits while creating a continous export, we can:
+
+- make use of the fact that many endpoints return data in reverse chronological order
+- most information won't change (much) so we can cache it and keep a datetime of the last indexation
+- if endpoints are independent of each other, we can probably run a DO alarm with attached queue on a per-endpoint basis that, every 15 minutes, picks the next user to scrape, and does this until the ratelimit is hit, sets an alarm again after 15 minutes. this way we divide the app-based ratelimit nicely over all users that want a continous export.
+
+To grow this to $5k/month (and be able to get the pro plan) I need to make the most out of the $200/month plan as well as socialdata.tools.
 
 ## Fundamentals
 
 - ✅ Make the new router the core of xymake (using getFormat, allowing .ext convention)
 - Refactor away `/og/` to use just `/username/status/id.png` (but keep old one possible for a bit longer)
-- Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
-- See which endpoints can be easily done with https://socialdata.tools
+- Refactor away storing user data in TWEET_KV (store all in DOs) and create a central DO that also has all userdata (this is a longer project but great to do)
+
+Which endpoints can be easily done with https://socialdata.tools
 
 ## Make it cheaper for unauthorized profiles
 
@@ -181,6 +202,7 @@ But then also lists, bookmarks, and likes.
 # BACKLOG
 
 - Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api)
+- Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
 
 # Ideas
 

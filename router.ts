@@ -1,26 +1,43 @@
 import { stringify } from "yaml";
 import { getFormat } from "./getFormat.js";
 import { Env, xLoginMiddleware } from "./xLoginMiddleware.js";
-import { postTweets } from "./postTweets.js";
-import users from "./users.js";
-import posts from "./posts.js";
-import { profile } from "./profile.js";
-import { getThread } from "./getThread.js";
 import { getOgImage } from "./getOgImage.js";
 export { XFeed } from "./xLoginMiddleware.js";
 
-/** Needs to be further improved using `getFormat` */
-const getDataResponse = (data: any, format: string) => {
-  if (format === "application/json") {
-    return new Response(JSON.stringify(data, undefined, 2), {
-      headers: { "content-type": "application/json" },
-    });
-  }
-  return new Response(stringify(data), {
-    headers: { "content-type": "text/yaml" },
-  });
-};
+// Import modular endpoint handlers
+import { postTweets } from "./endpoints/postTweets.js";
+import posts from "./endpoints/posts.js";
+import users from "./endpoints/users.js";
+import { getThread } from "./endpoints/getThread.js";
+import { getUserProfile } from "./endpoints/getUserProfile.js";
+import { getUserHighlights } from "./endpoints/getUserHighlights.js";
+import { getUserLists } from "./endpoints/getUserLists.js";
+import { getListDetails } from "./endpoints/getListDetails.js";
+// import { getUserPhoto } from "./endpoints/getUserPhoto.js";
+// import { getUserFollowing } from "./endpoints/getUserFollowing.js";
+// import { getUserFollowers } from "./endpoints/getUserFollowers.js";
+// import { getUserVerifiedFollowers } from "./endpoints/getUserVerifiedFollowers.js";
 
+export const validProfileRoutes = [
+  "details",
+  "status",
+  "photo",
+  "with_replies",
+  "highlights",
+  "articles",
+  "media",
+  "likes",
+  "following",
+  "followers",
+  "verified_followers",
+  "creator-subscriptions/subscriptions",
+  "lists",
+  "posts",
+  "reply",
+  "quote",
+  "new",
+  "bookmarks",
+];
 export default {
   fetch: async (request: Request, env: Env, ctx: any) => {
     // Handle CORS preflight requests
@@ -72,7 +89,8 @@ export default {
     if (segments[0] === "search" && segments.length === 1) {
       const query = url.searchParams.get("q");
       return new Response(
-        `Search is not supported (yet). Search for "${query}" ${format}`,
+        `Not supported because we won't expose unauthenticated users at this stage. Format: ${format}`,
+        { status: 400 },
       );
     }
 
@@ -85,40 +103,10 @@ export default {
     ) {
       const username = segments[0];
 
-      const validProfileRoutes = [
-        "details",
-        "status",
-        "photo",
-        "with_replies",
-        "highlights",
-        "articles",
-        "media",
-        "likes",
-        "following",
-        "followers",
-        "verified_followers",
-        "creator-subscriptions/subscriptions",
-        "lists",
-        "posts",
-        "reply",
-        "quote",
-        "new",
-        "bookmarks",
-      ];
-
       // Handle various profile routes
       if (segments.length === 1) {
-        // todo: can be cleaner
-        if (format === "application/json") {
-          const data = validProfileRoutes.reduce((previous, current) => {
-            return {
-              ...previous,
-              [current]: { $ref: `${url.origin}/${username}/${current}` },
-            };
-          }, {} as { [key: string]: { $ref: string } });
-          return getDataResponse(data, format);
-        }
-        return profile(request, env);
+        // Profile root page - show user details
+        return getUserProfile(request, env);
       }
 
       // Check if the route is valid
@@ -130,69 +118,46 @@ export default {
         (route === "new" && segments.length >= 3)
       ) {
         return postTweets(request, env, ctx);
-      }
-
-      if (route === "status" && segments.length >= 3) {
+      } else if (route === "status" && segments.length >= 3) {
         return getThread(request, env, ctx);
-      }
-
-      if (route === "posts" && segments.length >= 3) {
+        // } else if (route === "photo") {
+        //   return getUserPhoto(request, env, ctx);
+      } else if (route === "with_replies") {
         return posts.fetch(request, env, ctx);
-      }
+      } else if (route === "highlights") {
+        return getUserHighlights(request, env, ctx);
+        // } else if (route === "following") {
+        //   return getUserFollowing(request, env, ctx);
+        // } else if (route === "followers") {
+        //   return getUserFollowers(request, env, ctx);
+        // } else if (route === "verified_followers") {
+        //   return getUserVerifiedFollowers(request, env, ctx);
 
-      if (
-        route === "creator-subscriptions" &&
-        segments[2] === "subscriptions"
-      ) {
+        // TODO
+      } else if (route === "lists") {
+        return getUserLists(request, env, ctx);
+      } else if (validProfileRoutes.includes(route)) {
         return new Response(
-          `It's not possible yet to view your subscriptions. ${
-            format ? ` Format: ${format}` : ""
-          }`,
-        );
-      }
-      if (validProfileRoutes.includes(route)) {
-        return new Response(
-          `It's not possible yet (${route}). ${
-            format ? ` Format: ${format}` : ""
-          }`,
+          `Endpoint "/${username}/${route}" is not yet implemented. Format: ${format}`,
+          { status: 501 },
         );
       }
     }
 
     // Handle /i/ routes
     if (segments[0] === "i") {
+      if (segments[1] === "lists" && segments.length >= 3) {
+        // Default list details
+        return getListDetails(request, env, ctx);
+      }
+
       const validIRoutes = ["bookmarks", "lists", "topics", "communities"];
       if (validIRoutes.includes(segments[1])) {
         return new Response(
-          `This feature is not supported (yet). ${
-            format ? ` Format: ${format}` : ""
-          }`,
+          `This feature is not supported (yet). Format: ${format}`,
+          { status: 501 },
         );
       }
-
-      if (segments[1] === "lists" && segments.length >= 3) {
-        return new Response(
-          `Viewing a specific list is coming soon.
-          
-          ${format ? ` Format: ${format}` : ""}`,
-        );
-      }
-    }
-
-    // Handle other base routes
-    const validBaseRoutes = [
-      "notifications",
-      "messages",
-      "home",
-      "explore",
-      "search",
-    ];
-    if (segments.length === 1 && validBaseRoutes.includes(segments[0])) {
-      return new Response(
-        `This feature is not supported (yet).${
-          format ? ` Format: ${format}` : ""
-        }`,
-      );
     }
 
     // Catch-all for unhandled routes

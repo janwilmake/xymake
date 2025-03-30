@@ -1,4 +1,4 @@
-import { Env, getSubscriber } from "./xLoginMiddleware.js";
+import { Env, getSubscriber } from "../xLoginMiddleware.js";
 
 function isTweetId(id: any) {
   // Ensure it's a string or number and consists only of digits
