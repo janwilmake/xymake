@@ -255,6 +255,16 @@ Endpoints:
 
 # Community
 
+XYMake embrades community and aims to build with them, not just for them.
+
+Legenda:
+
+- ✅ done
+- 🟠 planned
+- 🔒 require X API Basic Plan
+- ❌ Likely hard to do / require enterprise, or unimportant (for now)
+- 🤔 Unsure
+
 ## Ideas by the community
 
 - ✅ [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://xymake.com/i/lists/1784659545656021044)
