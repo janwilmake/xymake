@@ -255,7 +255,7 @@ Endpoints:
 
 # Community
 
-XYMake embrades community and aims to build with them, not just for them.
+XYMake embrades community and aims to build with them, not just for them. Visit https://xymake.com/users.md to view all users!
 
 Legenda:
 
