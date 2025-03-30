@@ -16,10 +16,12 @@ export const getArchive = async (request: Request, env: Env, ctx: any) => {
     accept: format,
   };
   // TODO:
+
   // 0) use $ref properly
-  // 1) Finish zipobject $ref parsing
-  // 2) Finish zipobject html response
-  // 3) Find the right way to charge for this. Best would be building this out for anyone for a max cost of $0.50 putting as much valuable info in there. Then, if you want your entire dataset and have it continuously updated, donate $100 and it'd be good for 6 months (calculated based on some stats of your profile). Besides that it'd be great to incentivize people to also get the people they interacted most with in there too.
+  // 1) add authorization header support
+  // 2) Finish zipobject $ref parsing including proper authorization header support
+  // 3) Make accessible in the new uithub (universal information terminal)
+  // 4) Build out free archive of max $1 for any profile, expect payment for full archive.
 
   return fetch(`https://zipobject.com/xymake.com/${username}.json`, {
     headers,
