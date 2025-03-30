@@ -1193,15 +1193,14 @@ export const getSubscriber = async (
 
   let newAccessToken: undefined | string = undefined;
   if (json.expiredAt && json.refresh_token && json.expiredAt < Date.now()) {
-    const body = new FormData();
-    body.append("refresh_token", json.refresh_token);
-    body.append("grant_type", "refresh_token");
-    body.append("client_id", env.X_CLIENT_ID);
-
     const refreshResponse = await fetch("https://api.x.com/2/oauth2/token", {
       method: "POST",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-      body,
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        refresh_token: json.refresh_token,
+        grant_type: "refresh_token",
+        client_id: env.X_CLIENT_ID,
+      }),
     });
     if (!refreshResponse.ok) {
       // can't refresh. need to report status
