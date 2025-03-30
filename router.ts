@@ -6,7 +6,7 @@ export { XFeed } from "./xLoginMiddleware.js";
 
 // Import modular endpoint handlers
 import { postTweets } from "./endpoints/postTweets.js";
-import posts from "./endpoints/posts.js";
+import { getPosts } from "./endpoints/getPosts.js";
 import users from "./endpoints/users.js";
 import { getThread } from "./endpoints/getThread.js";
 import { getUserProfile } from "./endpoints/getUserProfile.js";
@@ -106,7 +106,7 @@ export default {
       // Handle various profile routes
       if (segments.length === 1) {
         // Profile root page - show user details
-        return getUserProfile(request, env);
+        return getUserProfile(request, env, ctx);
       }
 
       // Check if the route is valid
@@ -123,7 +123,44 @@ export default {
         // } else if (route === "photo") {
         //   return getUserPhoto(request, env, ctx);
       } else if (route === "with_replies") {
-        return posts.fetch(request, env, ctx);
+        const result = await getPosts(env, ctx, username);
+        const posts = result.dateResults
+          .map((x) =>
+            x.statusIds.map((id) => ({
+              url: `https://xymake.com/${username}/status/${id}`,
+              date: x.date,
+            })),
+          )
+          .flat();
+        if (format === "text/yaml") {
+          return new Response(stringify(posts), {
+            headers: { "content-type": "text/yaml" },
+          });
+        } else if (format === "application/json") {
+          return new Response(JSON.stringify(posts, null, 2), {
+            headers: { "content-type": "application/json" },
+          });
+        } else {
+          return new Response(
+            `Posts by @${result.username} between ${result.start} and ${
+              result.end
+            } (use ?start=YYYY-MM-DD&end=YYYY-MM-DD to change)
+            
+${result.dateResults
+  .map(
+    (item) => `# ${item.date} (${item.post_count} posts)
+  
+  
+${item.statusIds
+  .map((id) => `https://xymake.com/${item.username}/status/${id}`)
+  .join("\n")}`,
+  )
+  .join("\n\n")}`,
+            {
+              headers: { "content-type": "text/markdown" },
+            },
+          );
+        }
       } else if (route === "highlights") {
         return getUserHighlights(request, env, ctx);
         // } else if (route === "following") {

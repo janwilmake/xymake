@@ -185,7 +185,7 @@ To grow this to $5k/month (and be able to get the pro plan) I need to make the m
 
 - ✅ Make the new router the core of xymake (using getFormat, allowing .ext convention)
 - Refactor away `/og/` to use just `/username/status/id.png` (but keep old one possible for a bit longer)
-- Refactor away storing user data in TWEET_KV (store all in DOs) and create a central DO that also has all userdata (this is a longer project but great to do)
+- Refactor away storing user data in TWEET_KV (store all in DOs) and create a central DO that also has all userdata (this is a longer project but great to do. another option would be to add X Auth to [sponsorflare](https://sponsorflare.com))
 
 Which endpoints can be easily done with https://socialdata.tools
 

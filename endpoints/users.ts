@@ -4,7 +4,7 @@ export default {
   fetch: async (request: Request, env: Env) => {
     const list = await env.TWEET_KV.list({ prefix: "user:" });
 
-    const keys = list.keys.map((x) => x.name.split(":")[1]);
+    const keys: string[] = list.keys.map((x) => x.name.split(":")[1]);
 
     if (request.url.endsWith(".json")) {
       return new Response(JSON.stringify(keys, undefined, 2), {

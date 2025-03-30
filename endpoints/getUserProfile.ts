@@ -2,9 +2,9 @@ import { identify } from "../identify.js";
 import { Env, UserState } from "../xLoginMiddleware.js";
 import dashboard from "../dashboard.html";
 import html400 from "../public/400.html";
-import { validProfileRoutes } from "../router.js";
 import { getFormat } from "../getFormat.js";
 import { getDataResponse } from "../getDataResponse.js";
+import { getPosts } from "./getPosts.js";
 
 export const profile = async (request: Request, env: Env) => {
   const url = new URL(request.url);
@@ -41,17 +41,19 @@ export const profile = async (request: Request, env: Env) => {
   return new Response("Not found", { status: 404 });
 };
 
-export const getUserProfile = async (request: Request, env: Env) => {
+export const getUserProfile = async (request: Request, env: Env, ctx: any) => {
   const format = getFormat(request);
   if (!format) {
     return new Response("Bad request, invalid format expected", {
       status: 400,
     });
   }
+
   const url = new URL(request.url);
   const segments = url.pathname.split("/").slice(1);
-  const username = segments[0];
+  const username = segments[0].split(".")[0];
 
+  const validProfileRoutes = ["with_replies/{date}", "highlights", "lists"];
   if (format === "application/json") {
     const data = validProfileRoutes.reduce((previous, current) => {
       return {
