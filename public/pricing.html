@@ -236,7 +236,14 @@ make sure the whole calculator is viewable, including the suggested deposit, in 
         <div class="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-white/10 py-4 px-4">
             <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
-                    <p class="text-gray-300 mb-1">Suggested deposit (12 months coverage)</p>
+                    <p class="text-gray-300 mb-1">Minimal deposit</p>
+                    <p class="text-gray-600 text-xs mb-1">±30 days coverage</p>
+                    <p id="minimal-deposit" class="text-2xl font-bold text-blue-400">$30.00</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-300 mb-1">Suggested deposit</p>
+                    <p class="text-gray-600 text-xs mb-1">±12 months coverage</p>
                     <p id="suggested-deposit" class="text-2xl font-bold text-blue-400">$30.00</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -272,6 +279,7 @@ make sure the whole calculator is viewable, including the suggested deposit, in 
         const monthlyContentEl = document.getElementById('monthly-content');
         const monthlyCostEl = document.getElementById('monthly-cost');
         const suggestedDepositEl = document.getElementById('suggested-deposit');
+        const minimalDespositEl = document.getElementById('minimal-deposit');
 
         // Logarithmic scale conversion functions
         function followerValue() {
@@ -317,13 +325,14 @@ make sure the whole calculator is viewable, including the suggested deposit, in 
             const initialCost = totalHistorical / 1000;
             const monthlyCost = monthlyNew / 1000;
             const yearlyDeposit = (initialCost + (monthlyCost * 12)) * 1.2; // Add 20% margin
-
+            const minimalDesposit = (initialCost + monthlyCost) * 1.2
             // Update display
             commentsPerPostEl.textContent = commentsPerPost;
             totalHistoricalEl.textContent = formatNumber(totalHistorical) + ' items';
             monthlyContentEl.textContent = formatNumber(monthlyNew) + ' items';
             monthlyCostEl.textContent = '$' + monthlyCost.toFixed(2);
             suggestedDepositEl.textContent = '$' + yearlyDeposit.toFixed(2);
+            minimalDespositEl.textContent = '$' + (minimalDesposit).toFixed(2);
         }
 
         // Add event listeners
