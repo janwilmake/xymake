@@ -271,10 +271,11 @@ Legenda:
 - 🟠 [@brianships](https://x.com/brianships) - MCP
 - 🔒 [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
 - 🤔 [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - x cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
+- ❌ [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
 
 ## Created by the community / Attributions
 
 - [@jordanwaparker](https://x.com/jordanwaparker) - Custom frontend client for XYMake: [XYMake Plus](https://uithub.com/helloprkr/xymake-plus)
-- [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
 - [@ThomasSlabbers](https://x.com/Thomasslabbers) - Creator of https://www.xdeepthought.com and https://www.socialdatabase.com
 - [@brianships](https://x.com/brianships) - Creator of the API XYMake uses (https://socialdata.tools)
+- [@exgenesis](https://x.com/exgenesis) - Creator of https://www.community-archive.org
