@@ -6,7 +6,6 @@ export { XFeed } from "./xLoginMiddleware.js";
 
 // Import modular endpoint handlers
 import { postTweets } from "./endpoints/postTweets.js";
-import { getPosts } from "./endpoints/getPosts.js";
 import users from "./endpoints/users.js";
 import { getThread } from "./endpoints/getThread.js";
 import { getUserProfile } from "./endpoints/getUserProfile.js";
@@ -14,10 +13,7 @@ import { getUserHighlights } from "./endpoints/getUserHighlights.js";
 import { getUserLists } from "./endpoints/getUserLists.js";
 import { getListDetails } from "./endpoints/getListDetails.js";
 import { getArchive } from "./endpoints/getArchive.js";
-// import { getUserPhoto } from "./endpoints/getUserPhoto.js";
-// import { getUserFollowing } from "./endpoints/getUserFollowing.js";
-// import { getUserFollowers } from "./endpoints/getUserFollowers.js";
-// import { getUserVerifiedFollowers } from "./endpoints/getUserVerifiedFollowers.js";
+import { getPostsWithReplies } from "./endpoints/getPostsWithReplies.js";
 
 export const validProfileRoutes = [
   "details",
@@ -126,7 +122,7 @@ export default {
         // } else if (route === "photo") {
         //   return getUserPhoto(request, env, ctx);
       } else if (route === "with_replies") {
-        const result = await getPosts(env, ctx, username);
+        const result = await getPostsWithReplies(env, ctx, username);
         const posts = result.dateResults
           .map((x) =>
             x.statusIds.map((id) => ({
@@ -167,14 +163,6 @@ ${item.statusIds
         }
       } else if (route === "highlights") {
         return getUserHighlights(request, env, ctx);
-        // } else if (route === "following") {
-        //   return getUserFollowing(request, env, ctx);
-        // } else if (route === "followers") {
-        //   return getUserFollowers(request, env, ctx);
-        // } else if (route === "verified_followers") {
-        //   return getUserVerifiedFollowers(request, env, ctx);
-
-        // TODO
       } else if (route === "lists") {
         return getUserLists(request, env, ctx);
       } else if (validProfileRoutes.includes(route)) {
@@ -183,6 +171,12 @@ ${item.statusIds
           { status: 501 },
         );
       }
+      // } else if (route === "following") {
+      //   return getUserFollowing(request, env, ctx);
+      // } else if (route === "followers") {
+      //   return getUserFollowers(request, env, ctx);
+      // } else if (route === "verified_followers") {
+      //   return getUserVerifiedFollowers(request, env, ctx);
     }
 
     // Handle /i/ routes

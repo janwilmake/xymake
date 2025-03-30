@@ -30,7 +30,7 @@ export const getUserProfile = async (
   const privacyMessage =
     userState?.privacy !== "public"
       ? `@${username} did not free their data yet. Tell them to join the free data movement, or free your own data at https://xymake.com`
-      : "";
+      : undefined;
 
   // If HTML format and privacy is not public, handle accordingly
   if (userState?.privacy !== "public") {
@@ -97,15 +97,22 @@ export const getUserProfile = async (
   const routesData = validProfileRoutes.reduce((previous, current) => {
     return {
       ...previous,
-      [current]: { $ref: `${url.origin}/${username}/${current}` },
+
+      // this would be a md file for each, as a summary
+      [current + ".md"]: { $ref: `${url.origin}/${username}/${current}.md` },
+
+      // this should be a folder for each, with the actual threads and other data in there
+      [current]: {
+        $ref: `${url.origin}/${username}/${current}.json`,
+      },
     };
   }, {} as { [key: string]: { $ref: string } });
 
   // Combine profile data with routes
   const fullData = {
-    ...profileData,
-    routes: routesData,
-    message: privacyMessage,
+    "index.json": { ...profileData, message: privacyMessage },
+    "index.md": { $ref: `${url.origin}/${username}.md` },
+    ...routesData,
   };
 
   // Handle response based on format
@@ -130,7 +137,7 @@ export const getUserProfile = async (
 function generateMarkdownProfile(
   profileData: any,
   username: string,
-  message: string,
+  message: string | undefined,
 ): string {
   if (!profileData) {
     return `# @${username}\n\n${message || "Profile data not available."}`;

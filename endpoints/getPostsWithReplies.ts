@@ -127,13 +127,8 @@ interface GetPostsResult {
 
 /**
  * Gets posts for a username within a date range
- *
- * @param username Twitter username to fetch posts for
- * @param env Environment containing KV and API key
- * @param options Optional parameters: start date, end date, and execution context
- * @returns Object containing username and array of date results
  */
-export async function getPosts(
+export async function getPostsWithReplies(
   env: Env,
   ctx: ExecutionContext,
   username: string,
