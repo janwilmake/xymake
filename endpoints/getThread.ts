@@ -140,6 +140,7 @@ export const getThread = async (
         return new Response(
           html400
             .replaceAll(`{{username}}`, author || "this user")
+            .replaceAll(`{{title}}`, title)
             .replaceAll(`{{postCount}}`, String(threadData.postCount || 0))
             .replaceAll(`{{totalTokens}}`, String(threadData.totalTokens || 0))
             .replace(
@@ -162,8 +163,8 @@ export const getThread = async (
             <meta name="twitter:card" content="summary_large_image" />
             <meta property="twitter:domain" content="https://xymake.com" />
             <meta property="twitter:url" content="${request.url}" />
-            <meta name="twitter:description" content="${title}" />
-            <meta name="twitter:title" content="📄 " />
+            <meta name="twitter:description" content="${description}" />
+            <meta name="twitter:title" content="${title}" />
             <meta name="twitter:image" content="${ogImageUrl}" />
 
             <script>

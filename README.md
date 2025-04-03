@@ -194,12 +194,12 @@ To grow this to $5k/month (and be able to get the pro plan) I need to make the m
 
 ## BIG BLOCKER; Make it cheaper for unauthorized profiles
 
-- Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive.
-- Make and keep a `free:{status}` in kv
-- Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
-- As long as they didn't unlock yet, keep cache infinitely, stale-while-revalidate revalidating once per day only.
-- Ensure this resolves by doing a single API call to socialdata tools, just once, and the OG image gets created in the correct way.
-- Show # of tokens
+- ✅ Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive.
+- ✅ Make and keep a `free:{status}` in kv
+- ✅ Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
+- ✅ As long as they didn't unlock yet, keep cache infinitely, stale-while-revalidate revalidating once per day only.
+- ✅ Ensure this resolves by doing a single API call to socialdata tools, just once, and the OG image gets created in the correct way.
+- ✅ Show # of tokens
 
 # Improved OGs for other pages
 

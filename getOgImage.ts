@@ -142,9 +142,7 @@ function generateOgImageHtml(threadData: ThreadData): string {
       
       <!-- Footer -->
       <div style="background-color: #000; color: white; padding: 20px 60px; font-size: 24px; text-align: center; display: flex; justify-content: center;">
-        <span style="display: block;">View the full thread as text • ${
-          threadData.postCount
-        } posts</span>
+        <span style="display: block;">View as text</span>
       </div>
     </div>
   `;
