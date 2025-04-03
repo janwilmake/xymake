@@ -156,8 +156,7 @@ I'm excited to [share this on X now](https://x.com/janwilmake/status/19042344429
 - ❌ Add `priceCredit` to `getSubscriber` and keep track of balance.
 - ✅ Make redirect url in xymake configurable (securely)
 - ✅ Fix oauth flow for https://cli.xymake.com both from landing and CLI
-
-Now I can actually fix CLI. Great if fixed today and I can put 17 tweets out from terminal per day smoothly.
+- ✅ Now I can actually fix CLI. Great if fixed today and I can put 17 tweets out from terminal per day smoothly.
 
 # Learnings (2025-03-30)
 
@@ -193,15 +192,14 @@ To grow this to $5k/month (and be able to get the pro plan) I need to make the m
 - ❌ Refactor such that KV is fully gone and we put everything in an R2 under the appropriate pathname **not needed with help of zipobject object derefs**
 - ❌ Fix DO for data aggregation: Make it easier to debug what happens in the alarms with a special log function, then make the explorer able to easily switch between available DO names (use CF api) **for now, we will use socialdata.tools until we have the $200 plan**
 
-## Make it cheaper for unauthorized profiles
+## BIG BLOCKER; Make it cheaper for unauthorized profiles
 
 - Scraping https://xymake.com/bryan_johnson/status/1904328460019077452 is too expensive.
 - Make and keep a `free:{status}` in kv
 - Instead, get main speaker tokens + number of comments + estimated tokens for total tokens.
-
-For now the biggest priority is entire archive for your own threads
-
-But then also lists, bookmarks, and likes.
+- As long as they didn't unlock yet, keep cache infinitely, stale-while-revalidate revalidating once per day only.
+- Ensure this resolves by doing a single API call to socialdata tools, just once, and the OG image gets created in the correct way.
+- Show # of tokens
 
 # Improved OGs for other pages
 
@@ -209,7 +207,9 @@ Refactor away `/og/` to use just `/username/status/id.png` (but keep old one pos
 
 # BACKLOG
 
-- Attach oauth an a way such that it's freemium (ip-ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
+Attach oauth an a way such that it's freemium (super low per-hour ip-ratelimit, still low per-hour x-authed ratelimit) and keeps usage and balance of the user (sponsorflare style, but with X)
+
+Create a search monitor for @grok (socialdata.tools) so I can track when people inquire the LLM.
 
 # X URL Structure Coverage
 
@@ -255,7 +255,7 @@ Endpoints:
 
 # Community
 
-XYMake embrades community and aims to build with them, not just for them. Visit https://xymake.com/users.md to view all users!
+XYMake embraces community and aims to build with them, not just for them. Visit https://xymake.com/users.md to view all users!
 
 Legenda:
 

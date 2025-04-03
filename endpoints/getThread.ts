@@ -90,7 +90,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     const jsonOrMarkdownString =
       storageFormat === "json"
         ? JSON.stringify(threadData.tweets, undefined, 2)
-        : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n");
+        : threadData.tweets.map(formatTweetAsMarkdown).join("\n\n") + "\n\n";
 
     // Before sending data, ensure to first double check that the main contributor to the convo is has their data unlocked already
 
@@ -135,6 +135,7 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
           html400
             .replaceAll(`{{username}}`, author || "this user")
             .replaceAll(`{{numTweets}}`, String(threadData.tweets?.length || 0))
+            .replaceAll(`{{numTokens}}`, String(threadData.totalTokens || 0))
             .replace(
               "</head>",
               `

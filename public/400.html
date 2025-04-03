@@ -93,22 +93,49 @@
                 </a>
             </header>
 
-            <!-- Main Content -->
-            <div class="text-center mb-16">
-                <h1 id="pageTitle" class="text-5xl font-bold mb-4">@{{username}} Hasn't Unlock Their X Data Yet.</h1>
 
-                <p id="pageDescription" class="text-gray-400 mb-8">
-                    XYMake can only convert threads that have been made public. Help us spread the word!
+            <!-- Thread Preview Card -->
+            <div id="threadPreviewCard" class="xy-border  rounded-xl p-6 mb-12 bg-white/5 hidden">
+                <div class="flex flex-row justify-between">
+                    <h2 class="text-xl font-bold mb-4">Thread Preview (total items: {{numTweets}}, tokens:
+                        {{numTokens}})</h2>
+                    <button disabled class="bg-gray-700 text-gray-500 px-4 py-2 rounded cursor-not-allowed opacity-60">
+                        Copy
+                    </button>
+                </div>
+                <div class="preview-fade h-48 overflow-hidden">
+                    <pre><div id="threadPreviewContent" class="text-gray-300"></div></pre>
+                </div>
+            </div>
+
+            <!-- Explanation Section -->
+            <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
+                <!-- <h1 id="pageTitle" class="text-5xl font-bold mb-4">@{{username}} Hasn't Unlock Their X Data Yet.</h1> -->
+
+
+                <h1 class="text-2xl font-bold mb-6 text-center">Why Can't I Get The Thread?</h1>
+
+                <p class="text-gray-300 mb-8 text-center">
+                    XYMake respects user privacy and only converts threads that have been made public.
                 </p>
 
-                <p id="pageDescription" class="text-gray-400 mb-8">
-                    Are you @{{username}}?
+                <p class="text-gray-300 text-center mb-8">
+                    Encourage @{{username}} to join the movement and make their insights
+                    accessible!
                 </p>
 
-                <a href="/"
-                    class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
-                    Unlock Your X Data Now
-                </a>
+
+                <div class="flex justify-center items-center flex-col text-center">
+                    <p id="pageDescription" class="text-gray-400 mb-8">
+                        Are you @{{username}}?
+                    </p>
+
+                    <a href="/"
+                        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
+                        Unlock Your X Data Now
+                    </a>
+
+                </div>
             </div>
 
             <!-- Active Use Case Selection (Initially hidden) -->
@@ -223,34 +250,7 @@
                 </div>
             </div>
 
-            <!-- Thread Preview Card -->
-            <div id="threadPreviewCard" class="xy-border  rounded-xl p-6 mb-12 bg-white/5 hidden">
-                <div class="flex flex-row justify-between">
-                    <h2 class="text-xl font-bold mb-4">Thread Preview (total items: {{numTweets}})</h2>
-                    <button disabled class="bg-gray-700 text-gray-500 px-4 py-2 rounded cursor-not-allowed opacity-60">
-                        Copy
-                    </button>
-                </div>
-                <div class="preview-fade h-48 overflow-hidden">
-                    <pre><div id="threadPreviewContent" class="text-gray-300"></div></pre>
-                </div>
-            </div>
 
-            <!-- Explanation Section -->
-            <div class="xy-border rounded-xl p-8 mb-12 bg-white/5">
-                <h2 class="text-2xl font-bold mb-6 text-center">Why Can't I Get The Thread?</h2>
-                <p class="text-gray-300 text-center mb-8">
-                    XYMake respects user privacy. Only threads from accounts that have explicitly unlock their data can
-                    be converted to markdown. Encourage @{{username}} to join the movement and make their insights
-                    accessible!
-                </p>
-                <div class="flex justify-center">
-                    <a id="primaryCTA" href="https://xymake.com"
-                        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg button-glow transition-all hover:bg-blue-700">
-                        Unlock Your X Data Now
-                    </a>
-                </div>
-            </div>
 
             <!-- Footer -->
             <div class="text-center text-gray-500 border-t border-white/10 pt-12">
@@ -317,7 +317,7 @@
                 const statusId = pathSegments[2];
 
                 // Update the title and description
-                document.getElementById('pageTitle').textContent = `@${username} Hasn't Unlocked Their X Data Yet.`;
+                //  document.getElementById('pageTitle').textContent = `@${username} Hasn't Unlocked Their X Data Yet.`;
 
                 // Update secondary CTA
                 const secondaryCTA = document.getElementById('secondaryCTA');
