@@ -141,7 +141,7 @@ function generateOgImageHtml(threadData: ThreadData): string {
       </div>
       
       <!-- Footer -->
-      <div style="background-color: #000; color: white; padding: 20px 60px; font-size: 24px; text-align: center; display: flex; justify-content: center;">
+      <div style="background-color: #000; color: white; padding: 20px 60px; font-size: 24px; text-align: end; display: flex; justify-content: flex-end;">
         <span style="display: block;">View as text</span>
       </div>
     </div>
