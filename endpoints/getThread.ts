@@ -1,9 +1,8 @@
 import { getOgImage } from "../getOgImage.js";
 import { identify } from "../identify.js";
-import { UserState } from "../xLoginMiddleware.js";
+import { Env, UserState } from "../xLoginMiddleware.js";
 import html400 from "../public/400.html";
 import {
-  Env,
   formatTweetAsMarkdown,
   getThreadData,
   ThreadData,
@@ -11,14 +10,18 @@ import {
 } from "../getThreadData.js";
 
 // Main handler with format support
-export const getThread = async (request: Request, env: Env, ctx: any) => {
+export const getThread = async (
+  request: Request,
+  env: Env,
+  ctx: any,
+): Promise<Response> => {
   const { isBrowser, isAgent, isCrawler } = identify(request);
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split("/");
 
     if (pathParts.length < 4 || pathParts[2] !== "status") {
-      return;
+      return new Response("Usage /username/status/id[.json]");
     }
 
     // Split the last part to handle optional format
@@ -46,10 +49,12 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     //1) First check on the username
 
     // NB: THis could make things cheaper, but would not scrape for unauthorized accounts!
-    // const configUsername = await env.TWEET_KV.get<UserConfig>(
-    //   `user:${username}`,
-    //   "json",
-    // );
+    const userState = await env.TWEET_KV.get<UserState>(
+      `user:${username}`,
+      "json",
+    );
+
+    const isPublic = userState?.privacy === "public";
 
     // if (configUsername?.privacy !== "public") {
     //   if (isBrowser) {
@@ -68,13 +73,14 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
     // Load data if OK
 
     // Determine output format (default to .md if not specified)
-    const threadData = await getThreadData(request, env);
+    const threadData = await getThreadData(request, env, ctx, isPublic);
 
     if (!threadData) {
       return new Response(
         JSON.stringify({
           status: "error",
-          message: "Tweet ID must be numeric",
+          message:
+            "Could not retrieve thread data. Be aware: Tweet ID must be numeric",
         }),
         {
           status: 400,
@@ -134,8 +140,8 @@ export const getThread = async (request: Request, env: Env, ctx: any) => {
         return new Response(
           html400
             .replaceAll(`{{username}}`, author || "this user")
-            .replaceAll(`{{numTweets}}`, String(threadData.tweets?.length || 0))
-            .replaceAll(`{{numTokens}}`, String(threadData.totalTokens || 0))
+            .replaceAll(`{{postCount}}`, String(threadData.postCount || 0))
+            .replaceAll(`{{totalTokens}}`, String(threadData.totalTokens || 0))
             .replace(
               "</head>",
               `

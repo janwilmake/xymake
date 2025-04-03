@@ -1,9 +1,10 @@
 import { ImageResponse } from "workers-og";
 import { getThreadData, ThreadData } from "./getThreadData.js";
+import { Env, UserState } from "./xLoginMiddleware.js";
 
 export const getOgImage = async (
   request: Request,
-  env: any,
+  env: Env,
   ctx: any,
   isStore: boolean,
 ): Promise<Response | undefined> => {
@@ -12,14 +13,17 @@ export const getOgImage = async (
     const url = new URL(request.url);
     // TODO: Show Alternate OG based on this from the use-cases.
     const makeId = url.searchParams.get("make");
+
     const pathParts = url.pathname.split("/");
+
     if (pathParts.length < 4 || pathParts[2] !== "og") {
       return undefined;
     }
 
     // Extract tweet ID
-    const lastPart = pathParts[3];
-    const [tweetId] = lastPart.split(".");
+    const [, username, page, lastPart] = pathParts;
+    const [tweetId, extension] = lastPart.split(".");
+
     if (!/^\d+$/.test(tweetId)) {
       return undefined;
     }
@@ -41,9 +45,14 @@ export const getOgImage = async (
         },
       });
     }
+    const userState = await env.TWEET_KV.get<UserState>(
+      `user:${username}`,
+      "json",
+    );
+    const isPublic = userState?.privacy === "public";
 
     // If not in cache, fetch thread data and generate the image
-    const threadData = await getThreadData(request, env);
+    const threadData = await getThreadData(request, env, ctx, isPublic);
     if (!threadData) {
       return undefined;
     }
@@ -134,7 +143,7 @@ function generateOgImageHtml(threadData: ThreadData): string {
       <!-- Footer -->
       <div style="background-color: #000; color: white; padding: 20px 60px; font-size: 24px; text-align: center; display: flex; justify-content: center;">
         <span style="display: block;">View the full thread as text • ${
-          threadData.tweets.length
+          threadData.postCount
         } posts</span>
       </div>
     </div>

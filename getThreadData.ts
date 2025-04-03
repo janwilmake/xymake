@@ -7,6 +7,7 @@ export interface ThreadData {
   topUser: User | null;
   totalTokens: number;
   title: string;
+  postCount: number;
   description: string;
   avatarUrls: string[];
   ogImageUrl: string;
@@ -144,6 +145,7 @@ export interface Env {
 interface CachedTweetData {
   timestamp: number;
   tweets: Tweet[];
+  isIncomplete?: boolean;
   "X-CACHE": "HIT" | "MISS";
 }
 
@@ -268,7 +270,7 @@ const getAllTweets = async (env: Env, tweetId: string, format: string) => {
     expirationTtl: THIRTY_DAYS_SECONDS,
   });
 
-  return { ...cacheData, "X-CACHE": "MISS" };
+  return { ...cacheData, "X-CACHE": "MISS" as "MISS" };
 };
 
 // Fetch a single tweet by ID
@@ -292,6 +294,7 @@ async function fetchTweet(tweetId: string, apiKey: string): Promise<Tweet> {
 async function fetchAllComments(
   tweetId: string,
   apiKey: string,
+  onePage?: boolean,
 ): Promise<Tweet[]> {
   let comments: Tweet[] = [];
   let cursor: string | null = null;
@@ -316,7 +319,7 @@ async function fetchAllComments(
     const data: TweetsResponse = await response.json();
     comments = comments.concat(data.tweets);
     cursor = data.next_cursor;
-  } while (cursor);
+  } while (cursor && !onePage);
 
   return comments;
 }
@@ -360,6 +363,8 @@ async function fetchParentTweets(
 export const getThreadData = async (
   request: Request,
   env: Env,
+  ctx: any,
+  isUserPublic: boolean,
 ): Promise<ThreadData | undefined> => {
   const url = new URL(request.url);
   const makeId = url.searchParams.get("make");
@@ -376,11 +381,53 @@ export const getThreadData = async (
 
   const storageFormat = formatExt === "json" ? "json" : "md";
 
-  const allTweets = await getAllTweets(env, tweetId, storageFormat);
+  let allTweets: CachedTweetData;
+  if (!isUserPublic) {
+    const cacheKey = `free.${tweetId}`;
+
+    const cachedData = await env.TWEET_KV.get<CachedTweetData>(cacheKey, {
+      type: "json",
+    });
+
+    if (cachedData) {
+      allTweets = cachedData;
+    } else {
+      const [tweet, comments] = await Promise.all([
+        fetchTweet(tweetId, env.SOCIALDATA_API_KEY),
+        fetchAllComments(tweetId, env.SOCIALDATA_API_KEY, true),
+      ]);
+
+      const tweets = [
+        { ...tweet, is_main_tweet: true },
+        tweet.quoted_status,
+        ...comments,
+      ]
+        .filter(Boolean)
+        .map((x) => x!);
+      allTweets = {
+        tweets,
+        "X-CACHE": "HIT" as "HIT",
+        timestamp: Date.now(),
+        isIncomplete: true,
+      };
+
+      ctx.waitUntil(env.TWEET_KV.put(cacheKey, JSON.stringify(allTweets)));
+    }
+  } else {
+    allTweets = await getAllTweets(env, tweetId, storageFormat);
+  }
+
   const markdownContent = allTweets.tweets
     .map(formatTweetAsMarkdown)
     .join("\n\n");
-  const totalTokens = Math.round(markdownContent.length / 5);
+
+  const TOKENS_PER_REPLY = 28 + 10;
+  const totalTokens = allTweets.isIncomplete
+    ? Math.round(
+        markdownContent.length / 5 +
+          allTweets.tweets[0].reply_count * TOKENS_PER_REPLY,
+      )
+    : Math.round(markdownContent.length / 5);
 
   // Count occurrences of each user
   const userOccurrences = new Map<string, number>();
@@ -444,7 +491,9 @@ export const getThreadData = async (
     const remainingCount = userScreenNames.length - otherTopUsers.length - 1;
     participantsText = `@${authorUser?.screen_name}, ${otherTopUsers
       .map((name) => `@${name}`)
-      .join(", ")} and ${remainingCount} others`;
+      .join(", ")} and ${
+      allTweets.isIncomplete ? "many" : remainingCount
+    } others`;
   }
 
   // Generate title and description for SEO
@@ -457,9 +506,16 @@ export const getThreadData = async (
         .replaceAll('"', "'")}${firstTweet.full_text.length > 60 ? "..." : ""}'`
     : "";
 
-  const title = `${participantsText} on X with ${allTweets.tweets.length} posts (${totalTokens} tokens)`;
+  const postCount = allTweets.isIncomplete
+    ? allTweets.tweets[0].reply_count + 1
+    : allTweets.tweets.length;
+
+  console.log({ postCount, isIncomplete: allTweets.isIncomplete, totalTokens });
+
+  const title = `${participantsText} on X with ${postCount} posts (${totalTokens} tokens)`;
   const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}${makeSuffix}`;
   const threadData: ThreadData = {
+    postCount,
     ogImageUrl,
     tweets: allTweets.tweets,
     userCounts: Object.fromEntries(sortedUserCountEntries),
