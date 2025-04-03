@@ -133,7 +133,6 @@ export const getThread = async (
       // Not public yet.
       const author = threadData.authorUser?.screen_name;
 
-      console.log("NOT PUBLIC", author, { isBrowser, isCrawler, isAgent });
       if (isBrowser || isCrawler) {
         const { title, description, ogImageUrl } = threadData;
 

@@ -112,11 +112,11 @@ function generateOgImageHtml(threadData: ThreadData): string {
                 background-color: #fff; margin: 0; width: 1200px; height: 630px; display: flex; flex-direction: column; position: relative;">
       <!-- Black Header Bar -->
       <div style="background-color: #000; height: 80px; width: 100%; display: flex; align-items: center; padding: 0 60px;">
-        <div style="display: flex; align-items: center;">
-          <svg width="32" height="32" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="white"/>
-          </svg>
+        <div style="display: flex;">
+         
           <span style="color: white; font-size: 32px; margin-left: 16px; font-weight: bold;">X Thread Context for AI</span>
+          
+          <span style="color: white; font-size: 32px; margin-left: 16px; font-weight: bold; text-align:right;">(View as text)</span>
         </div>
       </div>
       
@@ -141,8 +141,8 @@ function generateOgImageHtml(threadData: ThreadData): string {
       </div>
       
       <!-- Footer -->
-      <div style="background-color: #000; color: white; padding: 20px 60px; font-size: 24px; text-align: end; display: flex; justify-content: flex-end;">
-        <span style="display: block;">View as text</span>
+      <div style="background-color: #000; color: white; padding: 20px 60px; font-size: 40px; text-align: end; display: flex; justify-content: flex-end;">
+        <span style="display: block;">_</span>
       </div>
     </div>
   `;

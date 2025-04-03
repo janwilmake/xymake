@@ -510,8 +510,6 @@ export const getThreadData = async (
     ? allTweets.tweets[0].reply_count + 1
     : allTweets.tweets.length;
 
-  console.log({ postCount, isIncomplete: allTweets.isIncomplete, totalTokens });
-
   const title = `${participantsText} on X with ${postCount} posts (${totalTokens} tokens)`;
   const ogImageUrl = `${url.origin}/${pathParts[1]}/og/${tweetId}${makeSuffix}`;
   const threadData: ThreadData = {
