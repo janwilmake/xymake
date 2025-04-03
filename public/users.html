@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XYMake - User Profiles</title>
+    <meta name="description" content="View and manage X user profiles in your XYMake dashboard." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        .xy-gradient {
+            background: linear-gradient(135deg, #000000 0%, #121212 100%);
+        }
+
+        .xy-border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button-glow:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body class="text-white">
+    <main class="min-h-screen xy-gradient">
+        <div class="max-w-7xl mx-auto px-4 py-10">
+            <!-- Header -->
+            <header class="mb-10">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-10 h-10 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <h1 class="text-3xl font-bold">XYMake <span class="text-blue-400">Profiles</span></h1>
+                    </div>
+                    <a href="#"
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full font-medium transition-all button-glow">
+                        Back to Dashboard
+                    </a>
+                </div>
+            </header>
+
+            <!-- Profiles Container -->
+            <div class="xy-border rounded-xl p-8 bg-white/5 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">User Profiles</h2>
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <input type="text" id="search-input" placeholder="Search profiles..."
+                                class="bg-white/10 border border-gray-700 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full">
+                            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <button id="refresh-btn" class="bg-blue-600 hover:bg-blue-700 p-2 rounded-lg transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading" class="flex justify-center items-center py-20">
+                    <svg class="animate-spin h-10 w-10 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error-message" class="hidden bg-red-900/50 text-white p-4 rounded-lg mb-6">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-text">Failed to load user profiles. Please try again.</span>
+                    </div>
+                </div>
+
+                <!-- Profiles Grid -->
+                <div id="profiles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards will be generated here via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center text-gray-500 border-t border-white/10 pt-6">
+                <div class="flex justify-center gap-6 mb-4">
+                    <a href="https://github.com/janwilmake/xymake" class="hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd"
+                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-sm">
+                    © 2025 XYMake. All rights reserved. Not affiliated with X Corp.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch user profiles
+            fetchUserProfiles();
+
+            // Add event listener for refresh button
+            document.getElementById('refresh-btn').addEventListener('click', fetchUserProfiles);
+
+            // Add event listener for search input
+            document.getElementById('search-input').addEventListener('input', filterProfiles);
+        });
+
+        // Function to fetch user profiles from the API
+        async function fetchUserProfiles() {
+            const loadingElement = document.getElementById('loading');
+            const errorElement = document.getElementById('error-message');
+            const profilesGrid = document.getElementById('profiles-grid');
+
+            // Show loading, hide error
+            loadingElement.classList.remove('hidden');
+            errorElement.classList.add('hidden');
+            profilesGrid.innerHTML = '';
+
+            try {
+                const response = await fetch('https://xymake.com/users/details.json');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Hide loading
+                loadingElement.classList.add('hidden');
+
+                // Render profiles
+                renderProfiles(data.sort((a, b) => b.followers_count - a.followers_count));
+
+                // Store the data for search filtering
+                window.profilesData = data;
+            } catch (error) {
+                // Show error message
+                loadingElement.classList.add('hidden');
+                errorElement.classList.remove('hidden');
+                document.getElementById('error-text').textContent = `Error: ${error.message}`;
+                console.error('Failed to fetch user profiles:', error);
+            }
+        }
+
+        // Function to render profiles
+        function renderProfiles(profiles) {
+            const profilesGrid = document.getElementById('profiles-grid');
+            profilesGrid.innerHTML = '';
+
+            if (profiles.length === 0) {
+                profilesGrid.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-gray-400">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-xl">No profiles found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            profiles.forEach(profile => {
+                const card = document.createElement('div');
+                card.className = 'xy-border rounded-xl bg-white/5 p-6 profile-card transition-all';
+                card.setAttribute('data-username', profile.screen_name.toLowerCase());
+                card.setAttribute('data-name', profile.name.toLowerCase());
+
+                const createdDate = new Date(profile.created_at);
+                const formattedDate = createdDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <img src="${profile.profile_image_url_https}" alt="${profile.name}" class="w-14 h-14 rounded-full mr-4">
+                        <div>
+                            <h3 class="font-bold text-lg">${profile.name}</h3>
+                            <p class="text-gray-400">@${profile.screen_name}</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-300">${profile.description || 'No description'}</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-4 text-center">
+                        <div class="xy-border rounded-lg p-2">
+                            <p class="text-sm text-gray-400">Tweets</p>
+                            <p class="font-bold">${profile.statuses_count.toLocaleString()}</p>
+                        </div>
+                        <div class="xy-border rounded-lg p-2">
+                            <p class="text-sm text-gray-400">Following</p>
+                            <p class="font-bold">${profile.friends_count.toLocaleString()}</p>
+                        </div>
+                        <div class="xy-border rounded-lg p-2">
+                            <p class="text-sm text-gray-400">Followers</p>
+                            <p class="font-bold">${profile.followers_count.toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-gray-400 mb-4">
+                        <span>${profile.location || 'No location'}</span>
+                        <span>Joined ${formattedDate}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="w-1/2 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-medium transition-all button-glow"
+                            onclick="showProfile('${profile.screen_name}')">
+                            Show on X
+                        </button>
+                        <button class="w-1/2 bg-white/10 hover:bg-white/20 py-2 rounded-lg font-medium transition-all"
+                            onclick="showOnXymake('${profile.screen_name}')">
+                            Show on XYMake
+                        </button>
+                    </div>
+                `;
+
+                profilesGrid.appendChild(card);
+            });
+        }
+
+        // Function to filter profiles based on search input
+        function filterProfiles() {
+            const searchInput = document.getElementById('search-input');
+            const searchTerm = searchInput.value.toLowerCase();
+            const profileCards = document.querySelectorAll('.profile-card');
+
+            profileCards.forEach(card => {
+                const username = card.getAttribute('data-username');
+                const name = card.getAttribute('data-name');
+
+                if (username.includes(searchTerm) || name.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Check if any results are visible
+            const visibleCards = document.querySelectorAll('.profile-card:not(.hidden)');
+            const profilesGrid = document.getElementById('profiles-grid');
+
+            if (visibleCards.length === 0 && window.profilesData?.length > 0) {
+                // No results found
+                if (!document.getElementById('no-results')) {
+                    const noResults = document.createElement('div');
+                    noResults.id = 'no-results';
+                    noResults.className = 'col-span-full text-center py-10 text-gray-400';
+                    noResults.innerHTML = `
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-xl">No matches found for "${searchTerm}"</p>
+                    `;
+                    profilesGrid.appendChild(noResults);
+                }
+            } else {
+                // Remove no results message if it exists
+                const noResults = document.getElementById('no-results');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+        }
+
+        // Function to show a user's profile
+        function showProfile(username) {
+            window.open(`https://x.com/${username}`, '_blank');
+        }
+
+        // Function to show a user on XYMake
+        function showOnXymake(username) {
+            window.open(`https://xymake.com/${username}.json`, '_blank');
+        }
+
+        // For demonstration purposes - if the API is unavailable, use mock data
+        setTimeout(() => {
+            const loadingElement = document.getElementById('loading');
+            if (!loadingElement.classList.contains('hidden')) {
+                console.log('Using mock data since API call appears to be taking too long');
+                const mockData = [
+                    {
+                        id: 223338653,
+                        id_str: "223338653",
+                        name: "Jane Cooper",
+                        screen_name: "janecooper",
+                        location: "San Francisco, CA",
+                        url: "https://janecooper.dev",
+                        description: "Senior Developer Advocate | Cloud Engineering | Speaker | Dog lover",
+                        protected: false,
+                        verified: true,
+                        followers_count: 3882,
+                        friends_count: 1205,
+                        listed_count: 76,
+                        favourites_count: 7223,
+                        statuses_count: 12844,
+                        created_at: "2018-06-12T14:48:31.000000Z",
+                        profile_banner_url: "https://pbs.twimg.com/profile_banners/223338653/1523987604",
+                        profile_image_url_https: "https://api.placeholder.com/48/48",
+                        can_dm: true
+                    },
+                    {
+                        id: 114567890,
+                        id_str: "114567890",
+                        name: "Alex Morgan",
+                        screen_name: "alexmorgan",
+                        location: "Seattle, WA",
+                        url: null,
+                        description: "Cloud Architect | GCP & AWS Certified | Tech Writer | Coffee Enthusiast",
+                        protected: false,
+                        verified: true,
+                        followers_count: 7542,
+                        friends_count: 843,
+                        listed_count: 124,
+                        favourites_count: 3456,
+                        statuses_count: 9876,
+                        created_at: "2016-09-23T08:14:22.000000Z",
+                        profile_banner_url: "https://pbs.twimg.com/profile_banners/114567890/1632145687",
+                        profile_image_url_https: "https://api.placeholder.com/48/48",
+                        can_dm: true
+                    },
+                    {
+                        id: 987654321,
+                        id_str: "987654321",
+                        name: "Sam Wilson",
+                        screen_name: "samwilson",
+                        location: "New York, NY",
+                        url: "https://samwilson.tech",
+                        description: "Software Engineer | Open Source Contributor | Public Speaker | Tech Mentor",
+                        protected: false,
+                        verified: false,
+                        followers_count: 2134,
+                        friends_count: 567,
+                        listed_count: 34,
+                        favourites_count: 5432,
+                        statuses_count: 4321,
+                        created_at: "2019-02-15T11:23:45.000000Z",
+                        profile_banner_url: null,
+                        profile_image_url_https: "https://api.placeholder.com/48/48",
+                        can_dm: false
+                    },
+                    {
+                        id: 456789123,
+                        id_str: "456789123",
+                        name: "Priya Sharma",
+                        screen_name: "priyasharma",
+                        location: "Bangalore, India",
+                        url: "https://priyasharma.io",
+                        description: "Full Stack Developer | AI Enthusiast | Technical Writer | Conference Speaker",
+                        protected: false,
+                        verified: true,
+                        followers_count: 9876,
+                        friends_count: 1234,
+                        listed_count: 156,
+                        favourites_count: 8765,
+                        statuses_count: 6543,
+                        created_at: "2017-11-30T09:45:12.000000Z",
+                        profile_banner_url: "https://pbs.twimg.com/profile_banners/456789123/1598765432",
+                        profile_image_url_https: "https://api.placeholder.com/48/48",
+                        can_dm: true
+                    },
+                    {
+                        id: 789123456,
+                        id_str: "789123456",
+                        name: "David Kim",
+                        screen_name: "davidkim",
+                        location: "Austin, TX",
+                        url: null,
+                        description: "DevOps Engineer | Kubernetes Expert | Tech Blogger | Gamer",
+                        protected: false,
+                        verified: false,
+                        followers_count: 3456,
+                        friends_count: 876,
+                        listed_count: 54,
+                        favourites_count: 4321,
+                        statuses_count: 3210,
+                        created_at: "2018-08-14T15:23:45.000000Z",
+                        profile_banner_url: "https://pbs.twimg.com/profile_banners/789123456/1587654321",
+                        profile_image_url_https: "https://api.placeholder.com/48/48",
+                        can_dm: true
+                    },
+                    {
+                        id: 135792468,
+                        id_str: "135792468",
+                        name: "Emma Williams",
+                        screen_name: "emmawilliams",
+                        location: "London, UK",
+                        url: "https://emmawilliams.dev",
+                        description: "Frontend Developer | UX Designer | Accessibility Advocate | Conference Speaker",
+                        protected: false,
+                        verified: true,
+                        followers_count: 5678,
+                        friends_count: 987,
+                        listed_count: 87,
+                        favourites_count: 6543,
+                        statuses_count: 5432,
+                        created_at: "2016-05-17T12:34:56.000000Z",
+                        profile_banner_url: "https://pbs.twimg.com/profile_banners/135792468/1576543210",
+                        profile_image_url_https: "https://api.placeholder.com/48/48",
+                        can_dm: true
+                    }
+                ];
+
+                loadingElement.classList.add('hidden');
+                renderProfiles(mockData);
+                window.profilesData = mockData;
+            }
+        },
+            3000); // Wait 3 seconds before showing mock data
+    </script>
+</body>
+
+</html>

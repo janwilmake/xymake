@@ -421,7 +421,7 @@ export const getThreadData = async (
     .map(formatTweetAsMarkdown)
     .join("\n\n");
 
-  const TOKENS_PER_REPLY = 28 + 10;
+  const TOKENS_PER_REPLY = 120;
   const totalTokens = allTweets.isIncomplete
     ? Math.round(
         markdownContent.length / 5 +
