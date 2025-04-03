@@ -69,8 +69,12 @@ export default {
       });
     }
 
-    if (url.pathname === "/users.json" || url.pathname === "/users.md") {
-      return users.fetch(request, env);
+    if (
+      url.pathname === "/users.json" ||
+      url.pathname === "/users.md" ||
+      url.pathname === "/users/details.json"
+    ) {
+      return users.fetch(request, env, ctx);
     }
 
     // Extract format if present
