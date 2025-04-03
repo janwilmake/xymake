@@ -243,8 +243,8 @@ const getThreadHtml = (threadData: ThreadData, requestUrl: string): string => {
 <meta name="twitter:card" content="summary_large_image" />
 <meta property="twitter:domain" content="https://xymake.com" />
 <meta property="twitter:url" content="${requestUrl}" />
-<meta name="twitter:description" content="${title}" />
-<meta name="twitter:title" content="📄 " />
+<meta name="twitter:description" content="${description}" />
+<meta name="twitter:title" content="${title}" />
 <meta name="twitter:image" content="${ogImageUrl}" />
  
   <script src="https://cdn.tailwindcss.com"></script>

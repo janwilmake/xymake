@@ -1,10 +1,13 @@
 {
-  "posts": [
+  "$schema": "https://cli.xymake.com/xymake.schema.json",
+  "threads": [
     {
-      "url": "https://github.com/janwilmake/xymake/tree/main",
       "branch": "main",
-      "tweetId": "1906207609989824785",
-      "createdAt": "2025-03-30T04:51:20.746Z"
+      "createdAt": "2025-04-03T12:45:21.502Z",
+      "slug": "thread1907776433830670523",
+      "updatedAt": "2025-04-03T12:45:21.502Z",
+      "url": "https://x.com/janwilmake/status/1904234442937536644"
     }
-  ]
+  ],
+  "lastPostUrl": "https://x.com/janwilmake/status/1907776433830670523"
 }
