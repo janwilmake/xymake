@@ -12,6 +12,107 @@
     }
   ],
   "paths": {
+    "/users/details.json": {
+      "get": {
+        "summary": "Get user details",
+        "description": "Returns a list of user profiles with their details",
+        "operationId": "getUserDetails",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "example": 223338653
+                      },
+                      "id_str": {
+                        "type": "string",
+                        "example": "223338653"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "screen_name": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string",
+                        "example": "Oakland, CA"
+                      },
+                      "url": {
+                        "type": ["string", "null"],
+                        "example": null
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "Cloud Infra Engineer, GCP Enthusiast"
+                      },
+                      "protected": {
+                        "type": "boolean",
+                        "example": false
+                      },
+                      "verified": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "followers_count": {
+                        "type": "integer",
+                        "example": 1449
+                      },
+                      "friends_count": {
+                        "type": "integer",
+                        "example": 4710
+                      },
+                      "listed_count": {
+                        "type": "integer",
+                        "example": 11
+                      },
+                      "favourites_count": {
+                        "type": "integer",
+                        "example": 10383
+                      },
+                      "statuses_count": {
+                        "type": "integer",
+                        "example": 1984
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "example": "2010-12-06T03:04:47.000000Z"
+                      },
+                      "profile_banner_url": {
+                        "type": ["string", "null"],
+                        "example": "https://pbs.twimg.com/profile_banners/223338653/1396987604"
+                      },
+                      "profile_image_url_https": {
+                        "type": "string",
+                        "example": "https://pbs.twimg.com/profile_images/1752999989343825920/qPC5NrE9_normal.jpg"
+                      },
+                      "can_dm": {
+                        "type": "boolean",
+                        "example": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User details not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+
     "/users.json": {
       "get": {
         "summary": "Get list of users",

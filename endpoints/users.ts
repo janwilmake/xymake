@@ -19,7 +19,7 @@ export default {
         ),
       );
       return new Response(JSON.stringify(responses, undefined, 2), {
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json;charset=utf8" },
       });
     }
 
