@@ -231,7 +231,7 @@ const getThreadHtml = (threadData: ThreadData, requestUrl: string): string => {
 <!-- Facebook Meta Tags -->
 <meta property="og:url" content="${requestUrl}" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="${title}" />
+<meta property="og:title" content="${title.slice(0, 70)}" />
 <meta property="og:description" content="${description}" />
 <meta property="og:image" content="${ogImageUrl}" />
 <meta property="og:image:alt" content="${description}"/>
@@ -243,7 +243,7 @@ const getThreadHtml = (threadData: ThreadData, requestUrl: string): string => {
 <meta property="twitter:domain" content="https://xymake.com" />
 <meta property="twitter:url" content="${requestUrl}" />
 <meta name="twitter:description" content="${description}" />
-<meta name="twitter:title" content="${title}" />
+<meta name="twitter:title" content="${title.slice(0, 70)}" />
 <meta name="twitter:image" content="${ogImageUrl}" />
  
   <script src="https://cdn.tailwindcss.com"></script>
