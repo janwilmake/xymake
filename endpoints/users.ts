@@ -1,3 +1,4 @@
+import { corsHeaders } from "../router.js";
 import { Env } from "../xLoginMiddleware.js";
 import { UserState } from "../xLoginMiddleware.js";
 import { getUserProfile } from "./getUserProfile.js";
@@ -19,17 +20,20 @@ export default {
         ),
       );
       return new Response(JSON.stringify(responses, undefined, 2), {
-        headers: { "content-type": "application/json;charset=utf8" },
+        headers: {
+          "content-type": "application/json;charset=utf8",
+          ...corsHeaders,
+        },
       });
     }
 
     if (request.url.endsWith(".json")) {
       return new Response(JSON.stringify(keys, undefined, 2), {
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...corsHeaders },
       });
     }
     return new Response(keys.map((x) => `@${x}`).join(", "), {
-      headers: { "content-type": "text/markdown" },
+      headers: { "content-type": "text/markdown", ...corsHeaders },
     });
   },
 };

@@ -3,6 +3,7 @@ import dashboard from "../dashboard.html";
 import html400 from "../public/400.html";
 import { getFormat } from "../getFormat.js";
 import { getDataResponse } from "../getDataResponse.js";
+import { corsHeaders } from "../router.js";
 
 export const getUserProfile = async (
   request: Request,
@@ -108,11 +109,17 @@ export const getUserProfile = async (
     };
   }, {} as { [key: string]: { $ref: string } });
 
+  const posts: { [url: string]: string } | null = await env.TWEET_KV.get(
+    `daily/${username}`,
+    "json",
+  );
+
   // Combine profile data with routes
   const fullData = {
     "index.json": { ...profileData, message: privacyMessage },
     "index.md": { $ref: `${url.origin}/${username}.md` },
     ...routesData,
+    posts,
   };
 
   // Handle response based on format
@@ -122,11 +129,12 @@ export const getUserProfile = async (
     // Create a markdown representation of the profile
     const markdown = generateMarkdownProfile(
       profileData,
+      posts,
       username,
       privacyMessage,
     );
     return new Response(markdown, {
-      headers: { "content-type": "text/markdown;charset=utf8" },
+      headers: { "content-type": "text/markdown;charset=utf8", ...corsHeaders },
     });
   } else {
     return new Response("Unsupported format", { status: 400 });
@@ -136,6 +144,7 @@ export const getUserProfile = async (
 // Helper function to generate markdown representation of a user profile
 function generateMarkdownProfile(
   profileData: any,
+  posts: { [url: string]: string } | null,
   username: string,
   message: string | undefined,
 ): string {
@@ -171,6 +180,14 @@ function generateMarkdownProfile(
 
   if (profileData.verified) {
     markdown += `- ✓ Verified account\n`;
+  }
+
+  if (posts && Object.keys(posts).length > 0) {
+    markdown += "\n\n\nSOME RECENT POSTS\n\n\n";
+    Object.keys(posts).forEach((key) => {
+      const value = posts[key];
+      markdown += `------\n${key}\n-------\n\n${value}`;
+    });
   }
 
   return markdown;

@@ -1,12 +1,43 @@
 {
   "$schema": "https://cli.xymake.com/xymake.schema.json",
+  "community_id": "1845745544406151438",
+  "posts": {
+    "usecases": {
+      "url": "https://x.com/janwilmake/status/1904479590560481467"
+    },
+    "why-goldmine": {
+      "url": "https://x.com/janwilmake/status/1904560299312562193"
+    },
+    "introduction": {
+      "url": "https://x.com/janwilmake/status/1904234442937536644"
+    },
+    "origin-story": {
+      "url": "https://x.com/janwilmake/status/1904080559422288062"
+    }
+  },
+
   "threads": [
     {
       "branch": "main",
+      "slug": "usecases",
+      "url": "https://x.com/janwilmake/status/1904479590560481467"
+    },
+    {
+      "branch": "main",
+      "slug": "why-goldmine",
+      "url": "https://x.com/janwilmake/status/1904560299312562193"
+    },
+    {
+      "branch": "main",
       "createdAt": "2025-04-03T12:45:21.502Z",
-      "slug": "thread1907776433830670523",
+      "slug": "introduction",
       "updatedAt": "2025-04-03T12:45:21.502Z",
       "url": "https://x.com/janwilmake/status/1904234442937536644"
+    },
+    {
+      "branch": "main",
+      "slug": "origin-story",
+      "url": "https://x.com/janwilmake/status/1904080559422288062"
     }
   ],
   "lastPostUrl": "https://x.com/janwilmake/status/1907776433830670523"

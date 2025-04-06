@@ -211,6 +211,8 @@ Attach oauth an a way such that it's freemium (super low per-hour ip-ratelimit, 
 
 Create a search monitor for @grok (socialdata.tools) so I can track when people inquire the LLM.
 
+BUG: when profile is not unlocked, the user is not always right. https://x.com/janwilmake/status/1908237939898789981
+
 # X URL Structure Coverage
 
 XYMake aims to follow the url structure of X with sensible extensions to it, such as allowing to choose the data format (.md, .json, .html, etc). This way, things are always easy to find, just change x.com/... into xymake.com/... and you can see!
@@ -269,6 +271,7 @@ Legenda:
 
 - ✅ [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://xymake.com/i/lists/1784659545656021044)
 - 🟠 [@brianships](https://x.com/brianships) - MCP
+- XYMake chrome extension
 - 🔒 [@nikitavoloboev](https://x.com/nikitavoloboev) wants realtime export of bookmarks and [likes](https://github.com/d60/twikit/issues/3)
 - 🤔 [@russelbal](https://x.com/RussellBal/status/1905723735908446221) - x cli to X but add ability to POST it to standardized list of servers. cache busting with query string, for a complete regeneration.
 - ❌ [@DefenderOfBasic](https://x.com/DefenderOfBasic) - Hierarchical file-structure data format (non-flat) - this is too different from this usecase. focus lies on full-context conversations.
