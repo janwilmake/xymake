@@ -1,5 +1,7 @@
 # 🔧 XYMake - Turn Your 𝕏 Into LLM-Ready Data
 
+[![janwilmake/xymake context](https://badge.forgithub.com/janwilmake/xymake)](https://uithub.com/janwilmake/xymake)
+
 Login at https://xymake.com to Free Your X Data and use it with any LLM, MCP, or API.
 
 Goals:
