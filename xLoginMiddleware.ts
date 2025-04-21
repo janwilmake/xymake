@@ -925,14 +925,17 @@ export const xLoginMiddleware = async (
     const codeVerifier = await generateRandomString(43);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
+    const Location = `https://x.com/i/oauth2/authorize?response_type=code&client_id=${
+      env.X_CLIENT_ID
+    }&redirect_uri=${encodeURIComponent(
+      env.X_REDIRECT_URI,
+    )}&scope=${encodeURIComponent(
+      scope || "users.read follows.read tweet.read offline.access",
+    )}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+
+    console.log({ Location });
     const headers = new Headers({
-      Location: `https://x.com/i/oauth2/authorize?response_type=code&client_id=${
-        env.X_CLIENT_ID
-      }&redirect_uri=${encodeURIComponent(
-        env.X_REDIRECT_URI,
-      )}&scope=${encodeURIComponent(
-        scope || "users.read follows.read tweet.read offline.access",
-      )}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`,
+      Location,
     });
 
     if (redirect_uri) {
