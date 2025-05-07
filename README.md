@@ -273,6 +273,7 @@ Legenda:
 
 ## Ideas by the community
 
+- [@leo_guinan](https://x.com/leo_guinan) - Nested post extraction - https://xymake.com/leo_guinan/status/1499894566425710596
 - ✅ [@0xperp](https://x.com/0xperp) - list members of lists you created should be easy to export (e.g. https://xymake.com/i/lists/1784659545656021044)
 - 🟠 [@brianships](https://x.com/brianships) - MCP
 - XYMake chrome extension
