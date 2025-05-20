@@ -217,6 +217,18 @@ BUG: when profile is not unlocked, the user is not always right. https://x.com/j
 
 Idea: after also gathering all posts, group them by interaction with other people. Also messaging if possible. Once indexed, there should be a simple way to retrieve this as full index, including a summary of interaction per person, sorted on temporally weighed volume score. Now an MCP can be created that knows your people.
 
+# User onboarding XYMAKE by cheap `archive.zip`
+
+When a user signs up for the first time, put them into a queue that builds `archive.zip` at https://xymake.com/[username]/archive/refs/heads/main.zip
+
+The user should immediately see links to their last 20 posts on /dashboard and a link to `archive.zip` with loading indicator.
+
+This archive should contain just the 20 last posts (with comments) of the user and some other details that can be easily found. It should cap if there are more comments than 20 to a post.
+
+It should have a message at the end saying `visit xymake.com/pricing` to build a better context for [username] AT EVERY CONTEXT, at the end.
+
+Archive can be downloaded directly or viewed with the uithub viewer: https://uithub.com/xymake.com/[username]
+
 # X URL Structure Coverage
 
 XYMake aims to follow the url structure of X with sensible extensions to it, such as allowing to choose the data format (.md, .json, .html, etc). This way, things are always easy to find, just change x.com/... into xymake.com/... and you can see!
