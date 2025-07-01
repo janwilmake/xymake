@@ -235,16 +235,16 @@ const getAllTweets = async (env: Env, tweetId: string, format: string) => {
   }
 
   // Fetch fresh data
-  const [mainTweet, comments] = await Promise.all([
+  const [mainTweet] = await Promise.all([
     fetchTweet(tweetId, env.SOCIALDATA_API_KEY),
-    fetchAllComments(tweetId, env.SOCIALDATA_API_KEY),
+    //  fetchAllComments(tweetId, env.SOCIALDATA_API_KEY),
   ]);
 
   const parents = await fetchParentTweets(mainTweet, env.SOCIALDATA_API_KEY);
   const allTweets: Tweet[] = [
     { ...mainTweet, is_main_tweet: true },
     ...parents,
-    ...comments,
+    // ...comments,
   ];
 
   allTweets.sort((a, b) => {
@@ -392,15 +392,15 @@ export const getThreadData = async (
     if (cachedData) {
       allTweets = cachedData;
     } else {
-      const [tweet, comments] = await Promise.all([
+      const [tweet] = await Promise.all([
         fetchTweet(tweetId, env.SOCIALDATA_API_KEY),
-        fetchAllComments(tweetId, env.SOCIALDATA_API_KEY, true),
+        //  fetchAllComments(tweetId, env.SOCIALDATA_API_KEY, true),
       ]);
 
       const tweets = [
         { ...tweet, is_main_tweet: true },
         tweet.quoted_status,
-        ...comments,
+        // ...comments,
       ]
         .filter(Boolean)
         .map((x) => x!);
